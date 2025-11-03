@@ -21,10 +21,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import java.util.List;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * Controller para gestionar los miembros de la cooperativa
  */
+
+@ApiResponses(
+    value = {
+        @ApiResponse(responseCode = "200", description = "Operación exitosa"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+        @ApiResponse(responseCode = "404", description = "Recurso no encontrado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    }
+)
 @Tag(
     name = "Members",
     description = "API para la gestión de miembros de la cooperativa"
@@ -101,15 +111,7 @@ public class MemberController {
     public ResponseEntity<MemberDTO> updateMember(
         @PathVariable Long id, 
         @Valid @RequestBody MemberDTO member
-    ) {
-        // Validar que el ID del body coincida con el ID del path (si se envió)
-        if (member.getId() != null && !member.getId().equals(id)) {
-            throw new InvalidDataException(
-                String.format("El ID del body (%d) no coincide con el ID de la URL (%d)", 
-                    member.getId(), id)
-            );
-        }
-        
+    ) { 
         member.setId(id);
         return ResponseEntity.ok(memberService.updateMember(member));
     }

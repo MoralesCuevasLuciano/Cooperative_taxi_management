@@ -134,6 +134,24 @@ public class DriverService {
         driverRepository.save(driverSaved);
     }
 
+    public void deleteDriver(Long id, LocalDate leaveDate) {
+        if(id == null) {
+            throw new InvalidDataException("El ID no puede ser nulo");
+        }
+
+        DriverEntity driverSaved = driverRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Conductor"));
+        
+        // Verificar que no esté ya inactivo
+        if (driverSaved.getLeaveDate() != null) {
+            throw new MemberAlreadyInactiveException(id);
+        }
+        
+        driverSaved.setLeaveDate(leaveDate);
+        driverRepository.save(driverSaved);
+    }
+
+
 
     private DriverEntity convertToEntity(DriverDTO driver) {
         DriverEntity driverEntity = new DriverEntity();

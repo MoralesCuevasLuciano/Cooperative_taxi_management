@@ -62,4 +62,7 @@ public abstract class PersonDTO {
     @Past(message = "La fecha de nacimiento no puede ser futura")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
+
+    @NotNull(message = "El estado no puede ser nulo")
+    private Boolean active = true;
 }

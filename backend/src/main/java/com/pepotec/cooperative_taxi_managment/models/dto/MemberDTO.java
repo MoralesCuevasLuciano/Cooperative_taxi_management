@@ -33,7 +33,4 @@ public class MemberDTO extends PersonDTO {
     @Valid
     @NotNull(message = "La dirección no puede ser nula")
     private AddressDTO address;
-
-    @NotNull(message = "El estado no puede ser nulo")
-    private Boolean active;
 }

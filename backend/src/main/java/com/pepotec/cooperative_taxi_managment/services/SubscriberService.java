@@ -136,4 +136,11 @@ public class SubscriberService {
             .licenceNumbers(subscriber.getLicenceNumbers())
             .build();
     }
+
+    public List<SubscriberDTO> getAllSubscribersActive() {
+        return subscriberRepository.findAll().stream()
+            .filter(subscriber -> subscriber.getActive().equals(true))
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
 }
