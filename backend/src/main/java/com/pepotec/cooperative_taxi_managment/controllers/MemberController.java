@@ -40,7 +40,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
     description = "API para la gestión de miembros de la cooperativa"
 )
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/members")
 public class MemberController {
     
     @Autowired
@@ -52,6 +52,7 @@ public class MemberController {
     @Operation(
         summary = "Crear un nuevo miembro",
         description = "Crea un nuevo miembro con la información proporcionada.",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "201", 
@@ -71,7 +72,7 @@ public class MemberController {
             )
         }
     )
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<MemberDTO> createMember(@Valid @RequestBody MemberDTO member) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -84,6 +85,7 @@ public class MemberController {
     @Operation(
         summary = "Actualizar un miembro existente",
         description = "Actualiza los datos de un miembro existente por su ID.",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "200", 
@@ -107,7 +109,7 @@ public class MemberController {
             )
         }
     )
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<MemberDTO> updateMember(
         @PathVariable Long id, 
         @Valid @RequestBody MemberDTO member
@@ -122,6 +124,7 @@ public class MemberController {
     @Operation(
         summary = "Eliminar un miembro",
         description = "Da de baja un miembro por su ID (soft delete).",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "204", 
@@ -141,7 +144,7 @@ public class MemberController {
             )
         }
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
@@ -153,6 +156,7 @@ public class MemberController {
     @Operation(
         summary = "Obtener un miembro por ID",
         description = "Busca y retorna un miembro por su ID.",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "200", 
@@ -168,7 +172,7 @@ public class MemberController {
             )
         }
     )
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.getMemberById(id));
     }
@@ -179,6 +183,7 @@ public class MemberController {
     @Operation(
         summary = "Obtener un miembro por DNI",
         description = "Busca y retorna un miembro activo por su DNI.",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "200", 
@@ -198,7 +203,7 @@ public class MemberController {
             )
         }
     )
-    @GetMapping("/dni/{dni}")
+    @GetMapping("/get/dni/{dni}")
     public ResponseEntity<MemberDTO> getMemberByDni(@PathVariable String dni) {
         return ResponseEntity.ok(memberService.getMemberByDni(dni));
     }
@@ -209,6 +214,7 @@ public class MemberController {
     @Operation(
         summary = "Obtener todos los miembros",
         description = "Retorna una lista de todos los miembros (activos e inactivos).",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "200", 
@@ -220,7 +226,7 @@ public class MemberController {
             )
         }
     )
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<MemberDTO>> getAllMembers() {
         return ResponseEntity.ok(memberService.getAllMembers());
     }
@@ -231,6 +237,7 @@ public class MemberController {
     @Operation(
         summary = "Obtener todos los miembros activos",
         description = "Retorna una lista de todos los miembros activos.",
+        tags = {"Members"},
         responses = {
             @ApiResponse(
                 responseCode = "200", 
@@ -242,7 +249,7 @@ public class MemberController {
             )
         }
     )
-    @GetMapping("/active")
+    @GetMapping("/get/active")
     public ResponseEntity<List<MemberDTO>> getAllMembersActive() {
         return ResponseEntity.ok(memberService.getAllMembersActive());
     }

@@ -1,0 +1,156 @@
+package com.pepotec.cooperative_taxi_managment.services;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.pepotec.cooperative_taxi_managment.models.dto.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.entities.VehicleEntity;
+import com.pepotec.cooperative_taxi_managment.models.entities.ModelEntity;
+import com.pepotec.cooperative_taxi_managment.repositories.VehicleRepository;
+import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundException;
+import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
+import com.pepotec.cooperative_taxi_managment.validators.VehicleValidator;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class VehicleService {
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private ModelService modelService;
+
+    @Autowired
+    private VehicleValidator vehicleValidator;
+
+    public VehicleDTO createVehicle(VehicleDTO vehicle) {
+        vehicleValidator.validateVehicleSpecificFields(vehicle);
+        vehicleValidator.validateUniqueFields(vehicle, null);
+
+        ModelEntity model = modelService.getModelEntityById(vehicle.getModel().getId());
+
+        VehicleEntity vehicleEntity = convertToEntity(vehicle);
+        vehicleEntity.setModel(model);
+        vehicleEntity.setActive(true);
+        vehicleEntity.setLeaveDate(null);
+
+        return convertToDTO(vehicleRepository.save(vehicleEntity));
+    }
+
+    public VehicleDTO getVehicleById(Long id) {
+        VehicleEntity vehicle = vehicleRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Vehículo"));
+        return convertToDTO(vehicle);
+    }
+
+    public VehicleDTO getVehicleByLicensePlate(String licensePlate) {
+        if (licensePlate == null || licensePlate.trim().isEmpty()) {
+            throw new InvalidDataException("La patente no puede estar vacía");
+        }
+
+        VehicleEntity vehicle = vehicleRepository.findByLicensePlate(licensePlate)
+            .orElseThrow(() -> new ResourceNotFoundException(null, "Vehículo con patente " + licensePlate));
+        return convertToDTO(vehicle);
+    }
+
+    public List<VehicleDTO> getAllVehicles() {
+        return vehicleRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<VehicleDTO> getActiveVehicles() {
+        return vehicleRepository.findByActiveTrueAndLeaveDateIsNull().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<VehicleDTO> getVehiclesByModel(Long modelId) {
+        return vehicleRepository.findByModelId(modelId).stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    public VehicleDTO updateVehicle(VehicleDTO vehicle) {
+        if (vehicle.getId() == null) {
+            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
+        }
+
+        VehicleEntity vehicleEntity = vehicleRepository.findById(vehicle.getId())
+            .orElseThrow(() -> new ResourceNotFoundException(vehicle.getId(), "Vehículo"));
+
+        vehicleValidator.validateVehicleSpecificFields(vehicle);
+        vehicleValidator.validateUniqueFields(vehicle, vehicle.getId());
+
+        ModelEntity model = modelService.getModelEntityById(vehicle.getModel().getId());
+
+        vehicleEntity.setLicensePlate(vehicle.getLicensePlate());
+        vehicleEntity.setLicenseNumber(vehicle.getLicenseNumber());
+        vehicleEntity.setEngineNumber(vehicle.getEngineNumber());
+        vehicleEntity.setChassisNumber(vehicle.getChassisNumber());
+        vehicleEntity.setVtvExpirationDate(vehicle.getVtvExpirationDate());
+        vehicleEntity.setModel(model);
+        vehicleEntity.setActive(vehicle.getActive() != null ? vehicle.getActive() : true);
+
+        return convertToDTO(vehicleRepository.save(vehicleEntity));
+    }
+
+    public void deleteVehicle(Long id) {
+        if (id == null) {
+            throw new InvalidDataException("El ID no puede ser nulo");
+        }
+
+        VehicleEntity vehicle = vehicleRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Vehículo"));
+
+        vehicle.setActive(false);
+        vehicle.setLeaveDate(LocalDate.now());
+        vehicleRepository.save(vehicle);
+    }
+
+    public void deleteVehicle(Long id, LocalDate leaveDate) {
+        if (id == null) {
+            throw new InvalidDataException("El ID no puede ser nulo");
+        }
+
+        VehicleEntity vehicle = vehicleRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Vehículo"));
+
+        vehicle.setActive(false);
+        vehicle.setLeaveDate(leaveDate);
+        vehicleRepository.save(vehicle);
+    }
+
+    private VehicleEntity convertToEntity(VehicleDTO vehicle) {
+        return VehicleEntity.builder()
+            .id(vehicle.getId())
+            .licensePlate(vehicle.getLicensePlate())
+            .licenseNumber(vehicle.getLicenseNumber())
+            .engineNumber(vehicle.getEngineNumber())
+            .chassisNumber(vehicle.getChassisNumber())
+            .vtvExpirationDate(vehicle.getVtvExpirationDate())
+            .active(vehicle.getActive() != null ? vehicle.getActive() : true)
+            .leaveDate(vehicle.getLeaveDate())
+            .build();
+    }
+
+    private VehicleDTO convertToDTO(VehicleEntity vehicle) {
+        if (vehicle == null) {
+            return null;
+        }
+        return VehicleDTO.builder()
+            .id(vehicle.getId())
+            .licensePlate(vehicle.getLicensePlate())
+            .licenseNumber(vehicle.getLicenseNumber())
+            .engineNumber(vehicle.getEngineNumber())
+            .chassisNumber(vehicle.getChassisNumber())
+            .vtvExpirationDate(vehicle.getVtvExpirationDate())
+            .active(vehicle.getActive())
+            .leaveDate(vehicle.getLeaveDate())
+            .model(modelService.getModelById(vehicle.getModel().getId()))
+            .build();
+    }
+}
+

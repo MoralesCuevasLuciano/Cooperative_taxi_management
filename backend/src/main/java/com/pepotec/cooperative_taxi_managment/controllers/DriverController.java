@@ -34,7 +34,7 @@ import java.time.LocalDate;
     description = "API para la gestión de conductores de la cooperativa"
 )
 @RestController
-@RequestMapping("/api/drivers")
+@RequestMapping("/drivers")
 public class DriverController {
 
     @Autowired
@@ -46,13 +46,14 @@ public class DriverController {
     @Operation(
         summary = "Crear un nuevo conductor",
         description = "Crea un nuevo conductor con la información proporcionada.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "201", description = "Conductor creado exitosamente"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos"),
             @ApiResponse(responseCode = "409", description = "Conflicto - DNI, CUIT o Email ya existen")
         }
     )
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<DriverDTO> createDriver(@Valid @RequestBody DriverDTO driver) {
         return ResponseEntity.status(HttpStatus.CREATED).body(driverService.createDriver(driver));
     }
@@ -63,12 +64,14 @@ public class DriverController {
     @Operation(
         summary = "Actualizar un conductor existente",
         description = "Actualiza los datos de un conductor existente por su ID.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Conductor actualizado exitosamente"),
         }
     )
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<DriverDTO> updateDriver(@PathVariable Long id, @Valid @RequestBody DriverDTO driver) {
+        driver.setId(id);
         return ResponseEntity.ok(driverService.updateDriver(driver));
     }
 
@@ -78,12 +81,13 @@ public class DriverController {
     @Operation(
         summary = "Dar de baja un conductor",
         description = "Da de baja un conductor por su ID.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "204", description = "Conductor dado de baja exitosamente"),
         }
     )
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id) {
         driverService.deleteDriver(id);
         return ResponseEntity.noContent().build();
@@ -95,11 +99,12 @@ public class DriverController {
     @Operation(
         summary = "Dar de baja un conductor con una fecha de baja específica",
         description = "Da de baja un conductor por su ID con una fecha de baja específica.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "204", description = "Conductor dado de baja exitosamente"),
         }
     )
-    @DeleteMapping("/{id}/leave-date/{leaveDate}")
+    @DeleteMapping("/delete/{id}/leave-date/{leaveDate}")
     public ResponseEntity<Void> deleteDriver(@PathVariable Long id, @PathVariable LocalDate leaveDate) {
         driverService.deleteDriver(id, leaveDate);
         return ResponseEntity.noContent().build();
@@ -111,11 +116,12 @@ public class DriverController {
     @Operation(
         summary = "Obtener un conductor por ID",
         description = "Obtiene un conductor por su ID.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Conductor encontrado"),
         }
     )
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<DriverDTO> getDriverById(@PathVariable Long id) {
         return ResponseEntity.ok(driverService.getDriverById(id));
     }
@@ -126,11 +132,12 @@ public class DriverController {
     @Operation(
         summary = "Obtener un conductor por DNI",
         description = "Obtiene un conductor por su DNI.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Conductor encontrado"),
         }
     )
-    @GetMapping("/dni/{dni}")
+    @GetMapping("/get/dni/{dni}")
     public ResponseEntity<DriverDTO> getDriverByDni(@PathVariable String dni) {
         return ResponseEntity.ok(driverService.getDriverByDni(dni));
     }
@@ -141,11 +148,12 @@ public class DriverController {
     @Operation(
         summary = "Obtener todos los conductores",
         description = "Obtiene todos los conductores.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de conductores encontrados"),
         }
     )
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<DriverDTO>> getAllDrivers() {
         return ResponseEntity.ok(driverService.getAllDrivers());
     }
@@ -156,11 +164,12 @@ public class DriverController {
     @Operation(
         summary = "Obtener todos los conductores activos",
         description = "Obtiene todos los conductores activos.",
+        tags = {"Drivers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de conductores activos encontrados"),
         }
     )
-    @GetMapping("/active")
+    @GetMapping("/get/active")
     public ResponseEntity<List<DriverDTO>> getAllDriversActive() {
         return ResponseEntity.ok(driverService.getAllDriversActive());
     }

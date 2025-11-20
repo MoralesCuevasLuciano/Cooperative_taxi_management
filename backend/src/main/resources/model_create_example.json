@@ -1,0 +1,9 @@
+{
+  "name": "Corolla",
+  "year": 2020,
+  "brand": {
+    "id": 1,
+    "name": "Toyota"
+  }
+}
+

@@ -36,7 +36,7 @@ import java.util.List;
     description = "API para la gestión de suscriptores de la cooperativa"
 )
 @RestController
-@RequestMapping("/api/subscribers")
+@RequestMapping("/subscribers")
 public class SubscriberController {
 
     @Autowired
@@ -48,6 +48,7 @@ public class SubscriberController {
     @Operation(
         summary = "Crear un nuevo suscriptor",
         description = "Crea un nuevo suscriptor con la información proporcionada.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(
                 responseCode = "201",
@@ -61,7 +62,7 @@ public class SubscriberController {
             @ApiResponse(responseCode = "409", description = "Conflicto - DNI, CUIT o Email ya existen")
         }
     )
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<SubscriberDTO> createSubscriber(@Valid @RequestBody SubscriberDTO subscriber) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -74,6 +75,7 @@ public class SubscriberController {
     @Operation(
         summary = "Actualizar un suscriptor existente",
         description = "Actualiza los datos de un suscriptor existente por su ID.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(
                 responseCode = "200",
@@ -88,7 +90,7 @@ public class SubscriberController {
             @ApiResponse(responseCode = "409", description = "Conflicto - DNI, CUIT o Email ya existen")
         }
     )
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<SubscriberDTO> updateSubscriber(
         @PathVariable Long id,
         @Valid @RequestBody SubscriberDTO subscriber
@@ -109,13 +111,14 @@ public class SubscriberController {
     @Operation(
         summary = "Eliminar un suscriptor",
         description = "Elimina un suscriptor por su ID.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(responseCode = "204", description = "Suscriptor eliminado exitosamente"),
             @ApiResponse(responseCode = "400", description = "ID inválido"),
             @ApiResponse(responseCode = "404", description = "Suscriptor no encontrado")
         }
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteSubscriber(@PathVariable Long id) {
         subscriberService.deleteSubscriber(id);
         return ResponseEntity.noContent().build();
@@ -127,6 +130,7 @@ public class SubscriberController {
     @Operation(
         summary = "Obtener un suscriptor por ID",
         description = "Busca y retorna un suscriptor por su ID.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(
                 responseCode = "200",
@@ -139,7 +143,7 @@ public class SubscriberController {
             @ApiResponse(responseCode = "404", description = "Suscriptor no encontrado")
         }
     )
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<SubscriberDTO> getSubscriberById(@PathVariable Long id) {
         return ResponseEntity.ok(subscriberService.getSubscriberById(id));
     }
@@ -150,6 +154,7 @@ public class SubscriberController {
     @Operation(
         summary = "Obtener un suscriptor por DNI",
         description = "Busca y retorna un suscriptor por su DNI.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(
                 responseCode = "200",
@@ -163,7 +168,7 @@ public class SubscriberController {
             @ApiResponse(responseCode = "404", description = "Suscriptor no encontrado")
         }
     )
-    @GetMapping("/dni/{dni}")
+    @GetMapping("/get/dni/{dni}")
     public ResponseEntity<SubscriberDTO> getSubscriberByDni(@PathVariable String dni) {
         return ResponseEntity.ok(subscriberService.getSubscriberByDni(dni));
     }
@@ -174,6 +179,7 @@ public class SubscriberController {
     @Operation(
         summary = "Obtener todos los suscriptores",
         description = "Retorna una lista de todos los suscriptores.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(
                 responseCode = "200",
@@ -185,7 +191,7 @@ public class SubscriberController {
             )
         }
     )
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<List<SubscriberDTO>> getAllSubscribers() {
         return ResponseEntity.ok(subscriberService.getAllSubscribers());
     }
@@ -195,11 +201,12 @@ public class SubscriberController {
     @Operation(
         summary = "Obtener todos los suscriptores activos",
         description = "Retorna una lista de todos los suscriptores activos.",
+        tags = {"Subscribers"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de suscriptores activos retornada exitosamente"),
         }
     )
-    @GetMapping("/active")
+    @GetMapping("/get/active")
     public ResponseEntity<List<SubscriberDTO>> getAllSubscribersActive() {
         return ResponseEntity.ok(subscriberService.getAllSubscribersActive());
     }

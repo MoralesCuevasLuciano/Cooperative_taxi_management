@@ -1,0 +1,18 @@
+{
+  "licensePlate": "XYZ789",
+  "licenseNumber": "9876543210",
+  "engineNumber": "MOTOR987654321",
+  "chassisNumber": "CHASSIS9876543210",
+  "vtvExpirationDate": "2026-06-30",
+  "active": true,
+  "model": {
+    "id": 1,
+    "name": "Fiesta",
+    "year": 2019,
+    "brand": {
+      "id": 1,
+      "name": "Ford"
+    }
+  }
+}
+
