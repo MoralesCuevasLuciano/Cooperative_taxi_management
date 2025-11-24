@@ -152,5 +152,14 @@ public class VehicleService {
             .model(modelService.getModelById(vehicle.getModel().getId()))
             .build();
     }
+
+    /**
+     * Obtiene la entidad VehicleEntity por ID para uso interno de otros servicios.
+     * Este método es package-private para mantener el encapsulamiento.
+     */
+    VehicleEntity getVehicleEntityById(Long id) {
+        return vehicleRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Vehículo"));
+    }
 }
 

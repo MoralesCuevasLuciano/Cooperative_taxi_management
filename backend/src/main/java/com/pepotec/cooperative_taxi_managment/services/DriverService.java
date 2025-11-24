@@ -200,4 +200,13 @@ public class DriverService {
             .expirationRegistrationDate(driver.getExpirationRegistrationDate())
             .build();
     }
+
+    /**
+     * Obtiene la entidad DriverEntity por ID para uso interno de otros servicios.
+     * Este método es package-private para mantener el encapsulamiento.
+     */
+    DriverEntity getDriverEntityById(Long id) {
+        return driverRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Conductor"));
+    }
 }
