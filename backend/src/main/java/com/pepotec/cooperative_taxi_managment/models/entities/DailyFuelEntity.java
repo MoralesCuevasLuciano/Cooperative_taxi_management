@@ -42,8 +42,9 @@ public class DailyFuelEntity {
     @NotNull(message = "The vehicle cannot be null")
     private VehicleEntity vehicle;
 
-    @Column(name = "id_settlement")
-    private Long rendicionId;
+    @ManyToOne
+    @JoinColumn(name = "id_settlement")
+    private DriverSettlementEntity settlement;
 
     @Column(name = "ticket_issue_date", nullable = false)
     @NotNull(message = "The ticket issue date cannot be null")

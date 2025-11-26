@@ -29,6 +29,9 @@ public class DailyFuelService {
     private VehicleService vehicleService;
 
     @Autowired
+    private DriverSettlementService driverSettlementService;
+
+    @Autowired
     private DailyFuelValidator dailyFuelValidator;
 
     @Transactional
@@ -41,6 +44,11 @@ public class DailyFuelService {
         DailyFuelEntity dailyFuelEntity = convertToEntity(dailyFuel);
         dailyFuelEntity.setDriver(driver);
         dailyFuelEntity.setVehicle(vehicle);
+        
+        if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
+            var settlement = driverSettlementService.getDriverSettlementEntityById(dailyFuel.getSettlement().getId());
+            dailyFuelEntity.setSettlement(settlement);
+        }
 
         return convertToDTO(dailyFuelRepository.save(dailyFuelEntity));
     }
@@ -182,7 +190,13 @@ public class DailyFuelService {
         dailyFuelEntity.setSubmissionDate(dailyFuel.getSubmissionDate());
         dailyFuelEntity.setAmount(dailyFuel.getAmount());
         dailyFuelEntity.setFuelType(dailyFuel.getFuelType());
-        dailyFuelEntity.setRendicionId(dailyFuel.getRendicionId());
+        
+        if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
+            var settlement = driverSettlementService.getDriverSettlementEntityById(dailyFuel.getSettlement().getId());
+            dailyFuelEntity.setSettlement(settlement);
+        } else {
+            dailyFuelEntity.setSettlement(null);
+        }
 
         return convertToDTO(dailyFuelRepository.save(dailyFuelEntity));
     }
@@ -199,30 +213,41 @@ public class DailyFuelService {
     }
 
     private DailyFuelEntity convertToEntity(DailyFuelDTO dailyFuel) {
-        return DailyFuelEntity.builder()
+        DailyFuelEntity entity = DailyFuelEntity.builder()
             .id(dailyFuel.getId())
-            .rendicionId(dailyFuel.getRendicionId())
             .ticketIssueDate(dailyFuel.getTicketIssueDate())
             .submissionDate(dailyFuel.getSubmissionDate())
             .amount(dailyFuel.getAmount())
             .fuelType(dailyFuel.getFuelType())
             .build();
+        
+        if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
+            var settlement = driverSettlementService.getDriverSettlementEntityById(dailyFuel.getSettlement().getId());
+            entity.setSettlement(settlement);
+        }
+        
+        return entity;
     }
 
     private DailyFuelDTO convertToDTO(DailyFuelEntity dailyFuel) {
         if (dailyFuel == null) {
             return null;
         }
-        return DailyFuelDTO.builder()
+        
+        DailyFuelDTO.DailyFuelDTOBuilder builder = DailyFuelDTO.builder()
             .id(dailyFuel.getId())
             .driver(driverService.getDriverById(dailyFuel.getDriver().getId()))
             .vehicle(vehicleService.getVehicleById(dailyFuel.getVehicle().getId()))
-            .rendicionId(dailyFuel.getRendicionId())
             .ticketIssueDate(dailyFuel.getTicketIssueDate())
             .submissionDate(dailyFuel.getSubmissionDate())
             .amount(dailyFuel.getAmount())
-            .fuelType(dailyFuel.getFuelType())
-            .build();
+            .fuelType(dailyFuel.getFuelType());
+        
+        if (dailyFuel.getSettlement() != null) {
+            builder.settlement(driverSettlementService.getDriverSettlementById(dailyFuel.getSettlement().getId()));
+        }
+        
+        return builder.build();
     }
 }
 

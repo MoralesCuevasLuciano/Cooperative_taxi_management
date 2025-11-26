@@ -1,6 +1,6 @@
 # Estado del Proyecto - Cooperative Taxi Management
 
-**Última actualización:** 21 de Noviembre, 2024
+**Última actualización:** 26 de Noviembre, 2024
 
 ---
 
@@ -59,7 +59,7 @@
 - `DELETE /vehicles/delete/{id}/leave-date/{leaveDate}` (formato fecha: YYYY-MM-DD)
 
 #### 4. **Daily Fuel (Combustible Diario)**
-- ✅ Entidad `DailyFuelEntity` con campos: `id`, `driver` (ManyToOne), `vehicle` (ManyToOne), `rendicionId` (Long nullable), `ticketIssueDate`, `submissionDate`, `amount`, `fuelType` (Enum)
+- ✅ Entidad `DailyFuelEntity` con campos: `id`, `driver` (ManyToOne), `vehicle` (ManyToOne), `settlement` (ManyToOne → DriverSettlementEntity, nullable), `ticketIssueDate`, `submissionDate`, `amount`, `fuelType` (Enum)
 - ✅ Enum `FuelType` con valores `GNC` y `NAFTA`
 - ✅ DTO `DailyFuelDTO`
 - ✅ Repository `DailyFuelRepository` con métodos de búsqueda
@@ -83,10 +83,10 @@
 - `GET /daily-fuel/get/by-vehicle/{vehicleId}/fuel-type/{fuelType}`
 - `GET /daily-fuel/get/by-driver/{driverId}/fuel-type/{fuelType}`
 
-**Nota:** Campo `rendicionId` es Long nullable por ahora, sin relación JPA. Se actualizará cuando se implemente `DriverSettlement`.
+**Nota:** Campo `settlement` es ManyToOne nullable hacia `DriverSettlementEntity`.
 
 #### 5. **Ticket Taxi**
-- ✅ Entidad `TicketTaxiEntity` con campos: `id`, `vehicle` (ManyToOne), `rendicionId` (Long obligatorio), `ticketNumber` (opcional), `startDate` (opcional), `cutDate` (opcional), `amount` (obligatorio, >= 0), `freeKilometers` (opcional, >= 0), `occupiedKilometers` (opcional, >= 0), `trips` (opcional, >= 0)
+- ✅ Entidad `TicketTaxiEntity` con campos: `id`, `vehicle` (ManyToOne), `settlement` (ManyToOne → DriverSettlementEntity, obligatorio), `ticketNumber` (opcional), `startDate` (opcional), `cutDate` (opcional), `amount` (obligatorio, >= 0), `freeKilometers` (opcional, >= 0), `occupiedKilometers` (opcional, >= 0), `trips` (opcional, >= 0)
 - ✅ DTO `TicketTaxiDTO`
 - ✅ Repository `TicketTaxiRepository` con métodos de búsqueda
 - ✅ Validator `TicketTaxiValidator` (validaciones: cutDate >= startDate si ambas presentes, amount >= 0, campos opcionales >= 0)
@@ -101,15 +101,15 @@
 - `PUT /ticket-taxi/update/{id}`
 - `DELETE /ticket-taxi/delete/{id}`
 - `GET /ticket-taxi/get/by-vehicle/{vehicleId}`
-- `GET /ticket-taxi/get/by-rendicion/{rendicionId}`
+- `GET /ticket-taxi/get/by-settlement/{settlementId}`
 - `GET /ticket-taxi/get/by-start-date-range?startDate=...&endDate=...`
 - `GET /ticket-taxi/get/by-cut-date-range?startDate=...&endDate=...`
 - `GET /ticket-taxi/get/by-vehicle/{vehicleId}/start-date-range?startDate=...&endDate=...`
 - `GET /ticket-taxi/get/by-vehicle/{vehicleId}/cut-date-range?startDate=...&endDate=...`
-- `GET /ticket-taxi/get/by-rendicion/{rendicionId}/start-date-range?startDate=...&endDate=...`
-- `GET /ticket-taxi/get/by-rendicion/{rendicionId}/cut-date-range?startDate=...&endDate=...`
+- `GET /ticket-taxi/get/by-settlement/{settlementId}/start-date-range?startDate=...&endDate=...`
+- `GET /ticket-taxi/get/by-settlement/{settlementId}/cut-date-range?startDate=...&endDate=...`
 
-**Nota:** Campo `rendicionId` es Long obligatorio por ahora, sin relación JPA. Se actualizará cuando se implemente `DriverSettlement`.
+**Nota:** Campo `settlement` es ManyToOne obligatorio hacia `DriverSettlementEntity`.
 
 ### ✅ Mejoras Implementadas
 
@@ -136,93 +136,45 @@
    - ✅ Todas las columnas de base de datos en inglés
    - ✅ Corrección de nombres en español: `id_chofer` → `id_driver`, `id_vehiculo` → `id_vehicle`, `id_rendicion` → `id_settlement`
 
+#### 6. **Driver Settlement (Rendición de Chofer)**
+- ✅ Entidad `DriverSettlementEntity` con campos: `id`, `driver` (ManyToOne → DriverEntity), `ticketAmount` (>= 0), `voucherAmount` (>= 0), `voucherDifference` (puede ser negativo), `finalBalance` (puede ser negativo), `submissionDate` (fecha de entrega)
+- ✅ DTO `DriverSettlementDTO`
+- ✅ Repository `DriverSettlementRepository` con métodos de búsqueda por chofer y fecha
+- ✅ Validator `DriverSettlementValidator` (validaciones: todos los campos obligatorios, montos >= 0 donde corresponde)
+- ✅ Service `DriverSettlementService` (CRUD completo + métodos de cálculo)
+- ✅ Controller `DriverSettlementController` con endpoints explícitos
+
+**Endpoints:**
+- `POST /driver-settlements/create`
+- `GET /driver-settlements/list`
+- `GET /driver-settlements/get/{id}`
+- `GET /driver-settlements/get/by-driver/{driverId}`
+- `GET /driver-settlements/get/by-submission-date/{submissionDate}`
+- `GET /driver-settlements/get/by-submission-date-range?startDate=...&endDate=...`
+- `GET /driver-settlements/get/by-driver/{driverId}/submission-date-range?startDate=...&endDate=...`
+- `GET /driver-settlements/calculate/total-tickets/{settlementId}`
+- `POST /driver-settlements/calculate/final-balance`
+- `PUT /driver-settlements/update/{id}`
+- `DELETE /driver-settlements/delete/{id}`
+
+**Métodos de cálculo:**
+- `calculateTotalTickets(Long settlementId)`: Suma todos los montos de tickets asociados a la rendición
+- `calculateFinalBalance(DriverSettlementDTO)`: Calcula saldo final (ticketAmount - voucherAmount + voucherDifference)
+
+**Relaciones:**
+- 1 Driver → 0..* DriverSettlements (ManyToOne desde DriverSettlement)
+- 1 DriverSettlement → 0..* TicketTaxis (ManyToOne desde TicketTaxi, obligatorio)
+- 1 DriverSettlement → 0..* DailyFuels (ManyToOne desde DailyFuel, nullable)
+
 ---
 
-## 🚧 Próxima Tarea: Driver Settlement (Rendicion_chofer)
+## 🚧 Próximas Tareas
 
-### 📝 Contexto
+### 📝 Tareas Futuras
 
-Se necesita implementar la entidad `Rendicion_chofer` (DriverSettlement) basada en el diagrama UML proporcionado. Esta entidad representa la rendición de un chofer que agrupa tickets de taxi y registros de combustible diario.
-
-### 🎯 Requisitos Identificados del UML
-
-#### **Entidad: DriverSettlementEntity**
-
-**Relaciones según UML:**
-1. **Con Driver:** 1 chofer → 0..* rendiciones (ManyToOne)
-2. **Con TicketTaxi:** 1 rendición → 0..* tickets (Composición - ManyToOne desde TicketTaxi)
-3. **Con DailyFuel:** Many-to-Many (0..* → 0..*) - **PREGUNTA PENDIENTE**
-
-**Campos según UML:**
-- `id` (PK)
-- `driver` (ManyToOne → DriverEntity) - **FK: id_driver**
-- `ticketAmount` (Double) - `monto_tickets` (>= 0)
-- `voucherAmount` (Double) - `monto_vauchers` (>= 0) - **PREGUNTA: ¿Es "vouchers"?**
-- `voucherDifference` (Double) - `diferencia_vauchers` (puede ser negativo)
-- `finalBalance` (Double) - `saldo_final` (puede ser negativo)
-
-**Métodos según UML:**
-- `calculateTotalTickets(): double` - `calcular_total_tickets()`
-- `calculateFinalBalance(): double` - `calcular_saldo_final()`
-
-### ❓ Preguntas Pendientes de Resolver
-
-1. **Nombres en inglés:**
-   - ¿"vauchers" es "vouchers" (vouchers/vales) o es otra cosa?
-   - Nombres propuestos:
-     - `DriverSettlementEntity` / `DriverSettlementDTO`
-     - `ticketAmount` (monto_tickets)
-     - `voucherAmount` (monto_vauchers)
-     - `voucherDifference` (diferencia_vauchers)
-     - `finalBalance` (saldo_final)
-     - `calculateTotalTickets()` (calcular_total_tickets)
-     - `calculateFinalBalance()` (calcular_saldo_final)
-
-2. **Relación con TicketTaxi:**
-   - El UML muestra composición (diamante relleno) de `Rendicion_chofer` hacia `Ticket_taxi`
-   - ¿Implementamos como ManyToOne desde `TicketTaxi` hacia `DriverSettlement`?
-   - ¿O prefieres otra estructura?
-
-3. **Relación con DailyFuel:**
-   - El UML muestra Many-to-Many entre `Rendicion_chofer` y `Combustible_diario`
-   - ¿La implementamos ahora o dejamos el campo `rendicionId` y la agregamos después?
-   - Actualmente `DailyFuel` tiene `rendicionId` (Long nullable) y `TicketTaxi` tiene `rendicionId` (Long obligatorio)
-
-4. **Métodos de cálculo:**
-   - Los métodos `calculateTotalTickets()` y `calculateFinalBalance()`:
-     - ¿Los implementamos en la entidad como métodos de negocio?
-     - ¿O en el servicio?
-     - ¿O los calculamos automáticamente al guardar/actualizar?
-
-5. **Validaciones:**
-   - ¿`ticketAmount` y `voucherAmount` deben ser >= 0? (Confirmado: SÍ)
-   - ¿`voucherDifference` y `finalBalance` pueden ser negativos? (Confirmado: SÍ)
-   - ¿Alguno de estos campos puede ser null o todos son obligatorios?
-
-6. **Endpoints:**
-   - ¿Qué filtros necesitas?
-     - Por chofer
-     - Por rango de fechas (¿qué fecha usarías? ¿fecha de creación de la rendición?)
-     - Otros
-
-### 📋 Tareas Pendientes
-
-1. ⏳ Actualizar `TicketTaxiEntity` y `DailyFuelEntity` para reemplazar `rendicionId` (Long) por relación ManyToOne con `DriverSettlementEntity`
-2. ⏳ Crear Enum si es necesario (no parece necesario según UML)
-3. ⏳ Crear `DriverSettlementEntity` con todas las relaciones y campos
-4. ⏳ Crear `DriverSettlementDTO`
-5. ⏳ Crear `DriverSettlementRepository` con métodos de búsqueda
-6. ⏳ Crear `DriverSettlementValidator` con validaciones
-7. ⏳ Crear `DriverSettlementService` con CRUD completo y métodos de cálculo
-8. ⏳ Crear `DriverSettlementController` con endpoints explícitos
-9. ⏳ Implementar relación Many-to-Many con `DailyFuel` (si se decide implementarla ahora)
-
-### ⚠️ Notas Importantes
-
-- **ACTUALIZAR:** `TicketTaxi` y `DailyFuel` tienen `rendicionId` como Long. Deben cambiarse a relación ManyToOne con `DriverSettlement`
-- Mantener principios SOLID (servicios no acceden a repositories de otras entidades)
-- Todo el código en inglés excepto documentación Swagger
-- Todas las columnas de base de datos en inglés
+- Implementar nuevas funcionalidades según requerimientos
+- Optimizaciones de rendimiento si es necesario
+- Mejoras en validaciones y manejo de errores
 
 ---
 
@@ -233,6 +185,8 @@ Se necesita implementar la entidad `Rendicion_chofer` (DriverSettlement) basada 
 3. ✅ Deprecación MySQL dialect - Solucionado cambiando a `MySQLDialect`
 4. ✅ Endpoints con misma URL en Swagger - Solucionado con tags explícitos y OpenApiConfig
 5. ✅ Inconsistencia de nombres de columnas (español/inglés) - Solucionado cambiando todas las columnas a inglés
+6. ✅ Dependencia circular entre `DriverSettlementService` y `TicketTaxiService` - Solucionado usando `@Lazy` en la dependencia
+7. ✅ Referencias a `rendicionId` en validators y servicios - Solucionado actualizando a usar relación `settlement`
 
 ---
 
@@ -246,6 +200,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── BrandController.java
 │   ├── DailyFuelController.java
 │   ├── DriverController.java
+│   ├── DriverSettlementController.java
 │   ├── MemberController.java
 │   ├── ModelController.java
 │   ├── SubscriberController.java
@@ -256,6 +211,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   ├── BrandDTO.java
 │   │   ├── DailyFuelDTO.java
 │   │   ├── DriverDTO.java
+│   │   ├── DriverSettlementDTO.java
 │   │   ├── MemberDTO.java
 │   │   ├── ModelDTO.java
 │   │   ├── PersonDTO.java
@@ -267,6 +223,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   ├── BrandEntity.java
 │   │   ├── DailyFuelEntity.java
 │   │   ├── DriverEntity.java
+│   │   ├── DriverSettlementEntity.java
 │   │   ├── MemberEntity.java
 │   │   ├── ModelEntity.java
 │   │   ├── PersonEntity.java
@@ -280,6 +237,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── BrandRepository.java
 │   ├── DailyFuelRepository.java
 │   ├── DriverRepository.java
+│   ├── DriverSettlementRepository.java
 │   ├── ModelRepository.java
 │   ├── TicketTaxiRepository.java
 │   └── VehicleRepository.java
@@ -288,6 +246,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── BrandService.java
 │   ├── DailyFuelService.java
 │   ├── DriverService.java
+│   ├── DriverSettlementService.java
 │   ├── ModelService.java
 │   ├── TicketTaxiService.java
 │   └── VehicleService.java
@@ -295,6 +254,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
     ├── AddressValidator.java
     ├── BrandValidator.java
     ├── DailyFuelValidator.java
+    ├── DriverSettlementValidator.java
     ├── DriverValidator.java
     ├── MemberValidator.java
     ├── ModelValidator.java
@@ -309,19 +269,19 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 
 **✅ Completado:**
 - Brand, Model, Vehicle con CRUD completo
-- DailyFuel con CRUD completo y filtros avanzados
-- TicketTaxi con CRUD completo y filtros avanzados
+- DailyFuel con CRUD completo y filtros avanzados (actualizado con relación a DriverSettlement)
+- TicketTaxi con CRUD completo y filtros avanzados (actualizado con relación a DriverSettlement)
+- DriverSettlement con CRUD completo, métodos de cálculo y filtros
 - Validaciones implementadas
-- Principios SOLID aplicados
+- Principios SOLID aplicados (con `@Lazy` para evitar dependencias circulares)
 - Endpoints explícitos
 - Documentación Swagger
 - Consistencia de nombres de columnas en inglés
+- Relaciones JPA correctamente implementadas entre todas las entidades
 
 **⏳ Pendiente:**
-- Implementar `DriverSettlementEntity` (Rendicion_chofer)
-- Actualizar `TicketTaxiEntity` y `DailyFuelEntity` para usar relación ManyToOne con `DriverSettlement` en lugar de `rendicionId` (Long)
-- Resolver preguntas pendientes sobre `DriverSettlement`
-- Implementar relación Many-to-Many entre `DriverSettlement` y `DailyFuel` (si se decide hacerlo ahora)
+- Implementar nuevas funcionalidades según requerimientos futuros
+- Optimizaciones y mejoras continuas
 
 ---
 

@@ -207,9 +207,9 @@ public class TicketTaxiController {
             )
         }
     )
-    @GetMapping("/get/by-rendicion/{rendicionId}")
-    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisByRendicion(@PathVariable Long rendicionId) {
-        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisByRendicion(rendicionId));
+    @GetMapping("/get/by-settlement/{settlementId}")
+    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisBySettlement(@PathVariable Long settlementId) {
+        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisBySettlement(settlementId));
     }
 
     @Operation(
@@ -321,13 +321,13 @@ public class TicketTaxiController {
             )
         }
     )
-    @GetMapping("/get/by-rendicion/{rendicionId}/start-date-range")
-    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisByRendicionAndStartDateRange(
-        @PathVariable Long rendicionId,
+    @GetMapping("/get/by-settlement/{settlementId}/start-date-range")
+    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisBySettlementAndStartDateRange(
+        @PathVariable Long settlementId,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisByRendicionAndStartDateRange(rendicionId, startDate, endDate));
+        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisBySettlementAndStartDateRange(settlementId, startDate, endDate));
     }
 
     @Operation(
@@ -345,13 +345,13 @@ public class TicketTaxiController {
             )
         }
     )
-    @GetMapping("/get/by-rendicion/{rendicionId}/cut-date-range")
-    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisByRendicionAndCutDateRange(
-        @PathVariable Long rendicionId,
+    @GetMapping("/get/by-settlement/{settlementId}/cut-date-range")
+    public ResponseEntity<List<TicketTaxiDTO>> getTicketTaxisBySettlementAndCutDateRange(
+        @PathVariable Long settlementId,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisByRendicionAndCutDateRange(rendicionId, startDate, endDate));
+        return ResponseEntity.ok(ticketTaxiService.getTicketTaxisBySettlementAndCutDateRange(settlementId, startDate, endDate));
     }
 }
 

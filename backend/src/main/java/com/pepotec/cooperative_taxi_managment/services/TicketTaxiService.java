@@ -24,6 +24,9 @@ public class TicketTaxiService {
     private VehicleService vehicleService;
 
     @Autowired
+    private DriverSettlementService driverSettlementService;
+
+    @Autowired
     private TicketTaxiValidator ticketTaxiValidator;
 
     @Transactional
@@ -31,9 +34,11 @@ public class TicketTaxiService {
         ticketTaxiValidator.validateTicketTaxiSpecificFields(ticketTaxi);
 
         VehicleEntity vehicle = vehicleService.getVehicleEntityById(ticketTaxi.getVehicle().getId());
+        var settlement = driverSettlementService.getDriverSettlementEntityById(ticketTaxi.getSettlement().getId());
 
         TicketTaxiEntity ticketTaxiEntity = convertToEntity(ticketTaxi);
         ticketTaxiEntity.setVehicle(vehicle);
+        ticketTaxiEntity.setSettlement(settlement);
 
         return convertToDTO(ticketTaxiRepository.save(ticketTaxiEntity));
     }
@@ -69,11 +74,11 @@ public class TicketTaxiService {
             .collect(Collectors.toList());
     }
 
-    public List<TicketTaxiDTO> getTicketTaxisByRendicion(Long rendicionId) {
-        if (rendicionId == null) {
+    public List<TicketTaxiDTO> getTicketTaxisBySettlement(Long settlementId) {
+        if (settlementId == null) {
             throw new InvalidDataException("El ID de rendición no puede ser nulo");
         }
-        return ticketTaxiRepository.findByRendicionId(rendicionId).stream()
+        return ticketTaxiRepository.findBySettlementId(settlementId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
@@ -132,8 +137,8 @@ public class TicketTaxiService {
             .collect(Collectors.toList());
     }
 
-    public List<TicketTaxiDTO> getTicketTaxisByRendicionAndStartDateRange(Long rendicionId, LocalDate startDate, LocalDate endDate) {
-        if (rendicionId == null) {
+    public List<TicketTaxiDTO> getTicketTaxisBySettlementAndStartDateRange(Long settlementId, LocalDate startDate, LocalDate endDate) {
+        if (settlementId == null) {
             throw new InvalidDataException("El ID de rendición no puede ser nulo");
         }
         if (startDate == null || endDate == null) {
@@ -142,13 +147,13 @@ public class TicketTaxiService {
         if (startDate.isAfter(endDate)) {
             throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
         }
-        return ticketTaxiRepository.findByRendicionIdAndStartDateBetween(rendicionId, startDate, endDate).stream()
+        return ticketTaxiRepository.findBySettlementIdAndStartDateBetween(settlementId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
-    public List<TicketTaxiDTO> getTicketTaxisByRendicionAndCutDateRange(Long rendicionId, LocalDate startDate, LocalDate endDate) {
-        if (rendicionId == null) {
+    public List<TicketTaxiDTO> getTicketTaxisBySettlementAndCutDateRange(Long settlementId, LocalDate startDate, LocalDate endDate) {
+        if (settlementId == null) {
             throw new InvalidDataException("El ID de rendición no puede ser nulo");
         }
         if (startDate == null || endDate == null) {
@@ -157,7 +162,7 @@ public class TicketTaxiService {
         if (startDate.isAfter(endDate)) {
             throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
         }
-        return ticketTaxiRepository.findByRendicionIdAndCutDateBetween(rendicionId, startDate, endDate).stream()
+        return ticketTaxiRepository.findBySettlementIdAndCutDateBetween(settlementId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
@@ -174,9 +179,10 @@ public class TicketTaxiService {
         ticketTaxiValidator.validateTicketTaxiSpecificFields(ticketTaxi);
 
         VehicleEntity vehicle = vehicleService.getVehicleEntityById(ticketTaxi.getVehicle().getId());
+        var settlement = driverSettlementService.getDriverSettlementEntityById(ticketTaxi.getSettlement().getId());
 
         ticketTaxiEntity.setVehicle(vehicle);
-        ticketTaxiEntity.setRendicionId(ticketTaxi.getRendicionId());
+        ticketTaxiEntity.setSettlement(settlement);
         ticketTaxiEntity.setTicketNumber(ticketTaxi.getTicketNumber());
         ticketTaxiEntity.setStartDate(ticketTaxi.getStartDate());
         ticketTaxiEntity.setCutDate(ticketTaxi.getCutDate());
@@ -200,9 +206,8 @@ public class TicketTaxiService {
     }
 
     private TicketTaxiEntity convertToEntity(TicketTaxiDTO ticketTaxi) {
-        return TicketTaxiEntity.builder()
+        TicketTaxiEntity entity = TicketTaxiEntity.builder()
             .id(ticketTaxi.getId())
-            .rendicionId(ticketTaxi.getRendicionId())
             .ticketNumber(ticketTaxi.getTicketNumber())
             .startDate(ticketTaxi.getStartDate())
             .cutDate(ticketTaxi.getCutDate())
@@ -211,24 +216,36 @@ public class TicketTaxiService {
             .occupiedKilometers(ticketTaxi.getOccupiedKilometers())
             .trips(ticketTaxi.getTrips())
             .build();
+        
+        if (ticketTaxi.getSettlement() != null && ticketTaxi.getSettlement().getId() != null) {
+            var settlement = driverSettlementService.getDriverSettlementEntityById(ticketTaxi.getSettlement().getId());
+            entity.setSettlement(settlement);
+        }
+        
+        return entity;
     }
 
     private TicketTaxiDTO convertToDTO(TicketTaxiEntity ticketTaxi) {
         if (ticketTaxi == null) {
             return null;
         }
-        return TicketTaxiDTO.builder()
+        
+        TicketTaxiDTO.TicketTaxiDTOBuilder builder = TicketTaxiDTO.builder()
             .id(ticketTaxi.getId())
             .vehicle(vehicleService.getVehicleById(ticketTaxi.getVehicle().getId()))
-            .rendicionId(ticketTaxi.getRendicionId())
             .ticketNumber(ticketTaxi.getTicketNumber())
             .startDate(ticketTaxi.getStartDate())
             .cutDate(ticketTaxi.getCutDate())
             .amount(ticketTaxi.getAmount())
             .freeKilometers(ticketTaxi.getFreeKilometers())
             .occupiedKilometers(ticketTaxi.getOccupiedKilometers())
-            .trips(ticketTaxi.getTrips())
-            .build();
+            .trips(ticketTaxi.getTrips());
+        
+        if (ticketTaxi.getSettlement() != null) {
+            builder.settlement(driverSettlementService.getDriverSettlementById(ticketTaxi.getSettlement().getId()));
+        }
+        
+        return builder.build();
     }
 }
 

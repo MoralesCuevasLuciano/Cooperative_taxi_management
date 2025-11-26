@@ -21,8 +21,9 @@ public class TicketTaxiDTO {
     @NotNull(message = "The vehicle cannot be null")
     private VehicleDTO vehicle;
 
-    @NotNull(message = "The settlement ID cannot be null")
-    private Long rendicionId;
+    @Valid
+    @NotNull(message = "The settlement cannot be null")
+    private DriverSettlementDTO settlement;
 
     private String ticketNumber;
 

@@ -26,7 +26,8 @@ public class DailyFuelDTO {
     @NotNull(message = "The vehicle cannot be null")
     private VehicleDTO vehicle;
 
-    private Long rendicionId;
+    @Valid
+    private DriverSettlementDTO settlement;
 
     @NotNull(message = "The ticket issue date cannot be null")
     @DateTimeFormat(pattern = "dd/MM/yyyy")

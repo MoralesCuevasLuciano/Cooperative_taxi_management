@@ -34,9 +34,10 @@ public class TicketTaxiEntity {
     @NotNull(message = "The vehicle cannot be null")
     private VehicleEntity vehicle;
 
-    @Column(name = "id_settlement", nullable = false)
-    @NotNull(message = "The settlement ID cannot be null")
-    private Long rendicionId;
+    @ManyToOne
+    @JoinColumn(name = "id_settlement", nullable = false)
+    @NotNull(message = "The settlement cannot be null")
+    private DriverSettlementEntity settlement;
 
     @Column(name = "ticket_number")
     private String ticketNumber;

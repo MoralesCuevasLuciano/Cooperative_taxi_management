@@ -12,8 +12,8 @@ public class TicketTaxiValidator {
             throw new InvalidDataException("El vehículo no puede ser nulo");
         }
 
-        if (ticketTaxi.getRendicionId() == null) {
-            throw new InvalidDataException("El ID de rendición no puede ser nulo");
+        if (ticketTaxi.getSettlement() == null || ticketTaxi.getSettlement().getId() == null) {
+            throw new InvalidDataException("La rendición no puede ser nula");
         }
 
         if (ticketTaxi.getAmount() == null) {
