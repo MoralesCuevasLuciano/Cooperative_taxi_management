@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountCreateDTO;
 
 @Service
 public class DriverService {
@@ -37,6 +38,9 @@ public class DriverService {
     @Autowired
     private MemberValidator memberValidator;
     
+    @Autowired
+    private MemberAccountService memberAccountService;
+    
     public DriverDTO createDriver(DriverDTO driver) {
         // Validar datos básicos de Person
         personValidator.validatePersonData(driver);
@@ -57,7 +61,16 @@ public class DriverService {
         if(driverSaved.getJoinDate() == null) {
             driverSaved.setJoinDate(LocalDate.now());
         }
-        return convertToDTO(driverRepository.save(driverSaved));
+        driverSaved = driverRepository.save(driverSaved);
+
+        // Crear cuenta asociada con saldo 0
+        MemberAccountCreateDTO accountCreateDTO = MemberAccountCreateDTO.builder()
+            .balance(0.0)
+            .lastModified(null)
+            .build();
+        memberAccountService.createMemberAccount(driverSaved, accountCreateDTO);
+
+        return convertToDTO(driverSaved);
     }
 
     public DriverDTO getDriverById(Long id) {

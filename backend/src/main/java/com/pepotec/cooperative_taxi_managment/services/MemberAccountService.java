@@ -4,6 +4,7 @@ import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundException;
 import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountCreateDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.MemberDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.MemberAccountRepository;
@@ -26,12 +27,22 @@ public class MemberAccountService {
     private MemberService memberService;
 
     @Autowired
+    @org.springframework.context.annotation.Lazy
+    private DriverService driverService;
+
+    @Autowired
     private MemberAccountValidator memberAccountValidator;
 
     public MemberAccountDTO createMemberAccount(Long memberId, MemberAccountCreateDTO account) {
         memberAccountValidator.validateMemberAccountCreateFields(account.getBalance(), account.getLastModified());
 
         MemberEntity member = memberService.getMemberEntityById(memberId);
+
+        return createMemberAccount(member, account);
+    }
+
+    public MemberAccountDTO createMemberAccount(MemberEntity member, MemberAccountCreateDTO account) {
+        memberAccountValidator.validateMemberAccountCreateFields(account.getBalance(), account.getLastModified());
 
         memberAccountRepository.findByMemberId(member.getId()).ifPresent(existing -> {
             throw new InvalidDataException("El socio ya tiene una cuenta asociada");
@@ -119,6 +130,7 @@ public class MemberAccountService {
         MemberAccountEntity entity = MemberAccountEntity.builder()
             .balance(dto.getBalance())
             .lastModified(dto.getLastModified())
+            .active(true)
             .build();
         return entity;
     }
@@ -128,10 +140,25 @@ public class MemberAccountService {
             return null;
         }
 
+        Long memberId = entity.getMember().getId();
+        MemberDTO memberDTO = null;
+        
+        // Intentar buscar primero en MemberService
+        try {
+            memberDTO = memberService.getMemberById(memberId);
+        } catch (ResourceNotFoundException e) {
+            // Si no se encuentra, intentar buscar en DriverService (ya que DriverEntity extiende MemberEntity)
+            try {
+                memberDTO = driverService.getDriverById(memberId);
+            } catch (ResourceNotFoundException ex) {
+                // Si tampoco se encuentra, dejar memberDTO como null (el campo es opcional)
+            }
+        }
+
         return MemberAccountDTO.builder()
             .id(entity.getId())
-            .memberId(entity.getMember().getId())
-            .member(memberService.getMemberById(entity.getMember().getId()))
+            .memberId(memberId)
+            .member(memberDTO)
             .balance(entity.getBalance())
             .lastModified(entity.getLastModified())
             .active(entity.getActive())

@@ -1,6 +1,6 @@
 # Estado del Proyecto - Cooperative Taxi Management
 
-**Última actualización:** 26 de Noviembre, 2024
+**Última actualización:** 15 de Diciembre, 2024
 
 ---
 
@@ -120,7 +120,7 @@
 - `PUT /drivers/update/{id}`
 - `DELETE /drivers/delete/{id}`
 
-**⚠️ IMPORTANTE - PENDIENTE:** Al crear un chofer (que es un miembro), actualmente NO se crea automáticamente una `MemberAccount`. Esto debe implementarse.
+**Nota:** Al crear un chofer, se crea automáticamente una `MemberAccount` con balance 0.
 
 #### 8. **Account Entities (Cuentas)**
 - ✅ Clase abstracta `AbstractAccountEntity` con `@MappedSuperclass` que contiene: `id`, `balance` (puede ser negativo), `lastModified` (nullable), `active` (soft delete)
@@ -273,6 +273,7 @@
   - Al crear un `Member` → se crea automáticamente `MemberAccount` con balance 0
   - Al crear un `Subscriber` → se crea automáticamente `SubscriberAccount` con balance 0
   - Al crear un `Vehicle` → se crea automáticamente `VehicleAccount` con balance 0
+  - Al crear un `Driver` → se crea automáticamente `MemberAccount` con balance 0 (ya que Driver extiende Member)
 
 ### 3. **Mejoras en Endpoints de Creación**
 - ✅ Refactorización de endpoints de creación para usar DTOs específicos (`*CreateDTO`) y path variables:
@@ -290,35 +291,7 @@
 
 ## 🚧 Tareas Pendientes
 
-### ⚠️ **PRIORITARIO - Creación Automática de Cuenta para Choferes**
-
-**Descripción:** Actualmente, cuando se crea un `Driver` (que extiende de `Member`), NO se crea automáticamente una `MemberAccount` asociada. Sin embargo, cuando se crea un `Member` directamente, sí se crea la cuenta automáticamente.
-
-**Ubicación del código:**
-- Service: `backend/src/main/java/com/pepotec/cooperative_taxi_managment/services/DriverService.java`
-- Método: `createDriver(DriverDTO driver)`
-
-**Implementación requerida:**
-1. En el método `createDriver` de `DriverService`, después de guardar el `DriverEntity`, crear automáticamente una `MemberAccount` con:
-   - `balance = 0.0`
-   - `lastModified = null` (se establecerá automáticamente en el servicio de cuentas)
-   - `active = true`
-   - Relación OneToOne con el `MemberEntity` creado
-
-2. Usar el patrón ya implementado en `MemberService.createMember()`:
-   ```java
-   MemberAccountCreateDTO accountCreateDTO = MemberAccountCreateDTO.builder()
-       .balance(0.0)
-       .lastModified(null)
-       .build();
-   memberAccountService.createMemberAccount(driverSaved.getId(), accountCreateDTO);
-   ```
-
-3. Nota: El `DriverEntity` tiene un `id` que es el mismo que el `MemberEntity` (herencia), por lo que se puede usar directamente `driverSaved.getId()`.
-
-**Dependencias necesarias:**
-- Inyectar `MemberAccountService` en `DriverService`
-- Asegurarse de que no haya dependencia circular (usar `@Lazy` si es necesario)
+_No hay tareas pendientes críticas en este momento._
 
 ---
 
@@ -457,6 +430,8 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 9. ✅ Endpoints de creación con objetos completos en body - Solucionado usando DTOs específicos y path variables
 10. ✅ Falta de sistema de cuentas - Solucionado implementando entidades de cuentas con herencia y CRUD completo
 11. ✅ Error "Row was updated or deleted by another transaction" en Swagger - Solucionado usando DTOs específicos de creación que excluyen el campo `id`
+12. ✅ Error "The active status cannot be null" al crear vehículos - Solucionado estableciendo explícitamente `active = true` en los métodos `convertCreateDtoToEntity` de todos los servicios de cuentas
+13. ✅ Creación automática de cuenta para choferes - Solucionado implementando creación automática de `MemberAccount` al crear un `Driver`, con método sobrecargado en `MemberAccountService` para aceptar `MemberEntity` directamente
 
 ---
 
@@ -468,8 +443,9 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 - Sistema de cuentas completo (MemberAccount, SubscriberAccount, VehicleAccount) con:
   - Herencia usando `@MappedSuperclass`
   - CRUD completo con soft delete
-  - Creación automática al crear Member, Subscriber o Vehicle
+  - Creación automática al crear Member, Subscriber, Vehicle o Driver
   - Validaciones que permiten balance negativo
+  - Campo `active` establecido explícitamente al crear cuentas (evita errores de validación)
 - DailyFuel con CRUD completo y filtros avanzados
 - TicketTaxi con CRUD completo y filtros avanzados
 - DriverSettlement con CRUD completo, métodos de cálculo y filtros
@@ -483,7 +459,6 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 - Relaciones JPA correctamente implementadas entre todas las entidades
 
 **⏳ Pendiente:**
-- ⚠️ **PRIORITARIO:** Implementar creación automática de `MemberAccount` cuando se crea un `Driver`
 - Implementar nuevas funcionalidades según requerimientos futuros
 - Optimizaciones y mejoras continuas
 
@@ -509,4 +484,4 @@ Este proyecto es un sistema de gestión de taxis cooperativos desarrollado en Sp
 
 ---
 
-**¡Listo para continuar con la implementación de creación automática de cuenta para choferes! 🚀**
+**¡Sistema completo y funcionando correctamente! 🚀**

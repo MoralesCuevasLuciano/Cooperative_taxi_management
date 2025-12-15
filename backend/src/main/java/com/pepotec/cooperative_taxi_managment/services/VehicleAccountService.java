@@ -119,6 +119,7 @@ public class VehicleAccountService {
         VehicleAccountEntity entity = VehicleAccountEntity.builder()
             .balance(dto.getBalance())
             .lastModified(dto.getLastModified())
+            .active(true)
             .build();
         return entity;
     }

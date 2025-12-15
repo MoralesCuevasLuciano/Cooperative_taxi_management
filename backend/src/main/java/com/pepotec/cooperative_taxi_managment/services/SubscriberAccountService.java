@@ -119,6 +119,7 @@ public class SubscriberAccountService {
         SubscriberAccountEntity entity = SubscriberAccountEntity.builder()
             .balance(dto.getBalance())
             .lastModified(dto.getLastModified())
+            .active(true)
             .build();
         return entity;
     }
