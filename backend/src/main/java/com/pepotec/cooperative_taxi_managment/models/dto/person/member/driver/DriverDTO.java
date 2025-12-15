@@ -1,5 +1,6 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.person.member.driver;
 
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.MemberDTO;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
@@ -19,3 +20,5 @@ public class DriverDTO extends MemberDTO {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private LocalDate expirationRegistrationDate;
 }
+
+

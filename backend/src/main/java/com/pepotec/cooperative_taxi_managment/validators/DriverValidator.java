@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.DriverDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.driver.DriverDTO;
 import com.pepotec.cooperative_taxi_managment.repositories.DriverRepository;
 import com.pepotec.cooperative_taxi_managment.validators.PersonValidator;
 import org.springframework.beans.factory.annotation.Autowired;

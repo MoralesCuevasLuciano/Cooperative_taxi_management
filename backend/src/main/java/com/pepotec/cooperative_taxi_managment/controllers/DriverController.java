@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.pepotec.cooperative_taxi_managment.models.dto.DriverDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.driver.DriverDTO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;

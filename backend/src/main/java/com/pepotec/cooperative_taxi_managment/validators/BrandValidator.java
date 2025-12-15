@@ -2,7 +2,7 @@ package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.DuplicateFieldException;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.BrandDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.brand.BrandDTO;
 import com.pepotec.cooperative_taxi_managment.repositories.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

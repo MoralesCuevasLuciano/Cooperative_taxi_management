@@ -1,4 +1,4 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.dailyfuel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,28 +6,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import com.pepotec.cooperative_taxi_managment.models.enums.FuelType;
 
+/**
+ * DTO usado para crear registros de combustible diario.
+ * Los IDs de driver, vehicle y settlement se reciben por path/param.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DailyFuelDTO {
-    private Long id;
-
-    @Valid
-    @NotNull(message = "The driver cannot be null")
-    private DriverDTO driver;
-
-    @Valid
-    @NotNull(message = "The vehicle cannot be null")
-    private VehicleDTO vehicle;
-
-    @Valid
-    private DriverSettlementDTO settlement;
+public class DailyFuelCreateDTO {
 
     @NotNull(message = "The ticket issue date cannot be null")
     @DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -44,4 +35,6 @@ public class DailyFuelDTO {
     @NotNull(message = "The fuel type cannot be null")
     private FuelType fuelType;
 }
+
+
 

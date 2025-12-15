@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.SubscriberDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber.SubscriberDTO;
 import com.pepotec.cooperative_taxi_managment.validators.PersonValidator;
 import org.springframework.stereotype.Component;
 

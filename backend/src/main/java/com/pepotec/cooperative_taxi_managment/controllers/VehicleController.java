@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.VehicleService;
-import com.pepotec.cooperative_taxi_managment.models.dto.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleCreateDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -61,7 +62,7 @@ public class VehicleController {
         }
     )
     @PostMapping("/create")
-    public ResponseEntity<VehicleDTO> createVehicle(@Valid @RequestBody VehicleDTO vehicle) {
+    public ResponseEntity<VehicleDTO> createVehicle(@Valid @RequestBody VehicleCreateDTO vehicle) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(vehicleService.createVehicle(vehicle));

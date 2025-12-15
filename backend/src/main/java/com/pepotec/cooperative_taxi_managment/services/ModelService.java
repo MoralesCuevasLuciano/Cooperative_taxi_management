@@ -3,7 +3,7 @@ package com.pepotec.cooperative_taxi_managment.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pepotec.cooperative_taxi_managment.models.dto.ModelDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.model.ModelDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.ModelEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.BrandEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.ModelRepository;

@@ -1,6 +1,6 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
-import com.pepotec.cooperative_taxi_managment.models.dto.AddressDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.address.AddressDTO;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import org.springframework.stereotype.Component;
 import java.util.regex.Pattern;

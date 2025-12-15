@@ -2,13 +2,15 @@ package com.pepotec.cooperative_taxi_managment.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.pepotec.cooperative_taxi_managment.models.dto.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.VehicleEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.ModelEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.VehicleRepository;
 import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundException;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.validators.VehicleValidator;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.account.VehicleAccountCreateDTO;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,18 +27,48 @@ public class VehicleService {
     @Autowired
     private VehicleValidator vehicleValidator;
 
-    public VehicleDTO createVehicle(VehicleDTO vehicle) {
-        vehicleValidator.validateVehicleSpecificFields(vehicle);
-        vehicleValidator.validateUniqueFields(vehicle, null);
+    @Autowired
+    private VehicleAccountService vehicleAccountService;
 
-        ModelEntity model = modelService.getModelEntityById(vehicle.getModel().getId());
+    public VehicleDTO createVehicle(VehicleCreateDTO vehicle) {
+        vehicleValidator.validateVehicleCreateFields(vehicle);
+        // Para unicidad usamos los valores del createDTO
+        vehicleValidator.validateUniqueFields(
+            VehicleDTO.builder()
+                .licensePlate(vehicle.getLicensePlate())
+                .licenseNumber(vehicle.getLicenseNumber())
+                .engineNumber(vehicle.getEngineNumber())
+                .chassisNumber(vehicle.getChassisNumber())
+                .vtvExpirationDate(vehicle.getVtvExpirationDate())
+                .active(true)
+                .model(null)
+                .build(),
+            null
+        );
 
-        VehicleEntity vehicleEntity = convertToEntity(vehicle);
+        ModelEntity model = modelService.getModelEntityById(vehicle.getModelId());
+
+        VehicleEntity vehicleEntity = VehicleEntity.builder()
+            .licensePlate(vehicle.getLicensePlate())
+            .licenseNumber(vehicle.getLicenseNumber())
+            .engineNumber(vehicle.getEngineNumber())
+            .chassisNumber(vehicle.getChassisNumber())
+            .vtvExpirationDate(vehicle.getVtvExpirationDate())
+            .active(true)
+            .leaveDate(null)
+            .build();
         vehicleEntity.setModel(model);
-        vehicleEntity.setActive(true);
-        vehicleEntity.setLeaveDate(null);
 
-        return convertToDTO(vehicleRepository.save(vehicleEntity));
+        vehicleEntity = vehicleRepository.save(vehicleEntity);
+
+        // Crear cuenta asociada con saldo 0
+        VehicleAccountCreateDTO accountCreateDTO = VehicleAccountCreateDTO.builder()
+            .balance(0.0)
+            .lastModified(null)
+            .build();
+        vehicleAccountService.createVehicleAccount(vehicleEntity.getId(), accountCreateDTO);
+
+        return convertToDTO(vehicleEntity);
     }
 
     public VehicleDTO getVehicleById(Long id) {

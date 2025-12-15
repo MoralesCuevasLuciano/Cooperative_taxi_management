@@ -3,7 +3,7 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.BrandService;
-import com.pepotec.cooperative_taxi_managment.models.dto.BrandDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.brand.BrandDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

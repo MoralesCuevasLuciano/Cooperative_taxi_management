@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.services;
 
 import org.springframework.stereotype.Service;
-import com.pepotec.cooperative_taxi_managment.models.dto.MemberDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.MemberDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.MemberRepository;
 import com.pepotec.cooperative_taxi_managment.validators.MemberValidator;
@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.pepotec.cooperative_taxi_managment.validators.AddressValidator;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountCreateDTO;
 
 @Service
 public class MemberService {
@@ -29,6 +30,9 @@ public class MemberService {
     
     @Autowired
     private AddressValidator addressValidator;
+
+    @Autowired
+    private MemberAccountService memberAccountService;
     
     public MemberDTO createMember(MemberDTO member) {
         // Validar datos básicos de Person
@@ -47,7 +51,16 @@ public class MemberService {
         if(memberSaved.getJoinDate() == null) {
             memberSaved.setJoinDate(LocalDate.now());
         }
-        return convertToDTO(memberRepository.save(memberSaved));
+        memberSaved = memberRepository.save(memberSaved);
+
+        // Crear cuenta asociada con saldo 0
+        MemberAccountCreateDTO accountCreateDTO = MemberAccountCreateDTO.builder()
+            .balance(0.0)
+            .lastModified(null)
+            .build();
+        memberAccountService.createMemberAccount(memberSaved.getId(), accountCreateDTO);
+
+        return convertToDTO(memberSaved);
     }
 
     public MemberDTO getMemberById(Long id) {
@@ -171,6 +184,14 @@ public class MemberService {
         
         memberSaved.setLeaveDate(leaveDate);
         memberRepository.save(memberSaved);
+    }
+
+    /**
+     * Obtiene la entidad MemberEntity por ID para uso interno de otros servicios.
+     */
+    MemberEntity getMemberEntityById(Long id) {
+        return memberRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Miembro"));
     }
 
     private MemberEntity convertToEntity(MemberDTO member) {

@@ -3,7 +3,7 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.SubscriberService;
-import com.pepotec.cooperative_taxi_managment.models.dto.SubscriberDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber.SubscriberDTO;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;

@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.TicketTaxiService;
-import com.pepotec.cooperative_taxi_managment.models.dto.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiCreateDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +47,7 @@ public class TicketTaxiController {
 
     @Operation(
         summary = "Crear un nuevo ticket de taxi",
-        description = "Crea un nuevo ticket de taxi con la información proporcionada.",
+        description = "Crea un nuevo ticket de taxi asociado a un vehículo y una rendición existentes.",
         tags = {"Ticket Taxi"},
         responses = {
             @ApiResponse(
@@ -60,11 +61,15 @@ public class TicketTaxiController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
         }
     )
-    @PostMapping("/create")
-    public ResponseEntity<TicketTaxiDTO> createTicketTaxi(@Valid @RequestBody TicketTaxiDTO ticketTaxi) {
+    @PostMapping("/settlements/{settlementId}/vehicles/{vehicleId}")
+    public ResponseEntity<TicketTaxiDTO> createTicketTaxi(
+        @PathVariable Long settlementId,
+        @PathVariable Long vehicleId,
+        @Valid @RequestBody TicketTaxiCreateDTO ticketTaxi
+    ) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(ticketTaxiService.createTicketTaxi(ticketTaxi));
+            .body(ticketTaxiService.createTicketTaxi(settlementId, vehicleId, ticketTaxi));
     }
 
     @Operation(

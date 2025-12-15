@@ -1,13 +1,14 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.vehicle;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.pepotec.cooperative_taxi_managment.models.dto.model.ModelDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ public class VehicleDTO {
     private Long id;
 
     @NotBlank(message = "La patente no puede estar vacía")
-    @Pattern(regexp = "^[A-Z]{3}[0-9]{3}$|^[A-Z]{2}[0-9]{3}[A-Z]{2}$", 
+    @Pattern(regexp = "^[A-Z]{3}[0-9]{3}$|^[A-Z]{2}[0-9]{3}[A-Z]{2}$",
              message = "La patente debe tener formato AAA123 o AB123CD")
     @Size(min = 6, max = 7, message = "La patente debe tener 6 o 7 caracteres")
     private String licensePlate;
@@ -54,4 +55,5 @@ public class VehicleDTO {
     @NotNull(message = "El modelo no puede ser nulo")
     private ModelDTO model;
 }
+
 

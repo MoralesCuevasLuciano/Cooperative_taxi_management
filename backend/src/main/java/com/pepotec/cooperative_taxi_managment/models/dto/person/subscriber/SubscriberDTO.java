@@ -1,5 +1,6 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber;
 
+import com.pepotec.cooperative_taxi_managment.models.dto.person.PersonDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.AllArgsConstructor;
@@ -18,9 +19,11 @@ import jakarta.validation.Valid;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubscriberDTO extends PersonDTO {
-    
+
     @Builder.Default
     @Size(max = 10, message = "No se pueden tener más de 10 números de licencia")
     @Valid
     private List<@Pattern(regexp = "^\\d{4}$", message = "Cada número de licencia debe tener exactamente 4 dígitos") String> licenceNumbers = new ArrayList<>();
 }
+
+

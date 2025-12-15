@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.services;
 
 import org.springframework.stereotype.Service;
-import com.pepotec.cooperative_taxi_managment.models.dto.DriverDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.driver.DriverDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.DriverEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.DriverRepository;
 import com.pepotec.cooperative_taxi_managment.validators.DriverValidator;

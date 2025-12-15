@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.services;
 
 import org.springframework.stereotype.Service;
-import com.pepotec.cooperative_taxi_managment.models.dto.AddressDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.address.AddressDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.AddressEntity;
 
 @Service

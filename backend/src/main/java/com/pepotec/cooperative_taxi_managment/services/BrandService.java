@@ -2,7 +2,7 @@ package com.pepotec.cooperative_taxi_managment.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.pepotec.cooperative_taxi_managment.models.dto.BrandDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.brand.BrandDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.BrandEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.BrandRepository;
 import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundException;

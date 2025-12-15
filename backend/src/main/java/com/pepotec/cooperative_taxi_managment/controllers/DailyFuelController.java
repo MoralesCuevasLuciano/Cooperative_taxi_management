@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.DailyFuelService;
-import com.pepotec.cooperative_taxi_managment.models.dto.DailyFuelDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.dailyfuel.DailyFuelDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.dailyfuel.DailyFuelCreateDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,7 +48,7 @@ public class DailyFuelController {
 
     @Operation(
         summary = "Crear un nuevo registro de combustible diario",
-        description = "Crea un nuevo registro de combustible diario con la información proporcionada.",
+        description = "Crea un nuevo registro de combustible diario para un chofer y vehículo existentes.",
         tags = {"Daily Fuel"},
         responses = {
             @ApiResponse(
@@ -61,11 +62,16 @@ public class DailyFuelController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
         }
     )
-    @PostMapping("/create")
-    public ResponseEntity<DailyFuelDTO> createDailyFuel(@Valid @RequestBody DailyFuelDTO dailyFuel) {
+    @PostMapping("/drivers/{driverId}/vehicles/{vehicleId}")
+    public ResponseEntity<DailyFuelDTO> createDailyFuel(
+        @PathVariable Long driverId,
+        @PathVariable Long vehicleId,
+        @RequestParam Long settlementId,
+        @Valid @RequestBody DailyFuelCreateDTO dailyFuel
+    ) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(dailyFuelService.createDailyFuel(dailyFuel));
+            .body(dailyFuelService.createDailyFuel(driverId, vehicleId, settlementId, dailyFuel));
     }
 
     @Operation(

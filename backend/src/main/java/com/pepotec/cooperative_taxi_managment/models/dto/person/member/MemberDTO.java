@@ -1,5 +1,7 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.person.member;
 
+import com.pepotec.cooperative_taxi_managment.models.dto.address.AddressDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.PersonDTO;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.Data;
@@ -16,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @AllArgsConstructor
-@NoArgsConstructor    
+@NoArgsConstructor
 public class MemberDTO extends PersonDTO {
     @NotNull(message = "La fecha de ingreso no puede ser nula")
     @PastOrPresent(message = "La fecha de ingreso no puede ser futura")
@@ -34,3 +36,5 @@ public class MemberDTO extends PersonDTO {
     @NotNull(message = "La dirección no puede ser nula")
     private AddressDTO address;
 }
+
+

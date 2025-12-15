@@ -1,4 +1,4 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.address;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,3 +33,5 @@ public class AddressDTO {
     private String apartment;
 
 }
+
+

@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pepotec.cooperative_taxi_managment.models.dto.DailyFuelDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.dailyfuel.DailyFuelDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.dailyfuel.DailyFuelCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.DailyFuelEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.DriverEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.VehicleEntity;
@@ -35,20 +36,21 @@ public class DailyFuelService {
     private DailyFuelValidator dailyFuelValidator;
 
     @Transactional
-    public DailyFuelDTO createDailyFuel(DailyFuelDTO dailyFuel) {
-        dailyFuelValidator.validateDailyFuelSpecificFields(dailyFuel);
+    public DailyFuelDTO createDailyFuel(Long driverId, Long vehicleId, Long settlementId, DailyFuelCreateDTO dailyFuel) {
+        dailyFuelValidator.validateDailyFuelCreateFields(dailyFuel);
 
-        DriverEntity driver = driverService.getDriverEntityById(dailyFuel.getDriver().getId());
-        VehicleEntity vehicle = vehicleService.getVehicleEntityById(dailyFuel.getVehicle().getId());
+        DriverEntity driver = driverService.getDriverEntityById(driverId);
+        VehicleEntity vehicle = vehicleService.getVehicleEntityById(vehicleId);
 
-        DailyFuelEntity dailyFuelEntity = convertToEntity(dailyFuel);
+        DailyFuelEntity dailyFuelEntity = convertCreateDtoToEntity(dailyFuel);
         dailyFuelEntity.setDriver(driver);
         dailyFuelEntity.setVehicle(vehicle);
-        
-        if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
-            var settlement = driverSettlementService.getDriverSettlementEntityById(dailyFuel.getSettlement().getId());
-            dailyFuelEntity.setSettlement(settlement);
+
+        if (settlementId == null) {
+            throw new InvalidDataException("El ID de rendición no puede ser nulo");
         }
+        var settlement = driverSettlementService.getDriverSettlementEntityById(settlementId);
+        dailyFuelEntity.setSettlement(settlement);
 
         return convertToDTO(dailyFuelRepository.save(dailyFuelEntity));
     }
@@ -226,6 +228,17 @@ public class DailyFuelService {
             entity.setSettlement(settlement);
         }
         
+        return entity;
+    }
+
+    private DailyFuelEntity convertCreateDtoToEntity(DailyFuelCreateDTO dailyFuel) {
+        DailyFuelEntity entity = DailyFuelEntity.builder()
+            .ticketIssueDate(dailyFuel.getTicketIssueDate())
+            .submissionDate(dailyFuel.getSubmissionDate())
+            .amount(dailyFuel.getAmount())
+            .fuelType(dailyFuel.getFuelType())
+            .build();
+
         return entity;
     }
 

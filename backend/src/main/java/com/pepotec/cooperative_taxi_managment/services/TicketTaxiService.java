@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pepotec.cooperative_taxi_managment.models.dto.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.TicketTaxiEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.VehicleEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.TicketTaxiRepository;
@@ -30,13 +31,13 @@ public class TicketTaxiService {
     private TicketTaxiValidator ticketTaxiValidator;
 
     @Transactional
-    public TicketTaxiDTO createTicketTaxi(TicketTaxiDTO ticketTaxi) {
-        ticketTaxiValidator.validateTicketTaxiSpecificFields(ticketTaxi);
+    public TicketTaxiDTO createTicketTaxi(Long settlementId, Long vehicleId, TicketTaxiCreateDTO ticketTaxi) {
+        ticketTaxiValidator.validateTicketTaxiCreateFields(ticketTaxi);
 
-        VehicleEntity vehicle = vehicleService.getVehicleEntityById(ticketTaxi.getVehicle().getId());
-        var settlement = driverSettlementService.getDriverSettlementEntityById(ticketTaxi.getSettlement().getId());
+        VehicleEntity vehicle = vehicleService.getVehicleEntityById(vehicleId);
+        var settlement = driverSettlementService.getDriverSettlementEntityById(settlementId);
 
-        TicketTaxiEntity ticketTaxiEntity = convertToEntity(ticketTaxi);
+        TicketTaxiEntity ticketTaxiEntity = convertCreateDtoToEntity(ticketTaxi);
         ticketTaxiEntity.setVehicle(vehicle);
         ticketTaxiEntity.setSettlement(settlement);
 
@@ -222,6 +223,20 @@ public class TicketTaxiService {
             entity.setSettlement(settlement);
         }
         
+        return entity;
+    }
+
+    private TicketTaxiEntity convertCreateDtoToEntity(TicketTaxiCreateDTO ticketTaxi) {
+        TicketTaxiEntity entity = TicketTaxiEntity.builder()
+            .ticketNumber(ticketTaxi.getTicketNumber())
+            .startDate(ticketTaxi.getStartDate())
+            .cutDate(ticketTaxi.getCutDate())
+            .amount(ticketTaxi.getAmount())
+            .freeKilometers(ticketTaxi.getFreeKilometers())
+            .occupiedKilometers(ticketTaxi.getOccupiedKilometers())
+            .trips(ticketTaxi.getTrips())
+            .build();
+
         return entity;
     }
 

@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pepotec.cooperative_taxi_managment.models.dto.DriverSettlementDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.driversettlement.DriverSettlementDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.driversettlement.DriverSettlementCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.DriverSettlementEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.DriverEntity;
 import com.pepotec.cooperative_taxi_managment.repositories.DriverSettlementRepository;
@@ -32,12 +33,12 @@ public class DriverSettlementService {
     private TicketTaxiService ticketTaxiService;
 
     @Transactional
-    public DriverSettlementDTO createDriverSettlement(DriverSettlementDTO settlement) {
-        driverSettlementValidator.validateDriverSettlementSpecificFields(settlement);
+    public DriverSettlementDTO createDriverSettlement(Long driverId, DriverSettlementCreateDTO settlement) {
+        driverSettlementValidator.validateDriverSettlementCreateFields(settlement);
 
-        DriverEntity driver = driverService.getDriverEntityById(settlement.getDriver().getId());
+        DriverEntity driver = driverService.getDriverEntityById(driverId);
 
-        DriverSettlementEntity settlementEntity = convertToEntity(settlement);
+        DriverSettlementEntity settlementEntity = convertCreateDtoToEntity(settlement);
         settlementEntity.setDriver(driver);
 
         return convertToDTO(driverSettlementRepository.save(settlementEntity));
@@ -111,7 +112,7 @@ public class DriverSettlementService {
 
         driverSettlementValidator.validateDriverSettlementSpecificFields(settlement);
 
-        DriverEntity driver = driverService.getDriverEntityById(settlement.getDriver().getId());
+        DriverEntity driver = driverService.getDriverEntityById(settlement.getDriverId());
 
         settlementEntity.setDriver(driver);
         settlementEntity.setTicketAmount(settlement.getTicketAmount());
@@ -184,6 +185,21 @@ public class DriverSettlementService {
         return entity;
     }
 
+    private DriverSettlementEntity convertCreateDtoToEntity(DriverSettlementCreateDTO settlement) {
+        if (settlement == null) {
+            return null;
+        }
+
+        DriverSettlementEntity entity = new DriverSettlementEntity();
+        entity.setTicketAmount(settlement.getTicketAmount());
+        entity.setVoucherAmount(settlement.getVoucherAmount());
+        entity.setVoucherDifference(settlement.getVoucherDifference());
+        entity.setFinalBalance(settlement.getFinalBalance());
+        entity.setSubmissionDate(settlement.getSubmissionDate());
+
+        return entity;
+    }
+
     private DriverSettlementDTO convertToDTO(DriverSettlementEntity settlement) {
         if (settlement == null) {
             return null;
@@ -191,6 +207,7 @@ public class DriverSettlementService {
 
         return DriverSettlementDTO.builder()
             .id(settlement.getId())
+            .driverId(settlement.getDriver().getId())
             .driver(driverService.getDriverById(settlement.getDriver().getId()))
             .ticketAmount(settlement.getTicketAmount())
             .voucherAmount(settlement.getVoucherAmount())

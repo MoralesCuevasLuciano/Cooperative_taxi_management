@@ -1,5 +1,6 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.model;
 
+import com.pepotec.cooperative_taxi_managment.models.dto.brand.BrandDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,4 +35,5 @@ public class ModelDTO {
     @NotNull(message = "La marca no puede ser nula")
     private BrandDTO brand;
 }
+
 

@@ -2,7 +2,7 @@ package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.exceptions.DuplicateFieldException;
-import com.pepotec.cooperative_taxi_managment.models.dto.PersonDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.PersonDTO;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.regex.Pattern;

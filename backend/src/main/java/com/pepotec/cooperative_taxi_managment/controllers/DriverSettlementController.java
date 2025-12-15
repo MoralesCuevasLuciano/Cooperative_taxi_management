@@ -3,7 +3,8 @@ package com.pepotec.cooperative_taxi_managment.controllers;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.pepotec.cooperative_taxi_managment.services.DriverSettlementService;
-import com.pepotec.cooperative_taxi_managment.models.dto.DriverSettlementDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.driversettlement.DriverSettlementDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.driversettlement.DriverSettlementCreateDTO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +47,7 @@ public class DriverSettlementController {
 
     @Operation(
         summary = "Crear una nueva rendición de chofer",
-        description = "Crea una nueva rendición de chofer con la información proporcionada.",
+        description = "Crea una nueva rendición de chofer para un chofer existente.",
         tags = {"Driver Settlements"},
         responses = {
             @ApiResponse(
@@ -60,11 +61,14 @@ public class DriverSettlementController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
         }
     )
-    @PostMapping("/create")
-    public ResponseEntity<DriverSettlementDTO> createDriverSettlement(@Valid @RequestBody DriverSettlementDTO settlement) {
+    @PostMapping("/drivers/{driverId}/settlements")
+    public ResponseEntity<DriverSettlementDTO> createDriverSettlement(
+        @PathVariable Long driverId,
+        @Valid @RequestBody DriverSettlementCreateDTO settlement
+    ) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .body(driverSettlementService.createDriverSettlement(settlement));
+            .body(driverSettlementService.createDriverSettlement(driverId, settlement));
     }
 
     @Operation(

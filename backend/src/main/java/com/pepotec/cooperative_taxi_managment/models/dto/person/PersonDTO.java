@@ -1,4 +1,4 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.person;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -66,3 +66,5 @@ public abstract class PersonDTO {
     @NotNull(message = "El estado no puede ser nulo")
     private Boolean active = true;
 }
+
+

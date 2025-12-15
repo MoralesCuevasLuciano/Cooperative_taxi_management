@@ -1,7 +1,7 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.MemberDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.person.member.MemberDTO;
 import com.pepotec.cooperative_taxi_managment.validators.PersonValidator;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;

@@ -2,7 +2,8 @@ package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.DuplicateFieldException;
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.VehicleCreateDTO;
 import com.pepotec.cooperative_taxi_managment.repositories.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,32 @@ public class VehicleValidator {
 
         if (vehicle.getModel() == null || vehicle.getModel().getId() == null) {
             throw new InvalidDataException("El modelo no puede ser nulo");
+        }
+    }
+
+    public void validateVehicleCreateFields(VehicleCreateDTO vehicle) {
+        if (vehicle.getLicensePlate() == null || vehicle.getLicensePlate().trim().isEmpty()) {
+            throw new InvalidDataException("La patente no puede estar vacía");
+        }
+
+        if (vehicle.getLicenseNumber() == null || vehicle.getLicenseNumber().trim().isEmpty()) {
+            throw new InvalidDataException("El número de licencia no puede estar vacío");
+        }
+
+        if (vehicle.getEngineNumber() == null || vehicle.getEngineNumber().trim().isEmpty()) {
+            throw new InvalidDataException("El número de motor no puede estar vacío");
+        }
+
+        if (vehicle.getChassisNumber() == null || vehicle.getChassisNumber().trim().isEmpty()) {
+            throw new InvalidDataException("El número de chasis no puede estar vacío");
+        }
+
+        if (vehicle.getVtvExpirationDate() == null) {
+            throw new InvalidDataException("La fecha de vencimiento de VTV no puede ser nula");
+        }
+
+        if (vehicle.getModelId() == null) {
+            throw new InvalidDataException("El ID de modelo no puede ser nulo");
         }
     }
 

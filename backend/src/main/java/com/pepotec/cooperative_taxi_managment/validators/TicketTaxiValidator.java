@@ -1,7 +1,8 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
-import com.pepotec.cooperative_taxi_managment.models.dto.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiDTO;
+import com.pepotec.cooperative_taxi_managment.models.dto.tickettaxi.TicketTaxiCreateDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -43,6 +44,45 @@ public class TicketTaxiValidator {
                 throw new InvalidDataException(
                     "La fecha de corte no puede ser anterior a la fecha de inicio. " +
                     "Fecha de inicio: " + ticketTaxi.getStartDate() + 
+                    ", Fecha de corte: " + ticketTaxi.getCutDate()
+                );
+            }
+        }
+    }
+
+    /**
+     * Validaciones para creación (IDs vienen por path).
+     */
+    public void validateTicketTaxiCreateFields(TicketTaxiCreateDTO ticketTaxi) {
+        if (ticketTaxi == null) {
+            throw new InvalidDataException("El ticket no puede ser nulo");
+        }
+
+        if (ticketTaxi.getAmount() == null) {
+            throw new InvalidDataException("El monto no puede ser nulo");
+        }
+
+        if (ticketTaxi.getAmount() < 0) {
+            throw new InvalidDataException("El monto debe ser mayor o igual a cero");
+        }
+
+        if (ticketTaxi.getFreeKilometers() != null && ticketTaxi.getFreeKilometers() < 0) {
+            throw new InvalidDataException("Los kilómetros libres deben ser mayores o iguales a cero");
+        }
+
+        if (ticketTaxi.getOccupiedKilometers() != null && ticketTaxi.getOccupiedKilometers() < 0) {
+            throw new InvalidDataException("Los kilómetros ocupados deben ser mayores o iguales a cero");
+        }
+
+        if (ticketTaxi.getTrips() != null && ticketTaxi.getTrips() < 0) {
+            throw new InvalidDataException("Los viajes deben ser mayores o iguales a cero");
+        }
+
+        if (ticketTaxi.getStartDate() != null && ticketTaxi.getCutDate() != null) {
+            if (ticketTaxi.getCutDate().isBefore(ticketTaxi.getStartDate())) {
+                throw new InvalidDataException(
+                    "La fecha de corte no puede ser anterior a la fecha de inicio. " +
+                    "Fecha de inicio: " + ticketTaxi.getStartDate() +
                     ", Fecha de corte: " + ticketTaxi.getCutDate()
                 );
             }

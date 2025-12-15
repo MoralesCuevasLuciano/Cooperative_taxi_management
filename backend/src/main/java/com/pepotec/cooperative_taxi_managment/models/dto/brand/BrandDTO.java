@@ -1,4 +1,4 @@
-package com.pepotec.cooperative_taxi_managment.models.dto;
+package com.pepotec.cooperative_taxi_managment.models.dto.brand;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +20,5 @@ public class BrandDTO {
     @Size(min = 2, max = 50, message = "El nombre de la marca debe tener entre 2 y 50 caracteres")
     private String name;
 }
+
 
