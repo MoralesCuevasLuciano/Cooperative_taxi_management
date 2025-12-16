@@ -18,5 +18,11 @@ public interface DailyFuelRepository extends JpaRepository<DailyFuelEntity, Long
     List<DailyFuelEntity> findByDriverIdAndTicketIssueDateBetween(Long driverId, LocalDate startDate, LocalDate endDate);
     List<DailyFuelEntity> findByVehicleIdAndFuelType(Long vehicleId, FuelType fuelType);
     List<DailyFuelEntity> findByDriverIdAndFuelType(Long driverId, FuelType fuelType);
+    
+    /**
+     * Busca el último DailyFuel del mismo tipo de combustible para un chofer específico.
+     * Ordena por fecha de emisión del ticket de forma descendente.
+     */
+    java.util.Optional<DailyFuelEntity> findFirstByDriverIdAndFuelTypeOrderByTicketIssueDateDesc(Long driverId, FuelType fuelType);
 }
 

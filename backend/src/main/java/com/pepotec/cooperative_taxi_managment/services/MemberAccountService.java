@@ -164,6 +164,21 @@ public class MemberAccountService {
             .active(entity.getActive())
             .build();
     }
+
+    /**
+     * Método auxiliar para obtener la entidad por ID (para uso interno).
+     */
+    public MemberAccountEntity getMemberAccountEntityById(Long id) {
+        return memberAccountRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Socio"));
+    }
+
+    /**
+     * Método auxiliar para actualizar la entidad directamente (para uso interno).
+     */
+    public MemberAccountEntity updateMemberAccountEntity(MemberAccountEntity entity) {
+        return memberAccountRepository.save(entity);
+    }
 }
 
 

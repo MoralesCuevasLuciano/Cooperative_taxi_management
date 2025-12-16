@@ -45,6 +45,9 @@ public class DailyFuelValidator {
                 ", Fecha de entrega: " + dailyFuel.getSubmissionDate()
             );
         }
+
+        // Validar porcentajes si están presentes
+        validatePercentages(dailyFuel.getCooperativePercentage(), dailyFuel.getDriverPercentage());
     }
 
     /**
@@ -81,6 +84,53 @@ public class DailyFuelValidator {
                 "La fecha de entrega no puede ser anterior a la fecha de emisión del ticket. " +
                 "Fecha de emisión: " + dailyFuel.getTicketIssueDate() +
                 ", Fecha de entrega: " + dailyFuel.getSubmissionDate()
+            );
+        }
+
+        // Validar porcentajes si están presentes
+        validatePercentages(dailyFuel.getCooperativePercentage(), dailyFuel.getDriverPercentage());
+    }
+
+    /**
+     * Valida que los porcentajes sumen 100 si ambos están presentes.
+     * Si solo uno está presente, lanza excepción.
+     * Si ninguno está presente, es válido (se asignarán por defecto en el servicio).
+     */
+    private void validatePercentages(Double cooperativePercentage, Double driverPercentage) {
+        // Si ambos son null, es válido (se asignarán por defecto)
+        if (cooperativePercentage == null && driverPercentage == null) {
+            return;
+        }
+
+        // Si solo uno está presente, es inválido
+        if (cooperativePercentage == null || driverPercentage == null) {
+            throw new InvalidDataException(
+                "Los porcentajes deben estar ambos presentes o ambos ausentes. " +
+                "Si se especifica uno, debe especificarse el otro."
+            );
+        }
+
+        // Validar que estén en rango válido (0-100)
+        if (cooperativePercentage < 0 || cooperativePercentage > 100) {
+            throw new InvalidDataException(
+                "El porcentaje de la cooperativa debe estar entre 0 y 100. Valor recibido: " + cooperativePercentage
+            );
+        }
+
+        if (driverPercentage < 0 || driverPercentage > 100) {
+            throw new InvalidDataException(
+                "El porcentaje del chofer debe estar entre 0 y 100. Valor recibido: " + driverPercentage
+            );
+        }
+
+        // Validar que sumen 100 (con tolerancia de 0.01 para errores de punto flotante)
+        double sum = cooperativePercentage + driverPercentage;
+        if (Math.abs(sum - 100.0) > 0.01) {
+            throw new InvalidDataException(
+                "La suma de los porcentajes debe ser 100. " +
+                "Porcentaje cooperativa: " + cooperativePercentage + 
+                ", Porcentaje chofer: " + driverPercentage + 
+                ", Suma: " + sum
             );
         }
     }

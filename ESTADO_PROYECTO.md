@@ -2,6 +2,8 @@
 
 **Última actualización:** 15 de Diciembre, 2024
 
+**Actualización reciente:** Sistema de porcentajes de combustible y FuelReimbursement implementado completamente.
+
 ---
 
 ## 📋 Resumen de Entidades Implementadas
@@ -446,7 +448,15 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
   - Creación automática al crear Member, Subscriber, Vehicle o Driver
   - Validaciones que permiten balance negativo
   - Campo `active` establecido explícitamente al crear cuentas (evita errores de validación)
-- DailyFuel con CRUD completo y filtros avanzados
+- DailyFuel con CRUD completo, filtros avanzados y sistema de porcentajes:
+  - Campos `cooperativePercentage` y `driverPercentage`
+  - Asignación automática de porcentajes (último del mismo tipo o 50/50 por defecto)
+  - Acumulación automática de crédito de combustible
+- FuelReimbursement (Reintegro de Combustible) con CRUD completo:
+  - Relación OneToOne con MemberAccount
+  - Creación automática al acumular crédito del primer DailyFuel
+  - Métodos de acumulación y reintegro quincenal
+  - Endpoints REST completos
 - TicketTaxi con CRUD completo y filtros avanzados
 - DriverSettlement con CRUD completo, métodos de cálculo y filtros
 - Refactorización completa de estructura de DTOs organizados por entidad
@@ -481,6 +491,137 @@ Este proyecto es un sistema de gestión de taxis cooperativos desarrollado en Sp
 - Seguir los patrones establecidos en el código existente
 - Mantener la estructura de carpetas de DTOs
 - Asegurarse de actualizar este archivo cuando se completen tareas
+
+---
+
+## 🏗️ Decisiones Arquitectónicas - Sistema de Combustible y Reintegros
+
+**Fecha de decisión:** 15 de Diciembre, 2024
+
+### 📌 Contexto del Negocio
+
+Cuando un chofer rinde (`DriverSettlement`), presenta:
+- **Tickets de trabajo** (`TicketTaxi`): ingresos del chofer
+- **Tickets de combustible** (`DailyFuel`): gastos de combustible
+
+Del gasto de combustible, un porcentaje (generalmente 50%) se acumula como crédito para el chofer, pero este crédito:
+- **NO** es saldo normal de la cuenta (`MemberAccount.balance`)
+- Se **reintegra quincenalmente** (manual)
+- Al reintegrarse, se suma al balance de la cuenta
+- Luego se usa para descontar la **cuota mensual de socio** (a implementar)
+
+### ✅ Decisiones Tomadas
+
+#### 1. **Porcentajes de Combustible en DailyFuel**
+
+**Implementación:**
+- Agregar campos `cooperativePercentage` y `driverPercentage` en `DailyFuelEntity`
+- **Validación:** La suma de ambos debe ser 100
+- **Lógica de valores por defecto:**
+  1. Si no se especifican porcentajes al crear un `DailyFuel`:
+     - Buscar el último `DailyFuel` del mismo `fuelType` (GNC/NAFTA) para ese `driver`
+     - Si existe, usar esos porcentajes
+     - Si no existe, usar 50/50 por defecto
+  2. El usuario puede modificar los porcentajes manualmente
+
+**Razón:** Permite flexibilidad para casos especiales (ej: auto que solo anda a nafta temporalmente → 70% chofer, 30% cooperativa) manteniendo consistencia con el último uso del mismo tipo de combustible.
+
+#### 2. **Entidad FuelReimbursement (Reintegro de Combustible)**
+
+**Nueva entidad:** `FuelReimbursementEntity`
+
+**Campos:**
+- `id` (Long)
+- `memberAccount` (OneToOne → MemberAccountEntity) - Relación única con la cuenta del chofer
+- `accumulatedAmount` (Double) - Monto acumulado pendiente de reintegro
+- `lastReimbursementDate` (LocalDate, nullable) - Última fecha de reintegro quincenal
+- `createdDate` (LocalDate) - Fecha de creación
+- `active` (Boolean) - Soft delete
+
+**Propósito:**
+- Mantener separado el saldo de combustible del balance general de la cuenta
+- Acumular el crédito del chofer (porcentaje del combustible) hasta el reintegro
+- Facilitar el reintegro quincenal manual
+- Preparar para el descuento de cuota mensual
+
+**Flujo:**
+1. Al crear un `DailyFuel`:
+   - Calcular: `driverCredit = amount * (driverPercentage / 100)`
+   - Si no existe `FuelReimbursement` para el chofer, se crea automáticamente
+   - Acumular en `FuelReimbursement.accumulatedAmount` del chofer
+2. Reintegro quincenal (manual):
+   - Sumar `accumulatedAmount` a `MemberAccount.balance`
+   - Resetear `accumulatedAmount` a 0
+   - Actualizar `lastReimbursementDate`
+3. Cuota mensual (a implementar):
+   - Usar `accumulatedAmount` (si existe) para descontar de la cuota
+
+**Creación:**
+- **Automática:** Se crea automáticamente al crear el primer `DailyFuel` con porcentaje del chofer > 0
+- **Manual:** También se puede crear explícitamente mediante endpoint `POST /fuel-reimbursements/member-accounts/{memberAccountId}`
+
+#### 3. **Reintegros y Cuotas**
+
+- **Reintegro quincenal:** Manual (no automático)
+- **Cuota de socio:** Mensual (a implementar)
+- **Historial de reintegros:** Pendiente para implementación futura (clase `MovimientoDinero` o similar)
+
+### ✅ Implementación Completada (15 de Diciembre, 2024)
+
+1. **✅ DailyFuelEntity modificado:**
+   - ✅ Agregados `cooperativePercentage` (Double, nullable)
+   - ✅ Agregados `driverPercentage` (Double, nullable)
+   - ✅ Validaciones actualizadas en `DailyFuelValidator` (suma debe ser 100)
+
+2. **✅ FuelReimbursementEntity creado:**
+   - ✅ Entidad completa con todos los campos definidos
+   - ✅ Repository `FuelReimbursementRepository` con métodos de búsqueda
+   - ✅ DTOs: `FuelReimbursementDTO` y `FuelReimbursementCreateDTO`
+   - ✅ Validator `FuelReimbursementValidator` con validaciones completas
+   - ✅ Service `FuelReimbursementService` con métodos:
+     - ✅ `createFuelReimbursement()` - Crear registro manualmente
+     - ✅ `accumulateFuelCredit()` - Acumular crédito (crea automáticamente si no existe)
+     - ✅ `reimburseFuelCredit()` - Reintegrar quincenalmente al balance
+     - ✅ CRUD completo
+   - ✅ Controller `FuelReimbursementController` con endpoints REST
+
+3. **✅ DailyFuelService modificado:**
+   - ✅ Lógica para buscar último `DailyFuel` del mismo `fuelType` para el chofer
+   - ✅ Asignación automática de porcentajes por defecto (último del mismo tipo o 50/50)
+   - ✅ Acumulación automática de crédito al crear `DailyFuel`
+   - ✅ Creación automática de `FuelReimbursement` si no existe
+
+**Endpoints implementados:**
+- `POST /fuel-reimbursements/member-accounts/{memberAccountId}` - Crear reintegro
+- `GET /fuel-reimbursements/get/{id}` - Obtener por ID
+- `GET /fuel-reimbursements/get/by-member-account/{memberAccountId}` - Obtener por cuenta
+- `GET /fuel-reimbursements/list` - Listar todos
+- `POST /fuel-reimbursements/member-accounts/{memberAccountId}/accumulate?amount={amount}` - Acumular crédito
+- `POST /fuel-reimbursements/member-accounts/{memberAccountId}/reimburse` - Reintegrar crédito
+- `PUT /fuel-reimbursements/update/{id}` - Actualizar
+- `DELETE /fuel-reimbursements/delete/{id}` - Soft delete
+
+### 📋 Tareas Pendientes
+
+4. **Futuro (no implementar ahora):**
+   - Sistema de historial de movimientos (`MovimientoDinero`)
+   - Sistema de cuotas mensuales de socio
+
+### 🔄 Relaciones Actualizadas
+
+```
+DailyFuelEntity
+├── cooperativePercentage (nuevo)
+├── driverPercentage (nuevo)
+└── ... (campos existentes)
+
+FuelReimbursementEntity (implementado)
+├── memberAccount (OneToOne → MemberAccountEntity, unique = true)
+└── ... (campos definidos)
+
+MemberAccountEntity
+└── (relación OneToOne con FuelReimbursementEntity)
+```
 
 ---
 

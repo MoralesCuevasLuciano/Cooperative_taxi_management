@@ -46,6 +46,10 @@ public class DailyFuelDTO {
 
     @NotNull(message = "The fuel type cannot be null")
     private FuelType fuelType;
+
+    private Double cooperativePercentage;
+
+    private Double driverPercentage;
 }
 
 

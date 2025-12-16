@@ -65,5 +65,11 @@ public class DailyFuelEntity {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "The fuel type cannot be null")
     private FuelType fuelType;
+
+    @Column(name = "cooperative_percentage")
+    private Double cooperativePercentage;
+
+    @Column(name = "driver_percentage")
+    private Double driverPercentage;
 }
 

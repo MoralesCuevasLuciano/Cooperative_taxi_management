@@ -35,6 +35,12 @@ public class DailyFuelService {
     @Autowired
     private DailyFuelValidator dailyFuelValidator;
 
+    @Autowired
+    private FuelReimbursementService fuelReimbursementService;
+
+    @Autowired
+    private MemberAccountService memberAccountService;
+
     @Transactional
     public DailyFuelDTO createDailyFuel(Long driverId, Long vehicleId, Long settlementId, DailyFuelCreateDTO dailyFuel) {
         dailyFuelValidator.validateDailyFuelCreateFields(dailyFuel);
@@ -52,7 +58,18 @@ public class DailyFuelService {
         var settlement = driverSettlementService.getDriverSettlementEntityById(settlementId);
         dailyFuelEntity.setSettlement(settlement);
 
-        return convertToDTO(dailyFuelRepository.save(dailyFuelEntity));
+        // Asignar porcentajes por defecto si no se especificaron
+        assignDefaultPercentages(dailyFuelEntity, driverId, dailyFuel.getFuelType());
+
+        // Guardar el DailyFuel
+        dailyFuelEntity = dailyFuelRepository.save(dailyFuelEntity);
+
+        // Acumular crédito del chofer si hay porcentaje del chofer
+        if (dailyFuelEntity.getDriverPercentage() != null && dailyFuelEntity.getDriverPercentage() > 0) {
+            accumulateDriverFuelCredit(driverId, dailyFuelEntity.getAmount(), dailyFuelEntity.getDriverPercentage());
+        }
+
+        return convertToDTO(dailyFuelEntity);
     }
 
     public DailyFuelDTO getDailyFuelById(Long id) {
@@ -192,6 +209,8 @@ public class DailyFuelService {
         dailyFuelEntity.setSubmissionDate(dailyFuel.getSubmissionDate());
         dailyFuelEntity.setAmount(dailyFuel.getAmount());
         dailyFuelEntity.setFuelType(dailyFuel.getFuelType());
+        dailyFuelEntity.setCooperativePercentage(dailyFuel.getCooperativePercentage());
+        dailyFuelEntity.setDriverPercentage(dailyFuel.getDriverPercentage());
         
         if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
             var settlement = driverSettlementService.getDriverSettlementEntityById(dailyFuel.getSettlement().getId());
@@ -214,6 +233,51 @@ public class DailyFuelService {
         dailyFuelRepository.delete(dailyFuel);
     }
 
+    /**
+     * Asigna porcentajes por defecto si no se especificaron.
+     * Busca el último DailyFuel del mismo tipo para ese chofer, si no existe usa 50/50.
+     */
+    private void assignDefaultPercentages(DailyFuelEntity dailyFuelEntity, Long driverId, FuelType fuelType) {
+        // Si ya tiene porcentajes asignados, no hacer nada
+        if (dailyFuelEntity.getCooperativePercentage() != null && dailyFuelEntity.getDriverPercentage() != null) {
+            return;
+        }
+
+        // Buscar el último DailyFuel del mismo tipo para ese chofer
+        var lastDailyFuel = dailyFuelRepository.findFirstByDriverIdAndFuelTypeOrderByTicketIssueDateDesc(driverId, fuelType);
+
+        if (lastDailyFuel.isPresent() && 
+            lastDailyFuel.get().getCooperativePercentage() != null && 
+            lastDailyFuel.get().getDriverPercentage() != null) {
+            // Usar los porcentajes del último DailyFuel del mismo tipo
+            dailyFuelEntity.setCooperativePercentage(lastDailyFuel.get().getCooperativePercentage());
+            dailyFuelEntity.setDriverPercentage(lastDailyFuel.get().getDriverPercentage());
+        } else {
+            // Usar 50/50 por defecto
+            dailyFuelEntity.setCooperativePercentage(50.0);
+            dailyFuelEntity.setDriverPercentage(50.0);
+        }
+    }
+
+    /**
+     * Acumula el crédito de combustible del chofer en su FuelReimbursement.
+     */
+    private void accumulateDriverFuelCredit(Long driverId, Double amount, Double driverPercentage) {
+        try {
+            // Obtener la cuenta del chofer (Driver extiende Member, así que tiene MemberAccount)
+            var memberAccount = memberAccountService.getMemberAccountByMemberId(driverId);
+            
+            // Calcular el crédito del chofer
+            Double driverCredit = amount * (driverPercentage / 100.0);
+            
+            // Acumular en FuelReimbursement
+            fuelReimbursementService.accumulateFuelCredit(memberAccount.getId(), driverCredit);
+        } catch (ResourceNotFoundException e) {
+            // Si no existe la cuenta, no acumular (no debería pasar, pero por seguridad)
+            // Log podría ir aquí en producción
+        }
+    }
+
     private DailyFuelEntity convertToEntity(DailyFuelDTO dailyFuel) {
         DailyFuelEntity entity = DailyFuelEntity.builder()
             .id(dailyFuel.getId())
@@ -221,6 +285,8 @@ public class DailyFuelService {
             .submissionDate(dailyFuel.getSubmissionDate())
             .amount(dailyFuel.getAmount())
             .fuelType(dailyFuel.getFuelType())
+            .cooperativePercentage(dailyFuel.getCooperativePercentage())
+            .driverPercentage(dailyFuel.getDriverPercentage())
             .build();
         
         if (dailyFuel.getSettlement() != null && dailyFuel.getSettlement().getId() != null) {
@@ -237,6 +303,8 @@ public class DailyFuelService {
             .submissionDate(dailyFuel.getSubmissionDate())
             .amount(dailyFuel.getAmount())
             .fuelType(dailyFuel.getFuelType())
+            .cooperativePercentage(dailyFuel.getCooperativePercentage())
+            .driverPercentage(dailyFuel.getDriverPercentage())
             .build();
 
         return entity;
@@ -254,7 +322,9 @@ public class DailyFuelService {
             .ticketIssueDate(dailyFuel.getTicketIssueDate())
             .submissionDate(dailyFuel.getSubmissionDate())
             .amount(dailyFuel.getAmount())
-            .fuelType(dailyFuel.getFuelType());
+            .fuelType(dailyFuel.getFuelType())
+            .cooperativePercentage(dailyFuel.getCooperativePercentage())
+            .driverPercentage(dailyFuel.getDriverPercentage());
         
         if (dailyFuel.getSettlement() != null) {
             builder.settlement(driverSettlementService.getDriverSettlementById(dailyFuel.getSettlement().getId()));
