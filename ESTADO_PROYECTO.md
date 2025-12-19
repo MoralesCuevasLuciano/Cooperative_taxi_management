@@ -1,8 +1,8 @@
 # Estado del Proyecto - Cooperative Taxi Management
 
-**Última actualización:** 15 de Diciembre, 2024
+**Última actualización:** Diciembre, 2024
 
-**Actualización reciente:** Sistema de porcentajes de combustible y FuelReimbursement implementado completamente.
+**Actualización reciente:** Sistema de Caja y Movimientos de Dinero - Entidades, DTOs, Repositories y Validators implementados. Pendiente: Services y Controllers.
 
 ---
 
@@ -232,9 +232,55 @@
 
 **Nota:** Campo `settlement` es ManyToOne obligatorio hacia `DriverSettlementEntity`.
 
+#### 12. **Sistema de Caja y Movimientos de Dinero** (EN PROGRESO)
+- ✅ Enum `MovementType` con valores: `DEPOSIT`, `WITHDRAWAL`, `TRANSFER`, `PAYMENT`, `REFUND`, `ADVANCE`, `WORKSHOP_ORDER`, `OTHER`
+- ✅ Clase abstracta `AbstractMovementEntity` con `@MappedSuperclass`:
+  - Campos comunes: `id`, `description`, `amount`, `date`, `movementType`, `isIncome`, `active`
+  - Relaciones polimórficas con cuentas (MemberAccount, SubscriberAccount, VehicleAccount) - solo una puede estar presente o todas null
+  - Campo `isIncome` (boolean) determina si suma o resta (true = ingreso, false = egreso)
+- ✅ Entidad `CashRegisterEntity` (singleton):
+  - Campos: `id`, `amount` (puede ser negativo), `active`
+  - Representa la caja física con billetes
+- ✅ Entidad `CashRegisterHistoryEntity`:
+  - Campos: `id`, `cashRegister` (ManyToOne), `initialAmount`, `finalAmount` (nullable), `date` (unique)
+  - Registro histórico diario de la caja
+- ✅ Entidad `CashMovementEntity` (extiende `AbstractMovementEntity`):
+  - Movimientos en efectivo (con billetes)
+  - Relación ManyToOne con `CashRegisterEntity`
+  - Afecta TANTO cuenta COMO caja
+- ✅ Entidad `NonCashMovementEntity` (extiende `AbstractMovementEntity`):
+  - Movimientos sin efectivo (transferencias, débitos, créditos)
+  - Solo afecta cuenta, NO afecta caja
+- ✅ DTOs organizados en estructura de carpetas:
+  - `models.dto.cashregister.*` - `CashRegisterDTO`, `CashRegisterHistoryDTO`
+  - `models.dto.movement.cash.*` - `CashMovementDTO`, `CashMovementCreateDTO`
+  - `models.dto.movement.noncash.*` - `NonCashMovementDTO`, `NonCashMovementCreateDTO`
+- ✅ Repositories:
+  - `CashRegisterRepository` - métodos para obtener/crear singleton
+  - `CashRegisterHistoryRepository` - búsqueda por fecha y rangos
+  - `CashMovementRepository` - búsqueda por cuenta, fecha, activos
+  - `NonCashMovementRepository` - búsqueda por cuenta, fecha, activos
+- ✅ Validator `MovementValidator`:
+  - Valida que solo haya una cuenta asociada (o ninguna)
+  - Valida restricciones por tipo: `ADVANCE` solo MemberAccount, `WORKSHOP_ORDER` solo VehicleAccount
+- ⏳ Pendiente: Services y Controllers (ver sección "Tareas Pendientes")
+
+**Características del Sistema:**
+- El campo `isIncome` (boolean) determina si el movimiento suma o resta, NO el `MovementType`
+- El `MovementType` queda para categorización/documentación
+- Los movimientos pueden editarse (con reversión de saldos)
+- Los movimientos pueden eliminarse (soft delete con reversión de saldos)
+- La caja se inicializa automáticamente al iniciar la aplicación
+- El historial diario se crea manualmente (endpoint) o automáticamente al iniciar sesión (cuando se implemente login)
+
+**Restricciones por tipo de movimiento:**
+- `ADVANCE`: Solo válido para `MemberAccount`, NO afecta el balance de la cuenta, crea instancia de `Advance` (a implementar)
+- `WORKSHOP_ORDER`: Solo válido para `VehicleAccount`
+- `OTHER`: Válido para cualquier cuenta o sin cuenta
+
 ---
 
-## 🎯 Trabajo Realizado Hoy (26 de Noviembre, 2024)
+## 🎯 Trabajo Realizado (Diciembre, 2024)
 
 ### 1. **Refactorización Completa de Estructura de DTOs**
 - ✅ Reorganización de todos los DTOs en estructura de carpetas por entidad
@@ -293,7 +339,69 @@
 
 ## 🚧 Tareas Pendientes
 
-_No hay tareas pendientes críticas en este momento._
+### Sistema de Caja y Movimientos de Dinero
+
+**⏳ Pendiente - Services:**
+1. `BalanceUpdateService` - Lógica de actualización/reversión de saldos basada en `isIncome`
+   - Métodos: `applyMovement()`, `revertMovement()`
+   - Actualizar cuentas y caja según `isIncome` (true = suma, false = resta)
+   - Manejar caso especial: `ADVANCE` no afecta balance de cuenta
+   - **NOTA:** Necesita métodos `updateAccountEntity()` en servicios de cuentas (MemberAccountService, SubscriberAccountService, VehicleAccountService)
+
+2. `CashRegisterService` - Gestión de caja singleton
+   - Método `getOrCreate()` con `@PostConstruct` para inicialización automática
+   - Métodos de consulta: `getCashRegister()`
+   - Métodos de actualización: `updateAmount()`
+
+3. `CashRegisterHistoryService` - Gestión de historial diario
+   - Método `ensureTodayHistoryExists()` - Crear historial para hoy si no existe
+   - Método `closeTodayHistory()` - Cerrar historial del día actual (actualizar `finalAmount`)
+
+4. `CashMovementService` - CRUD completo de movimientos en efectivo
+   - Crear: validar, convertir DTO, aplicar movimiento (actualizar saldos), guardar
+   - Actualizar: revertir movimiento original, actualizar campos, aplicar nuevo movimiento
+   - Eliminar: revertir movimiento, soft delete
+   - Listar: con filtros por cuenta, fecha, activos
+
+5. `NonCashMovementService` - CRUD completo de movimientos sin efectivo
+   - Misma lógica que `CashMovementService` pero sin afectar caja
+
+**⏳ Pendiente - Controllers:**
+1. `CashRegisterController` - Endpoints de consulta y actualización
+   - `GET /cash-register` - Obtener caja actual
+   - `PUT /cash-register/update` - Actualizar monto de caja
+
+2. `CashRegisterHistoryController` - Endpoints de historial
+   - `POST /cash-register-history/open-day` - Crear/obtener historial del día actual
+   - `POST /cash-register-history/close-day` - Cerrar historial del día actual
+   - `GET /cash-register-history/get/{id}` - Obtener por ID
+   - `GET /cash-register-history/get/by-date/{date}` - Obtener por fecha
+   - `GET /cash-register-history/list` - Listar todos
+   - `GET /cash-register-history/get/by-date-range?startDate=...&endDate=...` - Por rango de fechas
+
+3. `CashMovementController` - Endpoints de movimientos en efectivo
+   - `POST /cash-movements/create` - Crear movimiento
+   - `GET /cash-movements/list` - Listar todos
+   - `GET /cash-movements/get/{id}` - Obtener por ID
+   - `GET /cash-movements/get/by-account/{accountType}/{accountId}` - Por cuenta
+   - `GET /cash-movements/get/by-date-range?startDate=...&endDate=...` - Por rango de fechas
+   - `PUT /cash-movements/update/{id}` - Actualizar movimiento
+   - `DELETE /cash-movements/delete/{id}` - Eliminar movimiento (soft delete)
+
+4. `NonCashMovementController` - Endpoints de movimientos sin efectivo
+   - Mismos endpoints que `CashMovementController` pero en `/non-cash-movements/*`
+
+**⏳ Pendiente - Métodos en Servicios de Cuentas:**
+- Agregar método `updateAccountEntity()` en:
+  - `MemberAccountService`
+  - `SubscriberAccountService`
+  - `VehicleAccountService`
+- Estos métodos deben actualizar directamente la entidad en el repository (para uso interno de `BalanceUpdateService`)
+
+**⏳ Pendiente - Funcionalidades Futuras:**
+- Entidad `Advance` (adelanto de sueldo) - Se crea cuando el tipo de movimiento es `ADVANCE`
+- Sistema de auditoría (campos `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`)
+- Integración con sistema de login para crear historial automáticamente al iniciar sesión
 
 ---
 
@@ -305,12 +413,16 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   └── OpenApiConfig.java
 ├── controllers/
 │   ├── BrandController.java
+│   ├── CashMovementController.java (PENDIENTE)
+│   ├── CashRegisterController.java (PENDIENTE)
+│   ├── CashRegisterHistoryController.java (PENDIENTE)
 │   ├── DailyFuelController.java
 │   ├── DriverController.java
 │   ├── DriverSettlementController.java
 │   ├── MemberAccountController.java
 │   ├── MemberController.java
 │   ├── ModelController.java
+│   ├── NonCashMovementController.java (PENDIENTE)
 │   ├── SubscriberAccountController.java
 │   ├── SubscriberController.java
 │   ├── TicketTaxiController.java
@@ -322,6 +434,9 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   │   └── AddressDTO.java
 │   │   ├── brand/
 │   │   │   └── BrandDTO.java
+│   │   ├── cashregister/
+│   │   │   ├── CashRegisterDTO.java
+│   │   │   └── CashRegisterHistoryDTO.java
 │   │   ├── dailyfuel/
 │   │   │   ├── DailyFuelCreateDTO.java
 │   │   │   └── DailyFuelDTO.java
@@ -330,6 +445,13 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   │   └── DriverSettlementDTO.java
 │   │   ├── model/
 │   │   │   └── ModelDTO.java
+│   │   ├── movement/
+│   │   │   ├── cash/
+│   │   │   │   ├── CashMovementCreateDTO.java
+│   │   │   │   └── CashMovementDTO.java
+│   │   │   └── noncash/
+│   │   │       ├── NonCashMovementCreateDTO.java
+│   │   │       └── NonCashMovementDTO.java
 │   │   ├── person/
 │   │   │   ├── PersonDTO.java
 │   │   │   ├── member/
@@ -355,32 +477,42 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │           └── VehicleAccountDTO.java
 │   ├── entities/
 │   │   ├── AbstractAccountEntity.java
+│   │   ├── AbstractMovementEntity.java
 │   │   ├── AddressEntity.java
 │   │   ├── BrandEntity.java
+│   │   ├── CashMovementEntity.java
+│   │   ├── CashRegisterEntity.java
+│   │   ├── CashRegisterHistoryEntity.java
 │   │   ├── DailyFuelEntity.java
 │   │   ├── DriverEntity.java
 │   │   ├── DriverSettlementEntity.java
 │   │   ├── MemberAccountEntity.java
 │   │   ├── MemberEntity.java
 │   │   ├── ModelEntity.java
+│   │   ├── NonCashMovementEntity.java
 │   │   ├── PersonEntity.java
 │   │   ├── SubscriberAccountEntity.java
 │   │   ├── SubscriberEntity.java
 │   │   ├── TicketTaxiEntity.java
-│   │   └── VehicleAccountEntity.java
+│   │   ├── VehicleAccountEntity.java
 │   │   └── VehicleEntity.java
 │   └── enums/
 │       ├── FuelType.java
-│       └── MemberRole.java
+│       ├── MemberRole.java
+│       └── MovementType.java
 ├── repositories/
 │   ├── AddressRepository.java
 │   ├── BrandRepository.java
+│   ├── CashMovementRepository.java
+│   ├── CashRegisterHistoryRepository.java
+│   ├── CashRegisterRepository.java
 │   ├── DailyFuelRepository.java
 │   ├── DriverRepository.java
 │   ├── DriverSettlementRepository.java
 │   ├── MemberAccountRepository.java
 │   ├── MemberRepository.java
 │   ├── ModelRepository.java
+│   ├── NonCashMovementRepository.java
 │   ├── SubscriberAccountRepository.java
 │   ├── SubscriberRepository.java
 │   ├── TicketTaxiRepository.java
@@ -388,17 +520,22 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   └── VehicleRepository.java
 ├── services/
 │   ├── AddressService.java
+│   ├── BalanceUpdateService.java (PENDIENTE - implementar)
 │   ├── BrandService.java
+│   ├── CashMovementService.java (PENDIENTE - implementar)
+│   ├── CashRegisterHistoryService.java (PENDIENTE - implementar)
+│   ├── CashRegisterService.java (PENDIENTE - implementar)
 │   ├── DailyFuelService.java
 │   ├── DriverService.java
 │   ├── DriverSettlementService.java
-│   ├── MemberAccountService.java
+│   ├── MemberAccountService.java (PENDIENTE - agregar método updateAccountEntity)
 │   ├── MemberService.java
 │   ├── ModelService.java
-│   ├── SubscriberAccountService.java
+│   ├── NonCashMovementService.java (PENDIENTE - implementar)
+│   ├── SubscriberAccountService.java (PENDIENTE - agregar método updateAccountEntity)
 │   ├── SubscriberService.java
 │   ├── TicketTaxiService.java
-│   ├── VehicleAccountService.java
+│   ├── VehicleAccountService.java (PENDIENTE - agregar método updateAccountEntity)
 │   └── VehicleService.java
 └── validators/
     ├── AddressValidator.java
@@ -409,6 +546,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
     ├── MemberAccountValidator.java
     ├── MemberValidator.java
     ├── ModelValidator.java
+    ├── MovementValidator.java
     ├── PersonValidator.java
     ├── SubscriberAccountValidator.java
     ├── SubscriberValidator.java
@@ -459,6 +597,15 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
   - Endpoints REST completos
 - TicketTaxi con CRUD completo y filtros avanzados
 - DriverSettlement con CRUD completo, métodos de cálculo y filtros
+- **Sistema de Caja y Movimientos de Dinero (PARCIAL):**
+  - ✅ Enum `MovementType` con todos los valores
+  - ✅ Entidades: `AbstractMovementEntity`, `CashRegisterEntity`, `CashRegisterHistoryEntity`, `CashMovementEntity`, `NonCashMovementEntity`
+  - ✅ DTOs organizados en estructura de carpetas
+  - ✅ Repositories con métodos de búsqueda
+  - ✅ Validator `MovementValidator` con validaciones de "solo una cuenta" y restricciones por tipo
+  - ⏳ Pendiente: Services (BalanceUpdateService, CashRegisterService, CashRegisterHistoryService, CashMovementService, NonCashMovementService)
+  - ⏳ Pendiente: Controllers (CashRegisterController, CashRegisterHistoryController, CashMovementController, NonCashMovementController)
+  - ⏳ Pendiente: Métodos `updateAccountEntity()` en servicios de cuentas
 - Refactorización completa de estructura de DTOs organizados por entidad
 - Endpoints de creación mejorados usando DTOs específicos y path variables
 - Validaciones implementadas
@@ -469,7 +616,10 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 - Relaciones JPA correctamente implementadas entre todas las entidades
 
 **⏳ Pendiente:**
-- Implementar nuevas funcionalidades según requerimientos futuros
+- Completar Services y Controllers del sistema de caja y movimientos
+- Implementar entidad `Advance` (adelanto de sueldo)
+- Sistema de auditoría (campos de creación/modificación)
+- Integración con sistema de login para historial automático
 - Optimizaciones y mejoras continuas
 
 ---
@@ -485,6 +635,13 @@ Este proyecto es un sistema de gestión de taxis cooperativos desarrollado en Sp
 4. **Creación automática de cuentas:** Al crear Member, Subscriber o Vehicle, siempre crear automáticamente su cuenta asociada con balance 0.
 5. **Soft delete:** Las cuentas usan soft delete (campo `active`), no eliminación física.
 6. **Balance negativo permitido:** Las cuentas pueden tener balance negativo (deuda).
+7. **Sistema de movimientos de dinero:**
+   - El campo `isIncome` (boolean) determina si suma o resta, NO el `MovementType`
+   - El `MovementType` es solo para categorización/documentación
+   - Al editar/eliminar movimientos, SIEMPRE revertir los saldos antes de aplicar cambios
+   - `ADVANCE` no afecta el balance de la cuenta (independientemente de `isIncome`)
+   - Solo una cuenta puede estar asociada a un movimiento (o ninguna)
+   - La caja (`CashRegister`) es singleton - solo una instancia en todo el sistema
 
 **Para continuar el trabajo:**
 - Revisar la sección "Tareas Pendientes" para ver qué falta implementar
