@@ -7,11 +7,13 @@ import com.pepotec.cooperative_taxi_managment.models.dto.movement.cash.CashMovem
 import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber.account.SubscriberAccountDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.account.VehicleAccountDTO;
+import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.models.entities.CashMovementEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.CashRegisterEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.SubscriberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.VehicleAccountEntity;
+import com.pepotec.cooperative_taxi_managment.models.enums.MovementType;
 import com.pepotec.cooperative_taxi_managment.repositories.CashMovementRepository;
 import com.pepotec.cooperative_taxi_managment.validators.MovementValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +48,26 @@ public class CashMovementService {
     @Autowired
     private VehicleAccountService vehicleAccountService;
 
+    @Autowired
+    private AdvanceService advanceService;
+
     @Transactional
     public CashMovementDTO create(CashMovementCreateDTO dto) {
         movementValidator.validateCashMovementCreate(dto);
         CashMovementEntity entity = convertCreateDtoToEntity(dto);
         balanceUpdateService.applyMovement(entity);
-        return convertToDTO(cashMovementRepository.save(entity));
+        CashMovementEntity saved = cashMovementRepository.save(entity);
+
+        // Si es ADVANCE, crear Advance asociado
+        if (saved.getMovementType() == MovementType.ADVANCE) {
+            MemberAccountEntity account = saved.getMemberAccount();
+            if (account == null) {
+                throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
+            }
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+        }
+
+        return convertToDTO(saved);
     }
 
     public CashMovementDTO getById(Long id) {
@@ -87,18 +103,38 @@ public class CashMovementService {
     public CashMovementDTO update(Long id, CashMovementCreateDTO dto) {
         CashMovementEntity existing = findEntityById(id);
 
+        // Si el previo era ADVANCE, borrar el Advance asociado
+        if (existing.getMovementType() == MovementType.ADVANCE) {
+            advanceService.deleteByMovementId(existing.getId());
+        }
+
         balanceUpdateService.revertMovement(existing);
         movementValidator.validateCashMovementCreate(dto);
 
         CashMovementEntity updated = applyDtoToEntity(existing, dto);
         balanceUpdateService.applyMovement(updated);
 
-        return convertToDTO(cashMovementRepository.save(updated));
+        CashMovementEntity saved = cashMovementRepository.save(updated);
+
+        if (saved.getMovementType() == MovementType.ADVANCE) {
+            MemberAccountEntity account = saved.getMemberAccount();
+            if (account == null) {
+                throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
+            }
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+        }
+
+        return convertToDTO(saved);
     }
 
     @Transactional
     public void delete(Long id) {
         CashMovementEntity existing = findEntityById(id);
+
+        if (existing.getMovementType() == MovementType.ADVANCE) {
+            advanceService.deleteByMovementId(existing.getId());
+        }
+
         balanceUpdateService.revertMovement(existing);
         existing.setActive(false);
         cashMovementRepository.save(existing);

@@ -2,7 +2,7 @@
 
 **Última actualización:** Diciembre, 2024
 
-**Actualización reciente:** Sistema de Caja y Movimientos de Dinero - Entidades, DTOs, Repositories y Validators implementados. Pendiente: Services y Controllers.
+**Actualización reciente:** Sistema completo de Caja y Movimientos de Dinero implementado. Sistema de Advance (Vale) y PayrollSettlement (Liquidación) implementado completamente con Services, Controllers y documentación Swagger.
 
 ---
 
@@ -232,7 +232,7 @@
 
 **Nota:** Campo `settlement` es ManyToOne obligatorio hacia `DriverSettlementEntity`.
 
-#### 12. **Sistema de Caja y Movimientos de Dinero** (EN PROGRESO)
+#### 12. **Sistema de Caja y Movimientos de Dinero** ✅ COMPLETADO
 - ✅ Enum `MovementType` con valores: `DEPOSIT`, `WITHDRAWAL`, `TRANSFER`, `PAYMENT`, `REFUND`, `ADVANCE`, `WORKSHOP_ORDER`, `OTHER`
 - ✅ Clase abstracta `AbstractMovementEntity` con `@MappedSuperclass`:
   - Campos comunes: `id`, `description`, `amount`, `date`, `movementType`, `isIncome`, `active`
@@ -263,7 +263,17 @@
 - ✅ Validator `MovementValidator`:
   - Valida que solo haya una cuenta asociada (o ninguna)
   - Valida restricciones por tipo: `ADVANCE` solo MemberAccount, `WORKSHOP_ORDER` solo VehicleAccount
-- ⏳ Pendiente: Services y Controllers (ver sección "Tareas Pendientes")
+- ✅ Services completos:
+  - `BalanceUpdateService` - Lógica de actualización/reversión de saldos basada en `isIncome`
+  - `CashRegisterService` - Gestión de caja singleton con `@PostConstruct` para inicialización automática
+  - `CashRegisterHistoryService` - Gestión de historial diario (open-day, close-day)
+  - `CashMovementService` - CRUD completo con reversión de saldos en edición/eliminación
+  - `NonCashMovementService` - CRUD completo con reversión de saldos en edición/eliminación
+- ✅ Controllers completos con documentación Swagger:
+  - `CashRegisterController` - Consulta y actualización de caja
+  - `CashRegisterHistoryController` - Gestión de historial diario
+  - `CashMovementController` - CRUD de movimientos en efectivo
+  - `NonCashMovementController` - CRUD de movimientos sin efectivo
 
 **Características del Sistema:**
 - El campo `isIncome` (boolean) determina si el movimiento suma o resta, NO el `MovementType`
@@ -274,9 +284,57 @@
 - El historial diario se crea manualmente (endpoint) o automáticamente al iniciar sesión (cuando se implemente login)
 
 **Restricciones por tipo de movimiento:**
-- `ADVANCE`: Solo válido para `MemberAccount`, NO afecta el balance de la cuenta, crea instancia de `Advance` (a implementar)
+- `ADVANCE`: Solo válido para `MemberAccount`, NO afecta el balance de la cuenta, crea instancia de `Advance` automáticamente
 - `WORKSHOP_ORDER`: Solo válido para `VehicleAccount`
 - `OTHER`: Válido para cualquier cuenta o sin cuenta
+
+#### 13. **Sistema de Advance (Vale) y PayrollSettlement (Liquidación)** ✅ COMPLETADO
+- ✅ Entidad `AdvanceEntity` (Vale/Adelanto de sueldo):
+  - Campos: `id`, `memberAccount` (ManyToOne), `payrollSettlement` (ManyToOne, nullable), `movementId` (Long, nullable), `date`, `amount`, `notes` (String, nullable), `active`
+  - Se crea automáticamente al crear un movimiento `CashMovement` o `NonCashMovement` con `MovementType.ADVANCE`
+  - Solo válido para miembros con rol distinto de `DRIVER_1` y `DRIVER_2`
+  - Puede asociarse opcionalmente a una liquidación
+- ✅ Entidad `PayrollSettlementEntity` (Liquidación de sueldo):
+  - Campos: `id`, `memberAccount` (ManyToOne), `grossSalary`, `netSalary`, `yearMonth` (YearMonth), `paymentDate` (LocalDate, nullable), `active`
+  - Relación OneToMany con `AdvanceEntity` (puede tener múltiples vales asociados)
+  - Única por `account + yearMonth` (constraint de unicidad)
+  - `paymentDate` null = no pagado, con fecha = pagado
+  - Al pagar (setear `paymentDate`), crea automáticamente un `NonCashMovement` con `MovementType.PAYMENT` por el `grossSalary`
+- ✅ Converter `YearMonthAttributeConverter` para persistir `YearMonth` en base de datos
+- ✅ DTOs organizados:
+  - `models.dto.advance.*` - `AdvanceDTO`, `AdvanceCreateDTO`
+  - `models.dto.payrollsettlement.*` - `PayrollSettlementDTO`, `PayrollSettlementCreateDTO`
+- ✅ Repositories:
+  - `AdvanceRepository` - búsqueda por cuenta, fecha, movimiento
+  - `PayrollSettlementRepository` - búsqueda por cuenta, período, fecha de pago
+- ✅ Validators:
+  - `AdvanceValidator` - valida rol del miembro (no driver), campos obligatorios
+  - `PayrollSettlementValidator` - valida rol del miembro, campos obligatorios, unicidad
+- ✅ Services completos:
+  - `AdvanceService` - CRUD completo, creación desde movimientos, asociación a liquidaciones
+  - `PayrollSettlementService` - CRUD completo, asociación de vales, creación de movimiento de pago
+- ✅ Controllers completos con documentación Swagger:
+  - `AdvanceController` - CRUD de adelantos
+  - `PayrollSettlementController` - CRUD de liquidaciones
+- ✅ Integración con sistema de movimientos:
+  - Al crear `CashMovement` o `NonCashMovement` con `MovementType.ADVANCE` → crea automáticamente `Advance`
+  - Al eliminar/actualizar movimiento `ADVANCE` → elimina/actualiza el `Advance` asociado
+  - Al pagar liquidación → crea `NonCashMovement` con `MovementType.PAYMENT`
+
+**Endpoints:**
+- `POST /advances/create` - Crear adelanto manualmente
+- `GET /advances/get/{id}` - Obtener por ID
+- `GET /advances/list` - Listar todos
+- `GET /advances/by-account/{memberAccountId}` - Por cuenta
+- `GET /advances/by-date-range?startDate=...&endDate=...` - Por rango de fechas
+- `POST /payroll-settlements/create` - Crear liquidación (puede recibir `advanceIds` para asociar)
+- `PUT /payroll-settlements/update/{id}` - Actualizar liquidación
+- `GET /payroll-settlements/get/{id}` - Obtener por ID
+- `GET /payroll-settlements/list` - Listar todas
+- `GET /payroll-settlements/by-account/{memberAccountId}` - Por cuenta
+- `GET /payroll-settlements/by-period/{yearMonth}` - Por período (formato: YYYY-MM)
+- `GET /payroll-settlements/by-payment-date-range?startDate=...&endDate=...` - Por rango de fechas de pago
+- `DELETE /payroll-settlements/delete/{id}` - Soft delete
 
 ---
 
@@ -335,73 +393,57 @@
 - ✅ Validación de `lastModified` como nullable (cuando la cuenta está recién creada)
 - ✅ Implementación de soft delete en cuentas (campo `active`)
 
+### 5. **Sistema Completo de Caja y Movimientos de Dinero** (Diciembre, 2024)
+- ✅ Implementación completa de todos los Services:
+  - `BalanceUpdateService` - Lógica centralizada de actualización/reversión de saldos
+  - `CashRegisterService` - Gestión singleton de caja con inicialización automática
+  - `CashRegisterHistoryService` - Gestión de historial diario
+  - `CashMovementService` - CRUD completo con integración de creación automática de `Advance`
+  - `NonCashMovementService` - CRUD completo con integración de creación automática de `Advance` y pago de liquidaciones
+- ✅ Implementación completa de todos los Controllers con documentación Swagger
+- ✅ Refactorización para respetar principios SOLID (services usan otros services, no repositories directos)
+- ✅ Métodos `updateAccountEntity()` agregados en servicios de cuentas para uso interno
+
+### 6. **Sistema de Advance (Vale) y PayrollSettlement (Liquidación)** (Diciembre, 2024)
+- ✅ Implementación completa de entidades, DTOs, Repositories, Validators, Services y Controllers
+- ✅ Integración automática con sistema de movimientos:
+  - Creación automática de `Advance` al crear movimiento `ADVANCE`
+  - Eliminación automática de `Advance` al eliminar movimiento `ADVANCE`
+  - Validación de rol (no drivers) en creación de adelantos
+- ✅ Sistema de liquidaciones con:
+  - Unicidad por cuenta y período
+  - Asociación de múltiples vales a una liquidación
+  - Creación automática de movimiento de pago al pagar liquidación
+- ✅ Converter para `YearMonth` para persistencia en base de datos
+- ✅ Documentación Swagger completa en todos los endpoints
+
 ---
 
 ## 🚧 Tareas Pendientes
 
-### Sistema de Caja y Movimientos de Dinero
+### ⏳ Tareas para Próxima Sesión
 
-**⏳ Pendiente - Services:**
-1. `BalanceUpdateService` - Lógica de actualización/reversión de saldos basada en `isIncome`
-   - Métodos: `applyMovement()`, `revertMovement()`
-   - Actualizar cuentas y caja según `isIncome` (true = suma, false = resta)
-   - Manejar caso especial: `ADVANCE` no afecta balance de cuenta
-   - **NOTA:** Necesita métodos `updateAccountEntity()` en servicios de cuentas (MemberAccountService, SubscriberAccountService, VehicleAccountService)
+1. **Hacer que `notes` de `Advance` herede `description` de `NonCashMovement`**
+   - Cuando se crea un `Advance` desde un movimiento `ADVANCE`, el campo `notes` debería tomar el valor de `description` del movimiento
+   - Actualizar método `createFromMovement` en `AdvanceService` para incluir la descripción
 
-2. `CashRegisterService` - Gestión de caja singleton
-   - Método `getOrCreate()` con `@PostConstruct` para inicialización automática
-   - Métodos de consulta: `getCashRegister()`
-   - Métodos de actualización: `updateAmount()`
+2. **Hacer que el sueldo neto se calcule automáticamente**
+   - El `netSalary` de `PayrollSettlement` debería calcularse automáticamente como: `grossSalary - suma de vales asociados`
+   - Implementar lógica en `PayrollSettlementService.create()` y `PayrollSettlementService.update()`
+   - Considerar si hay otros descuentos además de vales (a futuro)
 
-3. `CashRegisterHistoryService` - Gestión de historial diario
-   - Método `ensureTodayHistoryExists()` - Crear historial para hoy si no existe
-   - Método `closeTodayHistory()` - Cerrar historial del día actual (actualizar `finalAmount`)
+3. **Descubrir y corregir error al crear `PayrollSettlement`**
+   - Investigar qué error ocurre al crear una liquidación
+   - Revisar logs, validaciones, relaciones y constraints de base de datos
+   - Corregir el problema encontrado
 
-4. `CashMovementService` - CRUD completo de movimientos en efectivo
-   - Crear: validar, convertir DTO, aplicar movimiento (actualizar saldos), guardar
-   - Actualizar: revertir movimiento original, actualizar campos, aplicar nuevo movimiento
-   - Eliminar: revertir movimiento, soft delete
-   - Listar: con filtros por cuenta, fecha, activos
+### ⏳ Funcionalidades Futuras
 
-5. `NonCashMovementService` - CRUD completo de movimientos sin efectivo
-   - Misma lógica que `CashMovementService` pero sin afectar caja
-
-**⏳ Pendiente - Controllers:**
-1. `CashRegisterController` - Endpoints de consulta y actualización
-   - `GET /cash-register` - Obtener caja actual
-   - `PUT /cash-register/update` - Actualizar monto de caja
-
-2. `CashRegisterHistoryController` - Endpoints de historial
-   - `POST /cash-register-history/open-day` - Crear/obtener historial del día actual
-   - `POST /cash-register-history/close-day` - Cerrar historial del día actual
-   - `GET /cash-register-history/get/{id}` - Obtener por ID
-   - `GET /cash-register-history/get/by-date/{date}` - Obtener por fecha
-   - `GET /cash-register-history/list` - Listar todos
-   - `GET /cash-register-history/get/by-date-range?startDate=...&endDate=...` - Por rango de fechas
-
-3. `CashMovementController` - Endpoints de movimientos en efectivo
-   - `POST /cash-movements/create` - Crear movimiento
-   - `GET /cash-movements/list` - Listar todos
-   - `GET /cash-movements/get/{id}` - Obtener por ID
-   - `GET /cash-movements/get/by-account/{accountType}/{accountId}` - Por cuenta
-   - `GET /cash-movements/get/by-date-range?startDate=...&endDate=...` - Por rango de fechas
-   - `PUT /cash-movements/update/{id}` - Actualizar movimiento
-   - `DELETE /cash-movements/delete/{id}` - Eliminar movimiento (soft delete)
-
-4. `NonCashMovementController` - Endpoints de movimientos sin efectivo
-   - Mismos endpoints que `CashMovementController` pero en `/non-cash-movements/*`
-
-**⏳ Pendiente - Métodos en Servicios de Cuentas:**
-- Agregar método `updateAccountEntity()` en:
-  - `MemberAccountService`
-  - `SubscriberAccountService`
-  - `VehicleAccountService`
-- Estos métodos deben actualizar directamente la entidad en el repository (para uso interno de `BalanceUpdateService`)
-
-**⏳ Pendiente - Funcionalidades Futuras:**
-- Entidad `Advance` (adelanto de sueldo) - Se crea cuando el tipo de movimiento es `ADVANCE`
 - Sistema de auditoría (campos `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`)
 - Integración con sistema de login para crear historial automáticamente al iniciar sesión
+- Sistema de cuotas mensuales de socio (usando `FuelReimbursement.accumulatedAmount`)
+- Historial de movimientos de dinero más detallado
+- Reportes en PDF para liquidaciones
 
 ---
 
@@ -413,16 +455,18 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   └── OpenApiConfig.java
 ├── controllers/
 │   ├── BrandController.java
-│   ├── CashMovementController.java (PENDIENTE)
-│   ├── CashRegisterController.java (PENDIENTE)
-│   ├── CashRegisterHistoryController.java (PENDIENTE)
+│   ├── AdvanceController.java
+│   ├── CashMovementController.java
+│   ├── CashRegisterController.java
+│   ├── CashRegisterHistoryController.java
 │   ├── DailyFuelController.java
 │   ├── DriverController.java
 │   ├── DriverSettlementController.java
 │   ├── MemberAccountController.java
 │   ├── MemberController.java
 │   ├── ModelController.java
-│   ├── NonCashMovementController.java (PENDIENTE)
+│   ├── NonCashMovementController.java
+│   ├── PayrollSettlementController.java
 │   ├── SubscriberAccountController.java
 │   ├── SubscriberController.java
 │   ├── TicketTaxiController.java
@@ -432,6 +476,9 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── dto/
 │   │   ├── address/
 │   │   │   └── AddressDTO.java
+│   │   ├── advance/
+│   │   │   ├── AdvanceCreateDTO.java
+│   │   │   └── AdvanceDTO.java
 │   │   ├── brand/
 │   │   │   └── BrandDTO.java
 │   │   ├── cashregister/
@@ -452,6 +499,9 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   │   └── noncash/
 │   │   │       ├── NonCashMovementCreateDTO.java
 │   │   │       └── NonCashMovementDTO.java
+│   │   ├── payrollsettlement/
+│   │   │   ├── PayrollSettlementCreateDTO.java
+│   │   │   └── PayrollSettlementDTO.java
 │   │   ├── person/
 │   │   │   ├── PersonDTO.java
 │   │   │   ├── member/
@@ -478,6 +528,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── entities/
 │   │   ├── AbstractAccountEntity.java
 │   │   ├── AbstractMovementEntity.java
+│   │   ├── AdvanceEntity.java
 │   │   ├── AddressEntity.java
 │   │   ├── BrandEntity.java
 │   │   ├── CashMovementEntity.java
@@ -490,6 +541,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   ├── MemberEntity.java
 │   │   ├── ModelEntity.java
 │   │   ├── NonCashMovementEntity.java
+│   │   ├── PayrollSettlementEntity.java
 │   │   ├── PersonEntity.java
 │   │   ├── SubscriberAccountEntity.java
 │   │   ├── SubscriberEntity.java
@@ -501,6 +553,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │       ├── MemberRole.java
 │       └── MovementType.java
 ├── repositories/
+│   ├── AdvanceRepository.java
 │   ├── AddressRepository.java
 │   ├── BrandRepository.java
 │   ├── CashMovementRepository.java
@@ -513,31 +566,35 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── MemberRepository.java
 │   ├── ModelRepository.java
 │   ├── NonCashMovementRepository.java
+│   ├── PayrollSettlementRepository.java
 │   ├── SubscriberAccountRepository.java
 │   ├── SubscriberRepository.java
 │   ├── TicketTaxiRepository.java
 │   ├── VehicleAccountRepository.java
 │   └── VehicleRepository.java
 ├── services/
+│   ├── AdvanceService.java
 │   ├── AddressService.java
-│   ├── BalanceUpdateService.java (PENDIENTE - implementar)
+│   ├── BalanceUpdateService.java
 │   ├── BrandService.java
-│   ├── CashMovementService.java (PENDIENTE - implementar)
-│   ├── CashRegisterHistoryService.java (PENDIENTE - implementar)
-│   ├── CashRegisterService.java (PENDIENTE - implementar)
+│   ├── CashMovementService.java
+│   ├── CashRegisterHistoryService.java
+│   ├── CashRegisterService.java
 │   ├── DailyFuelService.java
 │   ├── DriverService.java
 │   ├── DriverSettlementService.java
-│   ├── MemberAccountService.java (PENDIENTE - agregar método updateAccountEntity)
+│   ├── MemberAccountService.java
 │   ├── MemberService.java
 │   ├── ModelService.java
-│   ├── NonCashMovementService.java (PENDIENTE - implementar)
-│   ├── SubscriberAccountService.java (PENDIENTE - agregar método updateAccountEntity)
+│   ├── NonCashMovementService.java
+│   ├── PayrollSettlementService.java
+│   ├── SubscriberAccountService.java
 │   ├── SubscriberService.java
 │   ├── TicketTaxiService.java
-│   ├── VehicleAccountService.java (PENDIENTE - agregar método updateAccountEntity)
+│   ├── VehicleAccountService.java
 │   └── VehicleService.java
 └── validators/
+    ├── AdvanceValidator.java
     ├── AddressValidator.java
     ├── BrandValidator.java
     ├── DailyFuelValidator.java
@@ -547,6 +604,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
     ├── MemberValidator.java
     ├── ModelValidator.java
     ├── MovementValidator.java
+    ├── PayrollSettlementValidator.java
     ├── PersonValidator.java
     ├── SubscriberAccountValidator.java
     ├── SubscriberValidator.java
@@ -616,10 +674,10 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 - Relaciones JPA correctamente implementadas entre todas las entidades
 
 **⏳ Pendiente:**
-- Completar Services y Controllers del sistema de caja y movimientos
-- Implementar entidad `Advance` (adelanto de sueldo)
+- Mejoras en sistema de Advance y PayrollSettlement (ver "Tareas para Próxima Sesión")
 - Sistema de auditoría (campos de creación/modificación)
 - Integración con sistema de login para historial automático
+- Sistema de cuotas mensuales de socio
 - Optimizaciones y mejoras continuas
 
 ---
@@ -648,6 +706,15 @@ Este proyecto es un sistema de gestión de taxis cooperativos desarrollado en Sp
 - Seguir los patrones establecidos en el código existente
 - Mantener la estructura de carpetas de DTOs
 - Asegurarse de actualizar este archivo cuando se completen tareas
+
+**Notas importantes sobre Advance y PayrollSettlement:**
+- Los vales (`Advance`) se crean automáticamente al crear un movimiento `CashMovement` o `NonCashMovement` con `MovementType.ADVANCE`
+- Los vales solo pueden crearse para miembros cuyo `role` NO sea `DRIVER_1` ni `DRIVER_2`
+- Los vales NO afectan el balance de la cuenta del miembro (independientemente de `isIncome`)
+- Las liquidaciones (`PayrollSettlement`) son únicas por `account + yearMonth`
+- Al pagar una liquidación (setear `paymentDate`), se crea automáticamente un `NonCashMovement` con `MovementType.PAYMENT` por el `grossSalary`
+- Los vales pueden asociarse a una liquidación pasando `advanceIds` en el `PayrollSettlementCreateDTO`
+- El `netSalary` actualmente se ingresa manualmente, pero debería calcularse automáticamente (tarea pendiente)
 
 ---
 

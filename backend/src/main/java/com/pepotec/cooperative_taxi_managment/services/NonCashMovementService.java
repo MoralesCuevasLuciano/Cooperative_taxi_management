@@ -6,15 +6,18 @@ import com.pepotec.cooperative_taxi_managment.models.dto.movement.noncash.NonCas
 import com.pepotec.cooperative_taxi_managment.models.dto.person.member.account.MemberAccountDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber.account.SubscriberAccountDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.vehicle.account.VehicleAccountDTO;
+import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.NonCashMovementEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.SubscriberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.VehicleAccountEntity;
+import com.pepotec.cooperative_taxi_managment.models.enums.MovementType;
 import com.pepotec.cooperative_taxi_managment.repositories.NonCashMovementRepository;
 import com.pepotec.cooperative_taxi_managment.validators.MovementValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.pepotec.cooperative_taxi_managment.models.entities.PayrollSettlementEntity;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,12 +44,26 @@ public class NonCashMovementService {
     @Autowired
     private VehicleAccountService vehicleAccountService;
 
+    @Autowired
+    private AdvanceService advanceService;
+
     @Transactional
     public NonCashMovementDTO create(NonCashMovementCreateDTO dto) {
         movementValidator.validateNonCashMovementCreate(dto);
         NonCashMovementEntity entity = convertCreateDtoToEntity(dto);
         balanceUpdateService.applyMovement(entity);
-        return convertToDTO(nonCashMovementRepository.save(entity));
+        NonCashMovementEntity saved = nonCashMovementRepository.save(entity);
+
+        // Si es ADVANCE, crear Advance asociado
+        if (saved.getMovementType() == MovementType.ADVANCE) {
+            MemberAccountEntity account = saved.getMemberAccount();
+            if (account == null) {
+                throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
+            }
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+        }
+
+        return convertToDTO(saved);
     }
 
     public NonCashMovementDTO getById(Long id) {
@@ -82,18 +99,36 @@ public class NonCashMovementService {
     public NonCashMovementDTO update(Long id, NonCashMovementCreateDTO dto) {
         NonCashMovementEntity existing = findEntityById(id);
 
+        // Si el previo era ADVANCE, borrar el Advance asociado
+        if (existing.getMovementType() == MovementType.ADVANCE) {
+            advanceService.deleteByMovementId(existing.getId());
+        }
+
         balanceUpdateService.revertMovement(existing);
         movementValidator.validateNonCashMovementCreate(dto);
 
         NonCashMovementEntity updated = applyDtoToEntity(existing, dto);
         balanceUpdateService.applyMovement(updated);
 
-        return convertToDTO(nonCashMovementRepository.save(updated));
+        NonCashMovementEntity saved = nonCashMovementRepository.save(updated);
+
+        if (saved.getMovementType() == MovementType.ADVANCE) {
+            MemberAccountEntity account = saved.getMemberAccount();
+            if (account == null) {
+                throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
+            }
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+        }
+
+        return convertToDTO(saved);
     }
 
     @Transactional
     public void delete(Long id) {
         NonCashMovementEntity existing = findEntityById(id);
+        if (existing.getMovementType() == MovementType.ADVANCE) {
+            advanceService.deleteByMovementId(existing.getId());
+        }
         balanceUpdateService.revertMovement(existing);
         existing.setActive(false);
         nonCashMovementRepository.save(existing);
@@ -194,6 +229,28 @@ public class NonCashMovementService {
                 .isIncome(entity.getIsIncome())
                 .active(entity.getActive())
                 .build();
+    }
+
+    /**
+     * Crea un movimiento de pago de liquidación (NonCashMovement) por el grossSalary.
+     * Este método es llamado internamente por PayrollSettlementService cuando se paga una liquidación.
+     */
+    @Transactional
+    public NonCashMovementDTO createPaymentForSettlement(PayrollSettlementEntity settlement) {
+        if (settlement.getPaymentDate() == null) {
+            throw new InvalidDataException("Cannot create payment movement for a settlement without payment date");
+        }
+
+        NonCashMovementCreateDTO paymentDto = NonCashMovementCreateDTO.builder()
+                .memberAccountId(settlement.getMemberAccount().getId())
+                .description("Pago de liquidación - " + settlement.getYearMonth())
+                .amount(settlement.getGrossSalary())
+                .date(settlement.getPaymentDate())
+                .movementType(MovementType.PAYMENT)
+                .isIncome(true) // Es un ingreso para la cuenta del miembro
+                .build();
+
+        return create(paymentDto);
     }
 }
 
