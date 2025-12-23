@@ -138,6 +138,21 @@ public class VehicleAccountService {
             .active(entity.getActive())
             .build();
     }
+
+    /**
+     * Método auxiliar para actualizar la entidad directamente (para uso interno).
+     */
+    public VehicleAccountEntity updateAccountEntity(VehicleAccountEntity entity) {
+        return vehicleAccountRepository.save(entity);
+    }
+
+    /**
+     * Método auxiliar para obtener la entidad por ID (uso interno).
+     */
+    public VehicleAccountEntity getVehicleAccountEntityById(Long id) {
+        return vehicleAccountRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Vehículo"));
+    }
 }
 
 

@@ -15,3 +15,6 @@ public enum MovementType {
     OTHER             // Other - Para cualquier cuenta o ninguna, la descripción hace su magia
 }
 
+
+
+

@@ -44,3 +44,6 @@ public class NonCashMovementCreateDTO {
     private Boolean isIncome;
 }
 
+
+
+

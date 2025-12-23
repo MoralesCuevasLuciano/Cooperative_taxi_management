@@ -174,9 +174,9 @@ public class MemberAccountService {
     }
 
     /**
-     * Método auxiliar para actualizar la entidad directamente (para uso interno).
+     * Alias usado por BalanceUpdateService para persistir cambios de balance.
      */
-    public MemberAccountEntity updateMemberAccountEntity(MemberAccountEntity entity) {
+    public MemberAccountEntity updateAccountEntity(MemberAccountEntity entity) {
         return memberAccountRepository.save(entity);
     }
 }

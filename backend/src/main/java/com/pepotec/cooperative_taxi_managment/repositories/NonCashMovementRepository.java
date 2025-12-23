@@ -59,3 +59,6 @@ public interface NonCashMovementRepository extends JpaRepository<NonCashMovement
     List<NonCashMovementEntity> findByVehicleAccountId(Long vehicleAccountId);
 }
 
+
+
+

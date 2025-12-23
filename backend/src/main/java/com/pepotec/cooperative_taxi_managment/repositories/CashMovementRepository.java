@@ -59,3 +59,6 @@ public interface CashMovementRepository extends JpaRepository<CashMovementEntity
     List<CashMovementEntity> findByVehicleAccountId(Long vehicleAccountId);
 }
 
+
+
+

@@ -36,3 +36,6 @@ public interface CashRegisterHistoryRepository extends JpaRepository<CashRegiste
     List<CashRegisterHistoryEntity> findAllByOrderByDateDesc();
 }
 
+
+
+

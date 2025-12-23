@@ -48,3 +48,6 @@ public class CashRegisterHistoryEntity {
     private LocalDate date;
 }
 
+
+
+

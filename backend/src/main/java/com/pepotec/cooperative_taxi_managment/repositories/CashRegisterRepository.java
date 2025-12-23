@@ -27,3 +27,6 @@ public interface CashRegisterRepository extends JpaRepository<CashRegisterEntity
     CashRegisterEntity findByActive(Boolean active);
 }
 
+
+
+

@@ -31,3 +31,6 @@ public class CashRegisterHistoryDTO {
     private LocalDate date;
 }
 
+
+
+

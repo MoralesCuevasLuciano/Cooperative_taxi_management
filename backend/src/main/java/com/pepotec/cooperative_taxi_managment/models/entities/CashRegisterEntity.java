@@ -35,3 +35,6 @@ public class CashRegisterEntity {
     // NOTA: La lógica de actualización se maneja en el Service, NO en la entidad
 }
 
+
+
+

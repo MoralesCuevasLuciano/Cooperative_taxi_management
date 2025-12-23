@@ -156,7 +156,7 @@ public class FuelReimbursementService {
         MemberAccountEntity memberAccount = fuelReimbursement.getMemberAccount();
         memberAccount.setBalance(memberAccount.getBalance() + fuelReimbursement.getAccumulatedAmount());
         memberAccount.setLastModified(LocalDate.now());
-        memberAccountService.updateMemberAccountEntity(memberAccount);
+        memberAccountService.updateAccountEntity(memberAccount);
 
         // Resetear el monto acumulado y actualizar fecha de último reintegro
         fuelReimbursement.setAccumulatedAmount(0.0);

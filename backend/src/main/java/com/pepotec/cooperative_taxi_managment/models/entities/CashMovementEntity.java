@@ -28,3 +28,6 @@ public class CashMovementEntity extends AbstractMovementEntity {
     private CashRegisterEntity cashRegister;
 }
 
+
+
+

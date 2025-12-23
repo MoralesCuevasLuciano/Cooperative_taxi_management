@@ -138,6 +138,21 @@ public class SubscriberAccountService {
             .active(entity.getActive())
             .build();
     }
+
+    /**
+     * Método auxiliar para actualizar la entidad directamente (para uso interno).
+     */
+    public SubscriberAccountEntity updateAccountEntity(SubscriberAccountEntity entity) {
+        return subscriberAccountRepository.save(entity);
+    }
+
+    /**
+     * Método auxiliar para obtener la entidad por ID (uso interno).
+     */
+    public SubscriberAccountEntity getSubscriberAccountEntityById(Long id) {
+        return subscriberAccountRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Abonado"));
+    }
 }
 
 
