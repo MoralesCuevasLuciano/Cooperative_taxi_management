@@ -60,7 +60,7 @@ public class NonCashMovementService {
             if (account == null) {
                 throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
             }
-            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId(), saved.getDescription());
         }
 
         return convertToDTO(saved);
@@ -117,7 +117,7 @@ public class NonCashMovementService {
             if (account == null) {
                 throw new InvalidDataException("ADVANCE movement requires a MemberAccount");
             }
-            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId());
+            advanceService.createFromMovement(account, saved.getDate(), saved.getAmount(), saved.getId(), saved.getDescription());
         }
 
         return convertToDTO(saved);

@@ -25,10 +25,6 @@ public class PayrollSettlementCreateDTO {
     @PositiveOrZero(message = "The gross salary must be >= 0")
     private Double grossSalary;
 
-    @NotNull(message = "The net salary cannot be null")
-    @PositiveOrZero(message = "The net salary must be >= 0")
-    private Double netSalary;
-
     @NotNull(message = "The period (yearMonth) cannot be null")
     private YearMonth yearMonth;
 

@@ -5,7 +5,6 @@ import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundExcepti
 import com.pepotec.cooperative_taxi_managment.models.dto.payrollsettlement.PayrollSettlementCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.payrollsettlement.PayrollSettlementDTO;
 import com.pepotec.cooperative_taxi_managment.models.entities.*;
-import com.pepotec.cooperative_taxi_managment.repositories.AdvanceRepository;
 import com.pepotec.cooperative_taxi_managment.repositories.PayrollSettlementRepository;
 import com.pepotec.cooperative_taxi_managment.validators.PayrollSettlementValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class PayrollSettlementService {
     private PayrollSettlementRepository payrollSettlementRepository;
 
     @Autowired
-    private AdvanceRepository advanceRepository;
+    private AdvanceService advanceService;
 
     @Autowired
     private MemberAccountService memberAccountService;
@@ -39,38 +39,52 @@ public class PayrollSettlementService {
     public PayrollSettlementDTO create(PayrollSettlementCreateDTO dto) {
         MemberAccountEntity account = memberAccountService.getMemberAccountEntityById(dto.getMemberAccountId());
         payrollSettlementValidator.validateMemberRole(account);
-        payrollSettlementValidator.validateCreateFields(dto.getGrossSalary(), dto.getNetSalary(), dto.getYearMonth());
+        payrollSettlementValidator.validateCreateFields(dto.getGrossSalary(), dto.getYearMonth());
         payrollSettlementValidator.validatePaymentDate(dto.getPaymentDate());
 
         // Unicidad account + yearMonth
-        if (payrollSettlementRepository.existsByMemberAccountIdAndYearMonth(account.getId(), dto.getYearMonth())) {
+        String yearMonthStr = dto.getYearMonth() != null ? dto.getYearMonth().toString() : null;
+        if (payrollSettlementRepository.existsByMemberAccountIdAndYearMonth(account.getId(), yearMonthStr)) {
             throw new InvalidDataException("A payroll settlement already exists for this account and period");
+        }
+
+        // Obtener vales (solo los que no tengan liquidación)
+        List<AdvanceEntity> advances = new ArrayList<>();
+        if (dto.getAdvanceIds() != null && !dto.getAdvanceIds().isEmpty()) {
+            advances = advanceService.getAdvanceEntitiesByIds(dto.getAdvanceIds());
+            for (AdvanceEntity adv : advances) {
+                if (adv.getPayrollSettlement() != null) {
+                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to a payroll settlement");
+                }
+            }
+        }
+
+        // Calcular sueldo neto: grossSalary - suma de vales asociados
+        Double totalAdvances = advances.stream()
+                .mapToDouble(AdvanceEntity::getAmount)
+                .sum();
+        Double netSalary = dto.getGrossSalary() - totalAdvances;
+        if (netSalary < 0) {
+            netSalary = 0.0; // El sueldo neto no puede ser negativo
         }
 
         PayrollSettlementEntity entity = PayrollSettlementEntity.builder()
                 .memberAccount(account)
                 .grossSalary(dto.getGrossSalary())
-                .netSalary(dto.getNetSalary())
-                .yearMonth(dto.getYearMonth())
+                .netSalary(netSalary) // Calculado automáticamente
+                .yearMonth(dto.getYearMonth() != null ? dto.getYearMonth().toString() : null) // Convertir YearMonth a String
                 .paymentDate(dto.getPaymentDate())
                 .active(true)
                 .build();
 
-        // Asociar vales (solo los que no tengan liquidación)
-        if (dto.getAdvanceIds() != null && !dto.getAdvanceIds().isEmpty()) {
-            List<AdvanceEntity> advances = advanceRepository.findAllById(dto.getAdvanceIds());
-            for (AdvanceEntity adv : advances) {
-                if (adv.getPayrollSettlement() != null) {
-                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to a payroll settlement");
-                }
-                adv.setPayrollSettlement(entity);
-            }
-            entity.setAdvances(advances);
-        } else {
-            entity.setAdvances(new ArrayList<>());
-        }
-
+        // Guardar primero la entidad para que tenga ID
         entity = payrollSettlementRepository.save(entity);
+
+        // Actualizar vales existentes para asociarlos con esta liquidación
+        for (AdvanceEntity adv : advances) {
+            advanceService.associateWithSettlement(adv, entity);
+        }
+        entity.setAdvances(advances);
 
         // Si tiene paymentDate, registrar movimiento de pago (NonCashMovement) por grossSalary
         if (entity.getPaymentDate() != null) {
@@ -86,39 +100,53 @@ public class PayrollSettlementService {
 
         MemberAccountEntity account = memberAccountService.getMemberAccountEntityById(dto.getMemberAccountId());
         payrollSettlementValidator.validateMemberRole(account);
-        payrollSettlementValidator.validateCreateFields(dto.getGrossSalary(), dto.getNetSalary(), dto.getYearMonth());
+        payrollSettlementValidator.validateCreateFields(dto.getGrossSalary(), dto.getYearMonth());
         payrollSettlementValidator.validatePaymentDate(dto.getPaymentDate());
 
         // Unicidad account + yearMonth (permitiendo el mismo id)
-        payrollSettlementRepository.findByMemberAccountIdAndYearMonth(account.getId(), dto.getYearMonth())
+        String yearMonthStr = dto.getYearMonth() != null ? dto.getYearMonth().toString() : null;
+        payrollSettlementRepository.findByMemberAccountIdAndYearMonth(account.getId(), yearMonthStr)
                 .ifPresent(other -> {
                     if (!other.getId().equals(id)) {
                         throw new InvalidDataException("A payroll settlement already exists for this account and period");
                     }
                 });
 
-        existing.setMemberAccount(account);
-        existing.setGrossSalary(dto.getGrossSalary());
-        existing.setNetSalary(dto.getNetSalary());
-        existing.setYearMonth(dto.getYearMonth());
-        existing.setPaymentDate(dto.getPaymentDate());
-
-        // Limpiar enlaces previos de advances y asignar los nuevos
+        // Limpiar enlaces previos de advances (actualizar para desasociarlos)
         if (existing.getAdvances() != null) {
-            existing.getAdvances().forEach(a -> a.setPayrollSettlement(null));
+            for (AdvanceEntity adv : existing.getAdvances()) {
+                advanceService.disassociateFromSettlement(adv);
+            }
         }
         existing.setAdvances(new ArrayList<>());
 
+        // Asociar nuevos vales (actualizar para asociarlos)
+        List<AdvanceEntity> advances = new ArrayList<>();
         if (dto.getAdvanceIds() != null && !dto.getAdvanceIds().isEmpty()) {
-            List<AdvanceEntity> advances = advanceRepository.findAllById(dto.getAdvanceIds());
+            advances = advanceService.getAdvanceEntitiesByIds(dto.getAdvanceIds());
             for (AdvanceEntity adv : advances) {
                 if (adv.getPayrollSettlement() != null && !adv.getPayrollSettlement().getId().equals(existing.getId())) {
                     throw new InvalidDataException("Advance " + adv.getId() + " is already linked to another payroll settlement");
                 }
-                adv.setPayrollSettlement(existing);
+                advanceService.associateWithSettlement(adv, existing);
             }
-            existing.setAdvances(advances);
         }
+
+        // Calcular sueldo neto: grossSalary - suma de vales asociados
+        Double totalAdvances = advances.stream()
+                .mapToDouble(AdvanceEntity::getAmount)
+                .sum();
+        Double netSalary = dto.getGrossSalary() - totalAdvances;
+        if (netSalary < 0) {
+            netSalary = 0.0; // El sueldo neto no puede ser negativo
+        }
+
+        existing.setMemberAccount(account);
+        existing.setGrossSalary(dto.getGrossSalary());
+        existing.setNetSalary(netSalary); // Calculado automáticamente
+        existing.setYearMonth(dto.getYearMonth() != null ? dto.getYearMonth().toString() : null); // Convertir YearMonth a String
+        existing.setPaymentDate(dto.getPaymentDate());
+        existing.setAdvances(advances);
 
         existing = payrollSettlementRepository.save(existing);
 
@@ -143,7 +171,8 @@ public class PayrollSettlementService {
     }
 
     public List<PayrollSettlementDTO> listByPeriod(java.time.YearMonth yearMonth) {
-        return payrollSettlementRepository.findByYearMonth(yearMonth).stream().map(this::convertToDTO).collect(Collectors.toList());
+        String yearMonthStr = yearMonth != null ? yearMonth.toString() : null;
+        return payrollSettlementRepository.findByYearMonth(yearMonthStr).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     public List<PayrollSettlementDTO> listByPaymentDateRange(LocalDate startDate, LocalDate endDate) {
@@ -169,7 +198,7 @@ public class PayrollSettlementService {
                 .memberAccountId(entity.getMemberAccount().getId())
                 .grossSalary(entity.getGrossSalary())
                 .netSalary(entity.getNetSalary())
-                .yearMonth(entity.getYearMonth())
+                .yearMonth(entity.getYearMonth() != null ? YearMonth.parse(entity.getYearMonth()) : null) // Convertir String a YearMonth
                 .paymentDate(entity.getPaymentDate())
                 .active(entity.getActive())
                 .advances(entity.getAdvances() != null

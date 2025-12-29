@@ -22,12 +22,9 @@ public class PayrollSettlementValidator {
         }
     }
 
-    public void validateCreateFields(Double grossSalary, Double netSalary, YearMonth yearMonth) {
+    public void validateCreateFields(Double grossSalary, YearMonth yearMonth) {
         if (grossSalary == null || grossSalary < 0) {
             throw new InvalidDataException("The gross salary must be >= 0");
-        }
-        if (netSalary == null || netSalary < 0) {
-            throw new InvalidDataException("The net salary must be >= 0");
         }
         if (yearMonth == null) {
             throw new InvalidDataException("The period (yearMonth) cannot be null");

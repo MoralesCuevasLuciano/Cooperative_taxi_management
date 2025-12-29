@@ -1,6 +1,5 @@
 package com.pepotec.cooperative_taxi_managment.services;
 
-import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.exceptions.ResourceNotFoundException;
 import com.pepotec.cooperative_taxi_managment.models.dto.advance.AdvanceCreateDTO;
 import com.pepotec.cooperative_taxi_managment.models.dto.advance.AdvanceDTO;
@@ -60,9 +59,10 @@ public class AdvanceService {
 
     /**
      * Creación desde un movimiento de tipo ADVANCE.
+     * El campo notes del Advance hereda el description del movimiento.
      */
     @Transactional
-    public AdvanceEntity createFromMovement(MemberAccountEntity account, LocalDate date, Double amount, Long movementId) {
+    public AdvanceEntity createFromMovement(MemberAccountEntity account, LocalDate date, Double amount, Long movementId, String description) {
         advanceValidator.validateMemberRole(account);
         advanceValidator.validateCreateFields(amount, date);
         AdvanceEntity entity = AdvanceEntity.builder()
@@ -71,6 +71,7 @@ public class AdvanceService {
                 .movementId(movementId)
                 .date(date)
                 .amount(amount)
+                .notes(description) // Hereda description del movimiento
                 .active(true)
                 .build();
         return advanceRepository.save(entity);
@@ -79,6 +80,32 @@ public class AdvanceService {
     @Transactional
     public void deleteByMovementId(Long movementId) {
         advanceRepository.deleteByMovementId(movementId);
+    }
+
+    /**
+     * Obtiene entidades Advance por sus IDs (para uso interno de otros servicios).
+     */
+    public List<AdvanceEntity> getAdvanceEntitiesByIds(List<Long> ids) {
+        return advanceRepository.findAllById(ids);
+    }
+
+    /**
+     * Asocia un Advance con un PayrollSettlement (actualiza el campo payrollSettlement).
+     * El Advance ya debe existir en la base de datos.
+     */
+    @Transactional
+    public void associateWithSettlement(AdvanceEntity advance, PayrollSettlementEntity settlement) {
+        advance.setPayrollSettlement(settlement);
+        advanceRepository.save(advance);
+    }
+
+    /**
+     * Desasocia un Advance de su PayrollSettlement (pone payrollSettlement en null).
+     */
+    @Transactional
+    public void disassociateFromSettlement(AdvanceEntity advance) {
+        advance.setPayrollSettlement(null);
+        advanceRepository.save(advance);
     }
 
     public AdvanceDTO getById(Long id) {
