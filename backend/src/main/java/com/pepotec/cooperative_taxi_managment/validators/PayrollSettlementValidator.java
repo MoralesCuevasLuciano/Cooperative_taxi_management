@@ -31,6 +31,28 @@ public class PayrollSettlementValidator {
         }
     }
 
+    /**
+     * Valida que el String del período tenga el formato correcto YYYY-MM.
+     * 
+     * @param period String en formato YYYY-MM (ej: "2024-12")
+     * @throws InvalidDataException si el formato es inválido
+     */
+    public void validatePeriodFormat(String period) {
+        if (period == null || period.isBlank()) {
+            throw new InvalidDataException("The period cannot be null or empty");
+        }
+        // Validar formato YYYY-MM
+        if (!period.matches("^\\d{4}-(0[1-9]|1[0-2])$")) {
+            throw new InvalidDataException("The period must be in format YYYY-MM (e.g., 2024-12). Received: " + period);
+        }
+        // Validar que sea un YearMonth válido
+        try {
+            YearMonth.parse(period);
+        } catch (Exception e) {
+            throw new InvalidDataException("The period must be a valid year-month. Received: " + period);
+        }
+    }
+
     public void validatePaymentDate(LocalDate paymentDate) {
         // paymentDate can be null; no extra validation for now.
     }

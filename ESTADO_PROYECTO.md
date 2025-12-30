@@ -414,7 +414,13 @@
   - Unicidad por cuenta y período
   - Asociación de múltiples vales a una liquidación
   - Creación automática de movimiento de pago al pagar liquidación
-- ✅ Converter para `YearMonth` para persistencia en base de datos
+  - Cálculo automático de `netSalary` (grossSalary - suma de vales)
+- ✅ Validación de formato `YYYY-MM` para el campo `period`:
+  - Anotación `@Pattern` en la entidad para validación a nivel JPA
+  - Método `validatePeriodFormat()` en el validator para validación programática
+- ✅ Resolución de bug crítico de Hibernate 6:
+  - Cambio de nombre de columna de `year_month` a `period` para evitar error de sintaxis SQL
+  - Documentación completa del bug y solución en comentarios JavaDoc
 - ✅ Documentación Swagger completa en todos los endpoints
 
 ---
@@ -423,19 +429,22 @@
 
 ### ⏳ Tareas para Próxima Sesión
 
-1. **Hacer que `notes` de `Advance` herede `description` de `NonCashMovement`**
-   - Cuando se crea un `Advance` desde un movimiento `ADVANCE`, el campo `notes` debería tomar el valor de `description` del movimiento
-   - Actualizar método `createFromMovement` en `AdvanceService` para incluir la descripción
+1. **✅ COMPLETADO: Hacer que `notes` de `Advance` herede `description` de `NonCashMovement`**
+   - ✅ Implementado: El campo `notes` ahora hereda el `description` del movimiento al crear un `Advance`
+   - ✅ Actualizado método `createFromMovement` en `AdvanceService` para incluir la descripción
 
-2. **Hacer que el sueldo neto se calcule automáticamente**
-   - El `netSalary` de `PayrollSettlement` debería calcularse automáticamente como: `grossSalary - suma de vales asociados`
-   - Implementar lógica en `PayrollSettlementService.create()` y `PayrollSettlementService.update()`
-   - Considerar si hay otros descuentos además de vales (a futuro)
+2. **✅ COMPLETADO: Hacer que el sueldo neto se calcule automáticamente**
+   - ✅ Implementado: El `netSalary` se calcula automáticamente como `grossSalary - suma de vales asociados`
+   - ✅ Lógica implementada en `PayrollSettlementService.create()` y `PayrollSettlementService.update()`
+   - ✅ Si el resultado es negativo, se establece en 0.0
 
-3. **Descubrir y corregir error al crear `PayrollSettlement`**
-   - Investigar qué error ocurre al crear una liquidación
-   - Revisar logs, validaciones, relaciones y constraints de base de datos
-   - Corregir el problema encontrado
+3. **✅ RESUELTO: Error al crear `PayrollSettlement`**
+   - **Estado:** RESUELTO - La tabla se crea correctamente
+   - **Error original:** `SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'year_month) values (...)'`
+   - **Causa raíz:** Bug conocido en Hibernate 6.6.29.Final al generar DDL para constraints únicos compuestos cuando la columna se llama `year_month`. El problema NO es el guion bajo en sí, sino cómo Hibernate procesa ese nombre específico en el contexto de un `@UniqueConstraint` compuesto.
+   - **Solución aplicada:** Cambiar el nombre de la columna de `year_month` a `period` en la entidad y en el constraint único.
+   - **Documentación:** Ver comentarios en `PayrollSettlementEntity.java` para detalles completos del bug y la solución.
+   - **Lección aprendida:** Evitar nombres con guiones bajos en columnas que participen en constraints únicos compuestos cuando se usa Hibernate 6.
 
 ### ⏳ Funcionalidades Futuras
 
@@ -674,7 +683,6 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 - Relaciones JPA correctamente implementadas entre todas las entidades
 
 **⏳ Pendiente:**
-- Mejoras en sistema de Advance y PayrollSettlement (ver "Tareas para Próxima Sesión")
 - Sistema de auditoría (campos de creación/modificación)
 - Integración con sistema de login para historial automático
 - Sistema de cuotas mensuales de socio
