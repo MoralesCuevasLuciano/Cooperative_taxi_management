@@ -80,9 +80,7 @@ public class DriverService {
     }
 
     public DriverDTO getDriverByDni(String dni) {
-        if (dni == null || dni.trim().isEmpty()) {
-            throw new InvalidDataException("El DNI no puede estar vacío");
-        }
+        driverValidator.validateDniNotEmpty(dni);
         
         DriverEntity driver = driverRepository.findByDniAndLeaveDateIsNull(dni)
             .orElseThrow(() -> new ResourceNotFoundException(null, "Conductor con DNI " + dni));
@@ -103,10 +101,7 @@ public class DriverService {
     }
 
     public DriverDTO updateDriver(DriverDTO driver) {
-        // Validar que el ID no sea nulo
-        if (driver.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        driverValidator.validateIdNotNullForUpdate(driver.getId());
         
         // Buscar el conductor existente
         DriverEntity driverSaved = driverRepository.findById(driver.getId())
@@ -131,9 +126,7 @@ public class DriverService {
     }
 
     public void deleteDriver(Long id) {
-        if(id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        driverValidator.validateIdNotNullForUpdate(id);
 
         DriverEntity driverSaved = driverRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Conductor"));
@@ -148,9 +141,7 @@ public class DriverService {
     }
 
     public void deleteDriver(Long id, LocalDate leaveDate) {
-        if(id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        driverValidator.validateIdNotNullForUpdate(id);
 
         DriverEntity driverSaved = driverRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Conductor"));

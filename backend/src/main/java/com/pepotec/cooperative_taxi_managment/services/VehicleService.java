@@ -79,7 +79,7 @@ public class VehicleService {
 
     public VehicleDTO getVehicleByLicensePlate(String licensePlate) {
         if (licensePlate == null || licensePlate.trim().isEmpty()) {
-            throw new InvalidDataException("La patente no puede estar vacía");
+            throw new InvalidDataException("The license plate cannot be empty");
         }
 
         VehicleEntity vehicle = vehicleRepository.findByLicensePlate(licensePlate)
@@ -107,7 +107,7 @@ public class VehicleService {
 
     public VehicleDTO updateVehicle(VehicleDTO vehicle) {
         if (vehicle.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
+            throw new InvalidDataException("The ID cannot be null for update");
         }
 
         VehicleEntity vehicleEntity = vehicleRepository.findById(vehicle.getId())
@@ -131,7 +131,7 @@ public class VehicleService {
 
     public void deleteVehicle(Long id) {
         if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
+            throw new InvalidDataException("The ID cannot be null");
         }
 
         VehicleEntity vehicle = vehicleRepository.findById(id)
@@ -144,7 +144,7 @@ public class VehicleService {
 
     public void deleteVehicle(Long id, LocalDate leaveDate) {
         if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
+            throw new InvalidDataException("The ID cannot be null");
         }
 
         VehicleEntity vehicle = vehicleRepository.findById(id)

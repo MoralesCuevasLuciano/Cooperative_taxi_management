@@ -44,19 +44,13 @@ public class PayrollSettlementService {
 
         // Unicidad account + yearMonth
         String yearMonthStr = dto.getYearMonth() != null ? dto.getYearMonth().toString() : null;
-        if (payrollSettlementRepository.existsByMemberAccountIdAndYearMonth(account.getId(), yearMonthStr)) {
-            throw new InvalidDataException("A payroll settlement already exists for this account and period");
-        }
+        payrollSettlementValidator.validateUniqueAccountPeriod(account.getId(), yearMonthStr, null);
 
         // Obtener vales (solo los que no tengan liquidación)
         List<AdvanceEntity> advances = new ArrayList<>();
         if (dto.getAdvanceIds() != null && !dto.getAdvanceIds().isEmpty()) {
             advances = advanceService.getAdvanceEntitiesByIds(dto.getAdvanceIds());
-            for (AdvanceEntity adv : advances) {
-                if (adv.getPayrollSettlement() != null) {
-                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to a payroll settlement");
-                }
-            }
+            payrollSettlementValidator.validateAdvancesNotLinked(advances, null);
         }
 
         // Calcular sueldo neto: grossSalary - suma de vales asociados
@@ -105,12 +99,7 @@ public class PayrollSettlementService {
 
         // Unicidad account + yearMonth (permitiendo el mismo id)
         String yearMonthStr = dto.getYearMonth() != null ? dto.getYearMonth().toString() : null;
-        payrollSettlementRepository.findByMemberAccountIdAndYearMonth(account.getId(), yearMonthStr)
-                .ifPresent(other -> {
-                    if (!other.getId().equals(id)) {
-                        throw new InvalidDataException("A payroll settlement already exists for this account and period");
-                    }
-                });
+        payrollSettlementValidator.validateUniqueAccountPeriod(account.getId(), yearMonthStr, id);
 
         // Limpiar enlaces previos de advances (actualizar para desasociarlos)
         if (existing.getAdvances() != null) {
@@ -124,10 +113,8 @@ public class PayrollSettlementService {
         List<AdvanceEntity> advances = new ArrayList<>();
         if (dto.getAdvanceIds() != null && !dto.getAdvanceIds().isEmpty()) {
             advances = advanceService.getAdvanceEntitiesByIds(dto.getAdvanceIds());
+            payrollSettlementValidator.validateAdvancesNotLinked(advances, id);
             for (AdvanceEntity adv : advances) {
-                if (adv.getPayrollSettlement() != null && !adv.getPayrollSettlement().getId().equals(existing.getId())) {
-                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to another payroll settlement");
-                }
                 advanceService.associateWithSettlement(adv, existing);
             }
         }

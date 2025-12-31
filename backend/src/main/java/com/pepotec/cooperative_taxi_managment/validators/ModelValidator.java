@@ -16,11 +16,11 @@ public class ModelValidator {
 
     public void validateModelSpecificFields(ModelDTO model) {
         if (model.getName() == null || model.getName().trim().isEmpty()) {
-            throw new InvalidDataException("El nombre del modelo no puede estar vacío");
+            throw new InvalidDataException("The model name cannot be empty");
         }
 
         if (model.getBrand() == null || model.getBrand().getId() == null) {
-            throw new InvalidDataException("La marca no puede ser nula");
+            throw new InvalidDataException("The brand cannot be null");
         }
 
         validateYear(model);
@@ -28,12 +28,12 @@ public class ModelValidator {
 
     private void validateYear(ModelDTO model) {
         if (model.getYear() == null) {
-            throw new InvalidDataException("El año no puede ser nulo");
+            throw new InvalidDataException("The year cannot be null");
         }
 
         int currentYear = Year.now().getValue();
         if (model.getYear() > currentYear) {
-            throw new InvalidDataException("El año no puede ser futuro. El año máximo permitido es " + currentYear);
+            throw new InvalidDataException("The year cannot be in the future. The maximum allowed year is " + currentYear);
         }
     }
 
@@ -44,7 +44,7 @@ public class ModelValidator {
                     throw new DuplicateFieldException(
                         "name",
                         model.getName(),
-                        "Ya existe un modelo con el nombre '" + model.getName() + "' para la marca especificada"
+                        "A model with the name '" + model.getName() + "' already exists for the specified brand"
                     );
                 }
             });

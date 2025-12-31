@@ -51,9 +51,7 @@ public class TicketTaxiService {
     }
 
     public TicketTaxiDTO getTicketTaxiByTicketNumber(String ticketNumber) {
-        if (ticketNumber == null || ticketNumber.trim().isEmpty()) {
-            throw new InvalidDataException("El número de ticket no puede estar vacío");
-        }
+        ticketTaxiValidator.validateTicketNumberNotEmpty(ticketNumber);
 
         TicketTaxiEntity ticketTaxi = ticketTaxiRepository.findByTicketNumber(ticketNumber)
             .orElseThrow(() -> new ResourceNotFoundException(null, "Ticket de Taxi con número " + ticketNumber));
@@ -67,102 +65,60 @@ public class TicketTaxiService {
     }
 
     public List<TicketTaxiDTO> getTicketTaxisByVehicle(Long vehicleId) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
+        ticketTaxiValidator.validateVehicleIdNotNull(vehicleId);
         return ticketTaxiRepository.findByVehicleId(vehicleId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisBySettlement(Long settlementId) {
-        if (settlementId == null) {
-            throw new InvalidDataException("El ID de rendición no puede ser nulo");
-        }
+        ticketTaxiValidator.validateSettlementIdNotNull(settlementId);
         return ticketTaxiRepository.findBySettlementId(settlementId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisByStartDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findByStartDateBetween(startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisByCutDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findByCutDateBetween(startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisByVehicleAndStartDateRange(Long vehicleId, LocalDate startDate, LocalDate endDate) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateVehicleIdNotNull(vehicleId);
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findByVehicleIdAndStartDateBetween(vehicleId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisByVehicleAndCutDateRange(Long vehicleId, LocalDate startDate, LocalDate endDate) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateVehicleIdNotNull(vehicleId);
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findByVehicleIdAndCutDateBetween(vehicleId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisBySettlementAndStartDateRange(Long settlementId, LocalDate startDate, LocalDate endDate) {
-        if (settlementId == null) {
-            throw new InvalidDataException("El ID de rendición no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateSettlementIdNotNull(settlementId);
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findBySettlementIdAndStartDateBetween(settlementId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<TicketTaxiDTO> getTicketTaxisBySettlementAndCutDateRange(Long settlementId, LocalDate startDate, LocalDate endDate) {
-        if (settlementId == null) {
-            throw new InvalidDataException("El ID de rendición no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        ticketTaxiValidator.validateSettlementIdNotNull(settlementId);
+        ticketTaxiValidator.validateDateRange(startDate, endDate);
         return ticketTaxiRepository.findBySettlementIdAndCutDateBetween(settlementId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
@@ -170,9 +126,7 @@ public class TicketTaxiService {
 
     @Transactional
     public TicketTaxiDTO updateTicketTaxi(TicketTaxiDTO ticketTaxi) {
-        if (ticketTaxi.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        ticketTaxiValidator.validateIdNotNullForUpdate(ticketTaxi.getId());
 
         TicketTaxiEntity ticketTaxiEntity = ticketTaxiRepository.findById(ticketTaxi.getId())
             .orElseThrow(() -> new ResourceNotFoundException(ticketTaxi.getId(), "Ticket de Taxi"));
@@ -196,9 +150,7 @@ public class TicketTaxiService {
     }
 
     public void deleteTicketTaxi(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        ticketTaxiValidator.validateIdNotNull(id);
 
         TicketTaxiEntity ticketTaxi = ticketTaxiRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Ticket de Taxi"));

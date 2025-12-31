@@ -33,9 +33,7 @@ public class SubscriberAccountService {
 
         SubscriberEntity subscriber = subscriberService.getSubscriberEntityById(subscriberId);
 
-        subscriberAccountRepository.findBySubscriberId(subscriber.getId()).ifPresent(existing -> {
-            throw new InvalidDataException("El abonado ya tiene una cuenta asociada");
-        });
+        subscriberAccountValidator.validateUniqueSubscriberAccount(subscriber.getId());
 
         SubscriberAccountEntity entity = convertCreateDtoToEntity(account);
         entity.setSubscriber(subscriber);
@@ -54,9 +52,7 @@ public class SubscriberAccountService {
     }
 
     public SubscriberAccountDTO getSubscriberAccountBySubscriberId(Long subscriberId) {
-        if (subscriberId == null) {
-            throw new InvalidDataException("El ID del abonado no puede ser nulo");
-        }
+        subscriberAccountValidator.validateSubscriberIdNotNull(subscriberId);
         SubscriberAccountEntity account = subscriberAccountRepository.findBySubscriberIdAndActiveTrue(subscriberId)
             .orElseThrow(() -> new ResourceNotFoundException(subscriberId, "Cuenta de Abonado para el abonado"));
         return convertToDTO(account);
@@ -75,9 +71,7 @@ public class SubscriberAccountService {
     }
 
     public SubscriberAccountDTO updateSubscriberAccount(SubscriberAccountDTO account) {
-        if (account.getId() == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo para actualizar");
-        }
+        subscriberAccountValidator.validateIdNotNullForUpdate(account.getId());
 
         SubscriberAccountEntity entity = subscriberAccountRepository.findById(account.getId())
             .orElseThrow(() -> new ResourceNotFoundException(account.getId(), "Cuenta de Abonado"));
@@ -94,9 +88,7 @@ public class SubscriberAccountService {
     }
 
     public void deleteSubscriberAccount(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo");
-        }
+        subscriberAccountValidator.validateIdNotNull(id);
 
         SubscriberAccountEntity entity = subscriberAccountRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Abonado"));

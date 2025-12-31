@@ -16,53 +16,53 @@ public class VehicleValidator {
 
     public void validateVehicleSpecificFields(VehicleDTO vehicle) {
         if (vehicle.getLicensePlate() == null || vehicle.getLicensePlate().trim().isEmpty()) {
-            throw new InvalidDataException("La patente no puede estar vacía");
+            throw new InvalidDataException("The license plate cannot be empty");
         }
 
         if (vehicle.getLicenseNumber() == null || vehicle.getLicenseNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de licencia no puede estar vacío");
+            throw new InvalidDataException("The license number cannot be empty");
         }
 
         if (vehicle.getEngineNumber() == null || vehicle.getEngineNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de motor no puede estar vacío");
+            throw new InvalidDataException("The engine number cannot be empty");
         }
 
         if (vehicle.getChassisNumber() == null || vehicle.getChassisNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de chasis no puede estar vacío");
+            throw new InvalidDataException("The chassis number cannot be empty");
         }
 
         if (vehicle.getVtvExpirationDate() == null) {
-            throw new InvalidDataException("La fecha de vencimiento de VTV no puede ser nula");
+            throw new InvalidDataException("The VTV expiration date cannot be null");
         }
 
         if (vehicle.getModel() == null || vehicle.getModel().getId() == null) {
-            throw new InvalidDataException("El modelo no puede ser nulo");
+            throw new InvalidDataException("The model cannot be null");
         }
     }
 
     public void validateVehicleCreateFields(VehicleCreateDTO vehicle) {
         if (vehicle.getLicensePlate() == null || vehicle.getLicensePlate().trim().isEmpty()) {
-            throw new InvalidDataException("La patente no puede estar vacía");
+            throw new InvalidDataException("The license plate cannot be empty");
         }
 
         if (vehicle.getLicenseNumber() == null || vehicle.getLicenseNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de licencia no puede estar vacío");
+            throw new InvalidDataException("The license number cannot be empty");
         }
 
         if (vehicle.getEngineNumber() == null || vehicle.getEngineNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de motor no puede estar vacío");
+            throw new InvalidDataException("The engine number cannot be empty");
         }
 
         if (vehicle.getChassisNumber() == null || vehicle.getChassisNumber().trim().isEmpty()) {
-            throw new InvalidDataException("El número de chasis no puede estar vacío");
+            throw new InvalidDataException("The chassis number cannot be empty");
         }
 
         if (vehicle.getVtvExpirationDate() == null) {
-            throw new InvalidDataException("La fecha de vencimiento de VTV no puede ser nula");
+            throw new InvalidDataException("The VTV expiration date cannot be null");
         }
 
         if (vehicle.getModelId() == null) {
-            throw new InvalidDataException("El ID de modelo no puede ser nulo");
+            throw new InvalidDataException("The model ID cannot be null");
         }
     }
 
@@ -71,7 +71,7 @@ public class VehicleValidator {
             vehicle.getLicensePlate(),
             vehicleRepository::findByLicensePlate,
             excludeId,
-            "patente",
+            "license plate",
             vehicle.getLicensePlate()
         );
 
@@ -79,7 +79,7 @@ public class VehicleValidator {
             vehicle.getLicenseNumber(),
             vehicleRepository::findByLicenseNumber,
             excludeId,
-            "número de licencia",
+            "license number",
             vehicle.getLicenseNumber()
         );
 
@@ -87,7 +87,7 @@ public class VehicleValidator {
             vehicle.getEngineNumber(),
             vehicleRepository::findByEngineNumber,
             excludeId,
-            "número de motor",
+            "engine number",
             vehicle.getEngineNumber()
         );
 
@@ -95,7 +95,7 @@ public class VehicleValidator {
             vehicle.getChassisNumber(),
             vehicleRepository::findByChassisNumber,
             excludeId,
-            "número de chasis",
+            "chassis number",
             vehicle.getChassisNumber()
         );
     }
@@ -113,7 +113,7 @@ public class VehicleValidator {
                         throw new DuplicateFieldException(
                             fieldName,
                             displayValue,
-                            "Ya existe un vehículo con " + fieldName + ": " + displayValue
+                            "A vehicle with " + fieldName + ": " + displayValue + " already exists"
                         );
                     }
                 });

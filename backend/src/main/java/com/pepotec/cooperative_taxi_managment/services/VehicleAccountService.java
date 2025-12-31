@@ -33,9 +33,7 @@ public class VehicleAccountService {
 
         VehicleEntity vehicle = vehicleService.getVehicleEntityById(vehicleId);
 
-        vehicleAccountRepository.findByVehicleId(vehicle.getId()).ifPresent(existing -> {
-            throw new InvalidDataException("El vehículo ya tiene una cuenta asociada");
-        });
+        vehicleAccountValidator.validateUniqueVehicleAccount(vehicle.getId());
 
         VehicleAccountEntity entity = convertCreateDtoToEntity(account);
         entity.setVehicle(vehicle);
@@ -54,9 +52,7 @@ public class VehicleAccountService {
     }
 
     public VehicleAccountDTO getVehicleAccountByVehicleId(Long vehicleId) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
+        vehicleAccountValidator.validateVehicleIdNotNull(vehicleId);
         VehicleAccountEntity account = vehicleAccountRepository.findByVehicleIdAndActiveTrue(vehicleId)
             .orElseThrow(() -> new ResourceNotFoundException(vehicleId, "Cuenta de Vehículo para el vehículo"));
         return convertToDTO(account);
@@ -75,9 +71,7 @@ public class VehicleAccountService {
     }
 
     public VehicleAccountDTO updateVehicleAccount(VehicleAccountDTO account) {
-        if (account.getId() == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo para actualizar");
-        }
+        vehicleAccountValidator.validateIdNotNullForUpdate(account.getId());
 
         VehicleAccountEntity entity = vehicleAccountRepository.findById(account.getId())
             .orElseThrow(() -> new ResourceNotFoundException(account.getId(), "Cuenta de Vehículo"));
@@ -94,9 +88,7 @@ public class VehicleAccountService {
     }
 
     public void deleteVehicleAccount(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo");
-        }
+        vehicleAccountValidator.validateIdNotNull(id);
 
         VehicleAccountEntity entity = vehicleAccountRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Vehículo"));

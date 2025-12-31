@@ -42,7 +42,7 @@ public class BrandService {
 
     public BrandDTO updateBrand(BrandDTO brand) {
         if (brand.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
+            throw new InvalidDataException("The ID cannot be null for update");
         }
 
         BrandEntity brandEntity = brandRepository.findById(brand.getId())
@@ -57,7 +57,7 @@ public class BrandService {
 
     public void deleteBrand(Long id) {
         if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
+            throw new InvalidDataException("The ID cannot be null");
         }
 
         BrandEntity brand = brandRepository.findById(id)

@@ -5,6 +5,8 @@ import com.pepotec.cooperative_taxi_managment.models.dto.driversettlement.Driver
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class DriverSettlementValidator {
 
@@ -82,6 +84,80 @@ public class DriverSettlementValidator {
 
         if (settlement.getSubmissionDate() == null) {
             throw new InvalidDataException("The submission date cannot be null");
+        }
+    }
+
+    /**
+     * Valida que el ID no sea nulo (para updates y deletes).
+     * @param id ID a validar
+     */
+    public void validateIdNotNull(Long id) {
+        if (id == null) {
+            throw new InvalidDataException("The ID cannot be null");
+        }
+    }
+
+    /**
+     * Valida que el settlement ID no sea nulo.
+     * @param settlementId ID de la rendición a validar
+     */
+    public void validateSettlementIdNotNullForCalculation(Long settlementId) {
+        if (settlementId == null) {
+            throw new InvalidDataException("The settlement ID cannot be null");
+        }
+    }
+
+    /**
+     * Valida que el ID no sea nulo para actualizar.
+     * @param id ID a validar
+     */
+    public void validateIdNotNullForUpdate(Long id) {
+        if (id == null) {
+            throw new InvalidDataException("The ID cannot be null for update");
+        }
+    }
+
+    /**
+     * Valida que el driver ID no sea nulo.
+     * @param driverId ID del chofer a validar
+     */
+    public void validateDriverIdNotNull(Long driverId) {
+        if (driverId == null) {
+            throw new InvalidDataException("The driver ID cannot be null");
+        }
+    }
+
+    /**
+     * Valida que el settlement ID no sea nulo.
+     * @param settlementId ID de la rendición a validar
+     */
+    public void validateSettlementIdNotNull(Long settlementId) {
+        if (settlementId == null) {
+            throw new InvalidDataException("The settlement ID cannot be null");
+        }
+    }
+
+    /**
+     * Valida que la fecha de entrega no sea nula.
+     * @param submissionDate Fecha de entrega a validar
+     */
+    public void validateSubmissionDateNotNull(LocalDate submissionDate) {
+        if (submissionDate == null) {
+            throw new InvalidDataException("The submission date cannot be null");
+        }
+    }
+
+    /**
+     * Valida un rango de fechas (startDate y endDate no nulos, y startDate <= endDate).
+     * @param startDate Fecha inicial
+     * @param endDate Fecha final
+     */
+    public void validateDateRange(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            throw new InvalidDataException("The start and end dates cannot be null");
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDataException("The start date cannot be after the end date");
         }
     }
 }

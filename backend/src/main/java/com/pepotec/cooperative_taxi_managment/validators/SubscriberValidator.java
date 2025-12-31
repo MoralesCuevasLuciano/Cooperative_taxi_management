@@ -2,7 +2,6 @@ package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
 import com.pepotec.cooperative_taxi_managment.models.dto.person.subscriber.SubscriberDTO;
-import com.pepotec.cooperative_taxi_managment.validators.PersonValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -28,7 +27,7 @@ public class SubscriberValidator {
     public void validateSubscriberSpecificFields(SubscriberDTO subscriber) {
         // Validar números de licencia
         if (subscriber.getLicenceNumbers() == null) {
-            throw new InvalidDataException("Los números de licencia no pueden ser nulos");
+            throw new InvalidDataException("The license numbers cannot be null");
         }
 
         validateLicenceNumbersFormat(subscriber.getLicenceNumbers());
@@ -41,10 +40,10 @@ public class SubscriberValidator {
     private void validateLicenceNumbersFormat(java.util.List<String> licenceNumbers) {
         for (String licence : licenceNumbers) {
             if (licence == null || licence.trim().isEmpty()) {
-                throw new InvalidDataException("Los números de licencia no pueden estar vacíos");
+                throw new InvalidDataException("The license numbers cannot be empty");
             }
             if (!licence.matches("^\\d{4}$")) {
-                throw new InvalidDataException("Cada número de licencia debe tener exactamente 4 dígitos: " + licence);
+                throw new InvalidDataException("Each license number must have exactly 4 digits: " + licence);
             }
         }
     }
@@ -56,7 +55,7 @@ public class SubscriberValidator {
         Set<String> seenLicences = new HashSet<>();
         for (String licence : licenceNumbers) {
             if (!seenLicences.add(licence)) {
-                throw new InvalidDataException("No se permiten números de licencia duplicados: " + licence);
+                throw new InvalidDataException("Duplicate license numbers are not allowed: " + licence);
             }
         }
     }
@@ -73,5 +72,25 @@ public class SubscriberValidator {
             subscriberRepository::findByEmail,
             "suscriptor"
         );
+    }
+
+    /**
+     * Valida que el ID no sea nulo para actualizar.
+     * @param id ID a validar
+     */
+    public void validateIdNotNullForUpdate(Long id) {
+        if (id == null) {
+            throw new InvalidDataException("The ID cannot be null for update");
+        }
+    }
+
+    /**
+     * Valida que el DNI no esté vacío.
+     * @param dni DNI a validar
+     */
+    public void validateDniNotEmpty(String dni) {
+        if (dni == null || dni.trim().isEmpty()) {
+            throw new InvalidDataException("The DNI cannot be empty");
+        }
     }
 }

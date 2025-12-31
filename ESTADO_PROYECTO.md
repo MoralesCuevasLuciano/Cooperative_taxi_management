@@ -2,7 +2,7 @@
 
 **Última actualización:** Diciembre, 2024
 
-**Actualización reciente:** Sistema completo de Caja y Movimientos de Dinero implementado. Sistema de Advance (Vale) y PayrollSettlement (Liquidación) implementado completamente con Services, Controllers y documentación Swagger.
+**Actualización reciente:** Sistema completo de Receipt (Recibo) y AccountHistory (Historial de Cuenta) implementado. Endpoint manual para generación de historiales. Configuración de logging a archivos. Validación de unicidad de recibos actualizada para incluir receiptType.
 
 ---
 
@@ -336,6 +336,68 @@
 - `GET /payroll-settlements/by-payment-date-range?startDate=...&endDate=...` - Por rango de fechas de pago
 - `DELETE /payroll-settlements/delete/{id}` - Soft delete
 
+#### 14. **Sistema de Receipt (Recibo) y AccountHistory (Historial de Cuenta)** ✅ COMPLETADO
+- ✅ Entidad `ReceiptEntity` (Recibo físico):
+  - Campos: `id`, `memberAccount` (ManyToOne, nullable), `subscriberAccount` (ManyToOne, nullable), `receiptNumber`, `bookletNumber`, `receiptType` (Enum: MEMBER/SUBSCRIBER), `yearMonth` (String, formato YYYY-MM), `issueDate`, `active`
+  - Unicidad por: `(account + period)` y `(receiptNumber + bookletNumber + receiptType)`
+  - Solo una cuenta puede estar presente (MemberAccount o SubscriberAccount)
+  - El `receiptType` debe coincidir con el tipo de cuenta asociada
+- ✅ Entidad `AccountHistoryEntity` (Historial mensual de cuenta):
+  - Campos: `id`, `memberAccount` (ManyToOne, nullable), `subscriberAccount` (ManyToOne, nullable), `vehicleAccount` (ManyToOne, nullable), `yearMonth` (String, formato YYYY-MM), `registrationDate`, `monthEndBalance`, `active`
+  - Unicidad por: `(account + period)`
+  - Solo una cuenta puede estar presente (MemberAccount, SubscriberAccount o VehicleAccount)
+  - Se genera automáticamente para todas las cuentas activas al inicio de cada mes
+- ✅ Enum `ReceiptType` con valores: `MEMBER`, `SUBSCRIBER`
+- ✅ DTOs organizados:
+  - `models.dto.receipt.*` - `ReceiptDTO`, `ReceiptCreateDTO`
+  - `models.dto.accounthistory.*` - `AccountHistoryDTO`, `AccountHistoryCreateDTO`
+- ✅ Repositories:
+  - `ReceiptRepository` - búsqueda por cuenta, período, número de recibo/talonario, tipo, fecha de emisión
+  - `AccountHistoryRepository` - búsqueda por cuenta, período, fecha de registro
+- ✅ Validators:
+  - `ReceiptValidator` - valida una sola cuenta, tipo coincide con cuenta, formato YYYY-MM, unicidad
+  - `AccountHistoryValidator` - valida una sola cuenta, formato YYYY-MM, unicidad
+- ✅ Services completos:
+  - `ReceiptService` - CRUD completo con validaciones de unicidad
+  - `AccountHistoryService` - CRUD completo con validaciones de unicidad
+  - `AccountHistorySchedulerService` - generación automática mensual con `@Scheduled` (cron: día 1 de cada mes a las 00:00)
+- ✅ Controllers completos con documentación Swagger en español:
+  - `ReceiptController` - CRUD de recibos con filtros avanzados
+  - `AccountHistoryController` - CRUD de historiales + endpoint manual de generación
+- ✅ Configuración de logging:
+  - Logs escritos en archivo: `logs/cooperative-taxi-management.log`
+  - Rotación automática (10MB, 30 días de historial)
+  - Niveles configurados: DEBUG para la app, INFO para root
+
+**Endpoints:**
+- `POST /receipts/create` - Crear recibo
+- `GET /receipts/get/{id}` - Obtener por ID
+- `GET /receipts/list` - Listar todos
+- `GET /receipts/by-member-account/{memberAccountId}` - Por cuenta de socio
+- `GET /receipts/by-subscriber-account/{subscriberAccountId}` - Por cuenta de abonado
+- `GET /receipts/by-period/{period}` - Por período (YYYY-MM)
+- `GET /receipts/by-receipt-type/{receiptType}` - Por tipo
+- `GET /receipts/by-issue-date-range?startDate=...&endDate=...` - Por rango de fechas
+- `PUT /receipts/update/{id}` - Actualizar recibo
+- `DELETE /receipts/delete/{id}` - Soft delete
+- `POST /account-histories/create` - Crear historial manualmente
+- `GET /account-histories/get/{id}` - Obtener por ID
+- `GET /account-histories/list` - Listar todos
+- `GET /account-histories/by-member-account/{memberAccountId}` - Por cuenta de socio
+- `GET /account-histories/by-subscriber-account/{subscriberAccountId}` - Por cuenta de abonado
+- `GET /account-histories/by-vehicle-account/{vehicleAccountId}` - Por cuenta de vehículo
+- `GET /account-histories/by-period/{period}` - Por período (YYYY-MM)
+- `GET /account-histories/by-registration-date-range?startDate=...&endDate=...` - Por rango de fechas
+- `POST /account-histories/generate-monthly-histories` - Generar historiales manualmente (para testing)
+- `PUT /account-histories/update/{id}` - Actualizar historial
+- `DELETE /account-histories/delete/{id}` - Soft delete
+
+**Características:**
+- Los recibos permiten mismo `receiptNumber + bookletNumber` para diferentes `receiptType` (MEMBER y SUBSCRIBER pueden tener números iguales)
+- Los historiales se generan automáticamente el día 1 de cada mes a las 00:00 para el mes anterior
+- El endpoint manual permite generar historiales en cualquier momento para testing
+- Los logs se guardan en archivo con rotación automática
+
 ---
 
 ## 🎯 Trabajo Realizado (Diciembre, 2024)
@@ -423,6 +485,24 @@
   - Documentación completa del bug y solución en comentarios JavaDoc
 - ✅ Documentación Swagger completa en todos los endpoints
 
+### 7. **Sistema de Receipt (Recibo) y AccountHistory (Historial de Cuenta)** (Diciembre, 2024)
+- ✅ Implementación completa de entidades, DTOs, Repositories, Validators, Services y Controllers
+- ✅ Sistema de recibos físicos:
+  - Unicidad por `(account + period)` y `(receiptNumber + bookletNumber + receiptType)`
+  - Permite mismo número de recibo/talonario para diferentes tipos (MEMBER/SUBSCRIBER)
+  - Validación de que el tipo coincida con la cuenta asociada
+- ✅ Sistema de historiales mensuales:
+  - Generación automática el día 1 de cada mes a las 00:00 para el mes anterior
+  - Endpoint manual para testing y recuperación
+  - Registra el saldo de cierre de mes para cada cuenta activa
+- ✅ Refactorización masiva de validaciones:
+  - Todas las validaciones movidas de Services a Validators (principio de responsabilidad única)
+  - Mensajes de excepción estandarizados en inglés (Swagger sigue en español)
+- ✅ Configuración de logging:
+  - Logs escritos en archivo con rotación automática
+  - Niveles configurados para desarrollo y producción
+- ✅ Documentación Swagger completa en español para todos los endpoints
+
 ---
 
 ## 🚧 Tareas Pendientes
@@ -446,6 +526,17 @@
    - **Documentación:** Ver comentarios en `PayrollSettlementEntity.java` para detalles completos del bug y la solución.
    - **Lección aprendida:** Evitar nombres con guiones bajos en columnas que participen en constraints únicos compuestos cuando se usa Hibernate 6.
 
+4. **✅ COMPLETADO: Sistema de Receipt y AccountHistory**
+   - ✅ Implementación completa de ambas entidades con validaciones
+   - ✅ Generación automática de historiales mensuales con scheduler
+   - ✅ Endpoint manual para testing
+   - ✅ Configuración de logging a archivos
+
+5. **✅ COMPLETADO: Refactorización masiva de validaciones**
+   - ✅ Todas las validaciones movidas de Services a Validators
+   - ✅ Mensajes de excepción estandarizados en inglés
+   - ✅ Principio de responsabilidad única aplicado
+
 ### ⏳ Funcionalidades Futuras
 
 - Sistema de auditoría (campos `createdBy`, `createdDate`, `lastModifiedBy`, `lastModifiedDate`)
@@ -463,8 +554,9 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 ├── config/
 │   └── OpenApiConfig.java
 ├── controllers/
-│   ├── BrandController.java
+│   ├── AccountHistoryController.java
 │   ├── AdvanceController.java
+│   ├── BrandController.java
 │   ├── CashMovementController.java
 │   ├── CashRegisterController.java
 │   ├── CashRegisterHistoryController.java
@@ -476,6 +568,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── ModelController.java
 │   ├── NonCashMovementController.java
 │   ├── PayrollSettlementController.java
+│   ├── ReceiptController.java
 │   ├── SubscriberAccountController.java
 │   ├── SubscriberController.java
 │   ├── TicketTaxiController.java
@@ -511,6 +604,12 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   ├── payrollsettlement/
 │   │   │   ├── PayrollSettlementCreateDTO.java
 │   │   │   └── PayrollSettlementDTO.java
+│   │   ├── receipt/
+│   │   │   ├── ReceiptCreateDTO.java
+│   │   │   └── ReceiptDTO.java
+│   │   ├── accounthistory/
+│   │   │   ├── AccountHistoryCreateDTO.java
+│   │   │   └── AccountHistoryDTO.java
 │   │   ├── person/
 │   │   │   ├── PersonDTO.java
 │   │   │   ├── member/
@@ -537,6 +636,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── entities/
 │   │   ├── AbstractAccountEntity.java
 │   │   ├── AbstractMovementEntity.java
+│   │   ├── AccountHistoryEntity.java
 │   │   ├── AdvanceEntity.java
 │   │   ├── AddressEntity.java
 │   │   ├── BrandEntity.java
@@ -552,6 +652,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   │   ├── NonCashMovementEntity.java
 │   │   ├── PayrollSettlementEntity.java
 │   │   ├── PersonEntity.java
+│   │   ├── ReceiptEntity.java
 │   │   ├── SubscriberAccountEntity.java
 │   │   ├── SubscriberEntity.java
 │   │   ├── TicketTaxiEntity.java
@@ -562,6 +663,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │       ├── MemberRole.java
 │       └── MovementType.java
 ├── repositories/
+│   ├── AccountHistoryRepository.java
 │   ├── AdvanceRepository.java
 │   ├── AddressRepository.java
 │   ├── BrandRepository.java
@@ -576,12 +678,15 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── ModelRepository.java
 │   ├── NonCashMovementRepository.java
 │   ├── PayrollSettlementRepository.java
+│   ├── ReceiptRepository.java
 │   ├── SubscriberAccountRepository.java
 │   ├── SubscriberRepository.java
 │   ├── TicketTaxiRepository.java
 │   ├── VehicleAccountRepository.java
 │   └── VehicleRepository.java
 ├── services/
+│   ├── AccountHistoryService.java
+│   ├── AccountHistorySchedulerService.java
 │   ├── AdvanceService.java
 │   ├── AddressService.java
 │   ├── BalanceUpdateService.java
@@ -597,6 +702,7 @@ backend/src/main/java/com/pepotec/cooperative_taxi_managment/
 │   ├── ModelService.java
 │   ├── NonCashMovementService.java
 │   ├── PayrollSettlementService.java
+│   ├── ReceiptService.java
 │   ├── SubscriberAccountService.java
 │   ├── SubscriberService.java
 │   ├── TicketTaxiService.java

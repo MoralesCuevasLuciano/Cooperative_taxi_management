@@ -15,7 +15,7 @@ public class BrandValidator {
 
     public void validateBrandSpecificFields(BrandDTO brand) {
         if (brand.getName() == null || brand.getName().trim().isEmpty()) {
-            throw new InvalidDataException("El nombre de la marca no puede estar vacío");
+            throw new InvalidDataException("The brand name cannot be empty");
         }
     }
 
@@ -26,7 +26,7 @@ public class BrandValidator {
                     throw new DuplicateFieldException(
                         "name",
                         brand.getName(),
-                        "Ya existe una marca con el nombre '" + brand.getName() + "'"
+                        "A brand with the name '" + brand.getName() + "' already exists"
                     );
                 }
             });

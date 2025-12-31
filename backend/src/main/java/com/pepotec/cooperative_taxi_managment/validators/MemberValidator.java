@@ -24,11 +24,11 @@ public class MemberValidator {
     public void validateMemberSpecificFields(MemberDTO member) {
         // Validar campos obligatorios específicos de Member
         if (member.getRole() == null) {
-            throw new InvalidDataException("El rol no puede estar vacío");
+            throw new InvalidDataException("The role cannot be empty");
         }
         
         if (member.getAddress() == null) {
-            throw new InvalidDataException("La dirección no puede estar vacía");
+            throw new InvalidDataException("The address cannot be empty");
         }
         
         // Validar fechas específicas de Member
@@ -45,18 +45,18 @@ public class MemberValidator {
         
         // Validar joinDate si está presente
         if (member.getJoinDate() != null && member.getJoinDate().isAfter(today)) {
-            throw new InvalidDataException("La fecha de ingreso no puede ser futura");
+            throw new InvalidDataException("The join date cannot be in the future");
         }
         
         // Validar leaveDate si está presente
         if (member.getLeaveDate() != null) {
             if (member.getLeaveDate().isAfter(today)) {
-                throw new InvalidDataException("La fecha de salida no puede ser futura");
+                throw new InvalidDataException("The leave date cannot be in the future");
             }
             
             // La fecha de salida debe ser posterior a la de ingreso
             if (member.getJoinDate() != null && member.getLeaveDate().isBefore(member.getJoinDate())) {
-                throw new InvalidDataException("La fecha de salida no puede ser anterior a la fecha de ingreso");
+                throw new InvalidDataException("The leave date cannot be before the join date");
             }
         }
     }
@@ -75,5 +75,25 @@ public class MemberValidator {
             memberRepository::findByEmailAndLeaveDateIsNull,
             "miembro"
         );
+    }
+
+    /**
+     * Valida que el ID no sea nulo para actualizar.
+     * @param id ID a validar
+     */
+    public void validateIdNotNullForUpdate(Long id) {
+        if (id == null) {
+            throw new InvalidDataException("The ID cannot be null for update");
+        }
+    }
+
+    /**
+     * Valida que el DNI no esté vacío.
+     * @param dni DNI a validar
+     */
+    public void validateDniNotEmpty(String dni) {
+        if (dni == null || dni.trim().isEmpty()) {
+            throw new InvalidDataException("The DNI cannot be empty");
+        }
     }
 }

@@ -70,9 +70,7 @@ public class MemberService {
     }
 
     public MemberDTO getMemberByDni(String dni) {
-        if (dni == null || dni.trim().isEmpty()) {
-            throw new InvalidDataException("El DNI no puede estar vacío");
-        }
+        memberValidator.validateDniNotEmpty(dni);
         
         MemberEntity member = memberRepository.findByDniAndLeaveDateIsNull(dni)
             .orElseThrow(() -> new ResourceNotFoundException(null, "Miembro con DNI " + dni));
@@ -88,10 +86,7 @@ public class MemberService {
     }
 
     public MemberDTO updateMember(MemberDTO member) {
-        // Validar que el ID no sea nulo
-        if (member.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        memberValidator.validateIdNotNullForUpdate(member.getId());
         
         // Buscar el miembro existente
         MemberEntity memberSaved = memberRepository.findById(member.getId())
@@ -129,9 +124,7 @@ public class MemberService {
     }
 
     public void deleteMember(Long id) {
-        if(id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        memberValidator.validateIdNotNullForUpdate(id);
 
         MemberEntity memberSaved = memberRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Miembro"));
@@ -146,9 +139,7 @@ public class MemberService {
     }
 
     public void deleteMember(Long id, LocalDate leaveDate) {
-        if(id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        memberValidator.validateIdNotNullForUpdate(id);
 
         MemberEntity memberSaved = memberRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Miembro"));

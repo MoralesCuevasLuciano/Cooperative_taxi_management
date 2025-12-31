@@ -58,9 +58,7 @@ public class SubscriberService {
     }
 
     public SubscriberDTO getSubscriberByDni(String dni) {
-        if (dni == null || dni.trim().isEmpty()) {
-            throw new InvalidDataException("El DNI no puede estar vacío");
-        }
+        subscriberValidator.validateDniNotEmpty(dni);
         
         SubscriberEntity subscriber = subscriberRepository.findByDni(dni)
             .orElseThrow(() -> new ResourceNotFoundException(null, "Suscriptor con DNI " + dni));
@@ -74,10 +72,7 @@ public class SubscriberService {
     }
 
     public SubscriberDTO updateSubscriber(SubscriberDTO subscriber) {
-        // Validar que el ID no sea nulo
-        if (subscriber.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        subscriberValidator.validateIdNotNullForUpdate(subscriber.getId());
         
         // Buscar el suscriptor existente
         SubscriberEntity subscriberSaved = subscriberRepository.findById(subscriber.getId())
@@ -99,9 +94,7 @@ public class SubscriberService {
     }
 
     public void deleteSubscriber(Long id) {
-        if(id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        subscriberValidator.validateIdNotNullForUpdate(id);
 
         SubscriberEntity subscriberSaved = subscriberRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Suscriptor"));

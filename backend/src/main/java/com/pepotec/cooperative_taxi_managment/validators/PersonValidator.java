@@ -35,31 +35,31 @@ public class PersonValidator {
      */
     private void validateRequiredFields(PersonDTO person) {
         if (person.getFirstName() == null || person.getFirstName().trim().isEmpty()) {
-            throw new InvalidDataException("El nombre no puede estar vacío");
+            throw new InvalidDataException("The first name cannot be empty");
         }
         
         if (person.getFatherSurname() == null || person.getFatherSurname().trim().isEmpty()) {
-            throw new InvalidDataException("El apellido paterno no puede estar vacío");
+            throw new InvalidDataException("The father surname cannot be empty");
         }
         
         if (person.getDni() == null || person.getDni().trim().isEmpty()) {
-            throw new InvalidDataException("El DNI no puede estar vacío");
+            throw new InvalidDataException("The DNI cannot be empty");
         }
         
         if (person.getCuit() == null || person.getCuit().trim().isEmpty()) {
-            throw new InvalidDataException("El CUIT no puede estar vacío");
+            throw new InvalidDataException("The CUIT cannot be empty");
         }
         
         if (person.getEmail() == null || person.getEmail().trim().isEmpty()) {
-            throw new InvalidDataException("El email no puede estar vacío");
+            throw new InvalidDataException("The email cannot be empty");
         }
         
         if (person.getPhone() == null || person.getPhone().trim().isEmpty()) {
-            throw new InvalidDataException("El teléfono no puede estar vacío");
+            throw new InvalidDataException("The phone cannot be empty");
         }
         
         if (person.getBirthDate() == null) {
-            throw new InvalidDataException("La fecha de nacimiento no puede estar vacía");
+            throw new InvalidDataException("The birth date cannot be empty");
         }
     }
 
@@ -69,60 +69,60 @@ public class PersonValidator {
     private void validateFormats(PersonDTO person) {
         // Validar formato del nombre
         if (!NAME_PATTERN.matcher(person.getFirstName()).matches()) {
-            throw new InvalidDataException("El nombre solo puede contener letras y espacios");
+            throw new InvalidDataException("The first name can only contain letters and spaces");
         }
         
         if (person.getFirstName().length() < 2 || person.getFirstName().length() > 50) {
-            throw new InvalidDataException("El nombre debe tener entre 2 y 50 caracteres");
+            throw new InvalidDataException("The first name must have between 2 and 50 characters");
         }
         
         // Validar segundo nombre si existe
         if (person.getSecondName() != null && !person.getSecondName().trim().isEmpty()) {
             if (!NAME_PATTERN.matcher(person.getSecondName()).matches()) {
-                throw new InvalidDataException("El segundo nombre solo puede contener letras y espacios");
+                throw new InvalidDataException("The second name can only contain letters and spaces");
             }
             if (person.getSecondName().length() < 2 || person.getSecondName().length() > 50) {
-                throw new InvalidDataException("El segundo nombre debe tener entre 2 y 50 caracteres");
+                throw new InvalidDataException("The second name must have between 2 and 50 characters");
             }
         }
         
         // Validar apellido paterno
         if (!NAME_PATTERN.matcher(person.getFatherSurname()).matches()) {
-            throw new InvalidDataException("El apellido paterno solo puede contener letras y espacios");
+            throw new InvalidDataException("The father surname can only contain letters and spaces");
         }
         
         if (person.getFatherSurname().length() < 2 || person.getFatherSurname().length() > 50) {
-            throw new InvalidDataException("El apellido paterno debe tener entre 2 y 50 caracteres");
+            throw new InvalidDataException("The father surname must have between 2 and 50 characters");
         }
         
         // Validar apellido materno si existe
         if (person.getMotherSurname() != null && !person.getMotherSurname().trim().isEmpty()) {
             if (!NAME_PATTERN.matcher(person.getMotherSurname()).matches()) {
-                throw new InvalidDataException("El apellido materno solo puede contener letras y espacios");
+                throw new InvalidDataException("The mother surname can only contain letters and spaces");
             }
             if (person.getMotherSurname().length() < 2 || person.getMotherSurname().length() > 50) {
-                throw new InvalidDataException("El apellido materno debe tener entre 2 y 50 caracteres");
+                throw new InvalidDataException("The mother surname must have between 2 and 50 characters");
             }
         }
         
         // Validar DNI
         if (!DNI_PATTERN.matcher(person.getDni()).matches()) {
-            throw new InvalidDataException("El DNI debe tener 7 u 8 dígitos sin ceros a la izquierda");
+            throw new InvalidDataException("The DNI must have 7 or 8 digits without leading zeros");
         }
         
         // Validar CUIT
         if (!CUIT_PATTERN.matcher(person.getCuit()).matches()) {
-            throw new InvalidDataException("El CUIT debe tener 10 u 11 dígitos sin ceros a la izquierda");
+            throw new InvalidDataException("The CUIT must have 10 or 11 digits without leading zeros");
         }
         
         // Validar email
         if (!EMAIL_PATTERN.matcher(person.getEmail()).matches()) {
-            throw new InvalidDataException("El email no tiene un formato válido");
+            throw new InvalidDataException("The email does not have a valid format");
         }
         
         // Validar teléfono
         if (!PHONE_PATTERN.matcher(person.getPhone()).matches()) {
-            throw new InvalidDataException("El teléfono debe tener entre 10 y 15 dígitos");
+            throw new InvalidDataException("The phone must have between 10 and 15 digits");
         }
     }
 
@@ -145,7 +145,7 @@ public class PersonValidator {
         // Comparar
         if (!dni.equals(dniFromCuit)) {
             throw new InvalidDataException(
-                "El CUIT no corresponde al DNI. El CUIT debe contener el DNI en el medio (formato: XX-DNI-X)"
+                "The CUIT does not match the DNI. The CUIT must contain the DNI in the middle (format: XX-DNI-X)"
             );
         }
     }    
@@ -158,13 +158,13 @@ public class PersonValidator {
         
         // Validar que la fecha de nacimiento no sea futura
         if (person.getBirthDate().isAfter(today)) {
-            throw new InvalidDataException("La fecha de nacimiento no puede ser futura");
+            throw new InvalidDataException("The birth date cannot be in the future");
         }
         
         // Validar edad mínima (18 años)
         LocalDate minBirthDate = today.minusYears(18);
         if (person.getBirthDate().isAfter(minBirthDate)) {
-            throw new InvalidDataException("La persona debe tener al menos 18 años");
+            throw new InvalidDataException("The person must be at least 18 years old");
         }
     }
 
@@ -212,7 +212,7 @@ public class PersonValidator {
             // Asumimos que todas las entidades Person tienen getId()
             return (Long) entity.getClass().getMethod("getId").invoke(entity);
         } catch (Exception e) {
-            throw new RuntimeException("Error obteniendo ID de entidad", e);
+            throw new RuntimeException("Error getting entity ID", e);
         }
     }
 }

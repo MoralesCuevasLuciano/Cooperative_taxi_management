@@ -65,7 +65,7 @@ public class ModelService {
 
     public ModelDTO updateModel(ModelDTO model) {
         if (model.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
+            throw new InvalidDataException("The ID cannot be null for update");
         }
 
         ModelEntity modelEntity = modelRepository.findById(model.getId())
@@ -85,7 +85,7 @@ public class ModelService {
 
     public void deleteModel(Long id) {
         if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
+            throw new InvalidDataException("The ID cannot be null");
         }
 
         ModelEntity model = modelRepository.findById(id)

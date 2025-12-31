@@ -40,11 +40,7 @@ public class FuelReimbursementService {
         MemberAccountEntity memberAccount = memberAccountService.getMemberAccountEntityById(memberAccountId);
 
         // Verificar si ya existe uno (OneToOne, solo puede haber uno)
-        Optional<FuelReimbursementEntity> existing = fuelReimbursementRepository
-            .findByMemberAccountId(memberAccountId);
-        if (existing.isPresent()) {
-            throw new InvalidDataException("Ya existe un registro de reintegro de combustible para esta cuenta");
-        }
+        fuelReimbursementValidator.validateUniqueFuelReimbursement(memberAccountId);
 
         FuelReimbursementEntity entity = convertCreateDtoToEntity(fuelReimbursement);
         entity.setMemberAccount(memberAccount);
@@ -73,9 +69,7 @@ public class FuelReimbursementService {
      * Con OneToOne, solo puede haber uno por cuenta.
      */
     public FuelReimbursementDTO getFuelReimbursementByMemberAccountId(Long memberAccountId) {
-        if (memberAccountId == null) {
-            throw new InvalidDataException("El ID de la cuenta de socio no puede ser nulo");
-        }
+        fuelReimbursementValidator.validateMemberAccountIdNotNull(memberAccountId);
         FuelReimbursementEntity fuelReimbursement = fuelReimbursementRepository
             .findByMemberAccountId(memberAccountId)
             .orElseThrow(() -> new ResourceNotFoundException(memberAccountId, "Reintegro de Combustible para la cuenta"));
@@ -106,12 +100,8 @@ public class FuelReimbursementService {
      */
     @Transactional
     public FuelReimbursementDTO accumulateFuelCredit(Long memberAccountId, Double amount) {
-        if (memberAccountId == null) {
-            throw new InvalidDataException("El ID de la cuenta de socio no puede ser nulo");
-        }
-        if (amount == null || amount <= 0) {
-            throw new InvalidDataException("El monto a acumular debe ser positivo");
-        }
+        fuelReimbursementValidator.validateMemberAccountIdNotNull(memberAccountId);
+        fuelReimbursementValidator.validateAmountPositive(amount);
 
         Optional<FuelReimbursementEntity> existing = fuelReimbursementRepository
             .findByMemberAccountId(memberAccountId);
@@ -140,16 +130,14 @@ public class FuelReimbursementService {
      */
     @Transactional
     public FuelReimbursementDTO reimburseFuelCredit(Long memberAccountId) {
-        if (memberAccountId == null) {
-            throw new InvalidDataException("El ID de la cuenta de socio no puede ser nulo");
-        }
+        fuelReimbursementValidator.validateMemberAccountIdNotNull(memberAccountId);
 
         FuelReimbursementEntity fuelReimbursement = fuelReimbursementRepository
             .findByMemberAccountId(memberAccountId)
             .orElseThrow(() -> new ResourceNotFoundException(memberAccountId, "Reintegro de Combustible para la cuenta"));
 
         if (fuelReimbursement.getAccumulatedAmount() == null || fuelReimbursement.getAccumulatedAmount() <= 0) {
-            throw new InvalidDataException("No hay monto acumulado para reintegrar");
+            throw new InvalidDataException("There is no accumulated amount to reimburse");
         }
 
         // Obtener la cuenta de socio y sumar el monto acumulado al balance
@@ -170,9 +158,7 @@ public class FuelReimbursementService {
      */
     @Transactional
     public FuelReimbursementDTO updateFuelReimbursement(FuelReimbursementDTO fuelReimbursement) {
-        if (fuelReimbursement.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        fuelReimbursementValidator.validateIdNotNullForUpdate(fuelReimbursement.getId());
 
         FuelReimbursementEntity entity = fuelReimbursementRepository.findById(fuelReimbursement.getId())
             .orElseThrow(() -> new ResourceNotFoundException(fuelReimbursement.getId(), "Reintegro de Combustible"));
@@ -195,9 +181,7 @@ public class FuelReimbursementService {
      */
     @Transactional
     public void deleteFuelReimbursement(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        fuelReimbursementValidator.validateIdNotNull(id);
 
         FuelReimbursementEntity entity = fuelReimbursementRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Reintegro de Combustible"));

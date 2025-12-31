@@ -1,0 +1,1547 @@
+2025-12-31 11:34:58 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:34:58 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:35:00 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:35:00 - Finished Spring Data repository scanning in 170 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:35:00 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:35:00 - Starting service [Tomcat]
+2025-12-31 11:35:00 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:35:00 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:35:00 - Root WebApplicationContext: initialization completed in 2085 ms
+2025-12-31 11:35:01 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:35:01 - HHH000026: Second-level cache disabled
+2025-12-31 11:35:01 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:35:01 - HikariPool-7 - Starting...
+2025-12-31 11:35:01 - HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7c3a0bee
+2025-12-31 11:35:01 - HikariPool-7 - Start completed.
+2025-12-31 11:35:01 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:35:01 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-7)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:35:01 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:35:01 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:35:01 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:35:01 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:35:02 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:35:02 - LiveReload server is running on port 35729
+2025-12-31 11:35:02 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:35:02 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:35:02 - Started CooperativeTaxiManagmentApplication in 3.789 seconds (process running for 874.882)
+2025-12-31 11:35:02 - Condition evaluation unchanged
+2025-12-31 11:36:30 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:36:30 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:36:30 - Graceful shutdown complete
+2025-12-31 11:36:30 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:30 - HikariPool-7 - Shutdown initiated...
+2025-12-31 11:36:30 - HikariPool-7 - Shutdown completed.
+2025-12-31 11:36:30 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:36:30 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:36:31 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:36:31 - Finished Spring Data repository scanning in 135 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:36:31 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:36:31 - Starting service [Tomcat]
+2025-12-31 11:36:31 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:36:31 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:36:31 - Root WebApplicationContext: initialization completed in 1090 ms
+2025-12-31 11:36:32 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:36:32 - HHH000026: Second-level cache disabled
+2025-12-31 11:36:32 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:36:32 - HikariPool-8 - Starting...
+2025-12-31 11:36:32 - HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1c81c47e
+2025-12-31 11:36:32 - HikariPool-8 - Start completed.
+2025-12-31 11:36:32 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:36:32 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-8)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:36:32 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:36:32 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:36:32 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:33 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:36:33 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:36:34 - LiveReload server is running on port 35729
+2025-12-31 11:36:34 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:36:34 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:36:34 - Started CooperativeTaxiManagmentApplication in 3.379 seconds (process running for 966.478)
+2025-12-31 11:36:34 - Condition evaluation unchanged
+2025-12-31 11:36:36 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:36:36 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:36:36 - Graceful shutdown complete
+2025-12-31 11:36:36 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:36 - HikariPool-8 - Shutdown initiated...
+2025-12-31 11:36:36 - HikariPool-8 - Shutdown completed.
+2025-12-31 11:36:36 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:36:36 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:36:36 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:36:37 - Finished Spring Data repository scanning in 158 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:36:37 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:36:37 - Starting service [Tomcat]
+2025-12-31 11:36:37 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:36:37 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:36:37 - Root WebApplicationContext: initialization completed in 1100 ms
+2025-12-31 11:36:37 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:36:37 - HHH000026: Second-level cache disabled
+2025-12-31 11:36:37 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:36:37 - HikariPool-9 - Starting...
+2025-12-31 11:36:37 - HikariPool-9 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3718b8b8
+2025-12-31 11:36:37 - HikariPool-9 - Start completed.
+2025-12-31 11:36:37 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:36:37 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-9)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:36:37 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:36:37 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:36:37 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:38 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:36:38 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:36:39 - LiveReload server is running on port 35729
+2025-12-31 11:36:39 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:36:39 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:36:39 - Started CooperativeTaxiManagmentApplication in 3.071 seconds (process running for 971.46)
+2025-12-31 11:36:39 - Condition evaluation unchanged
+2025-12-31 11:36:40 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:36:40 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:36:40 - Graceful shutdown complete
+2025-12-31 11:36:40 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:40 - HikariPool-9 - Shutdown initiated...
+2025-12-31 11:36:40 - HikariPool-9 - Shutdown completed.
+2025-12-31 11:36:40 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:36:40 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:36:41 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:36:41 - Finished Spring Data repository scanning in 142 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:36:41 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:36:41 - Starting service [Tomcat]
+2025-12-31 11:36:41 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:36:41 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:36:41 - Root WebApplicationContext: initialization completed in 993 ms
+2025-12-31 11:36:42 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:36:42 - HHH000026: Second-level cache disabled
+2025-12-31 11:36:42 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:36:42 - HikariPool-10 - Starting...
+2025-12-31 11:36:42 - HikariPool-10 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2381f0b2
+2025-12-31 11:36:42 - HikariPool-10 - Start completed.
+2025-12-31 11:36:42 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:36:42 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-10)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:36:42 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:36:42 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:36:42 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:42 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:36:43 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:36:44 - LiveReload server is running on port 35729
+2025-12-31 11:36:44 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:36:44 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:36:44 - Started CooperativeTaxiManagmentApplication in 3.289 seconds (process running for 976.528)
+2025-12-31 11:36:44 - Condition evaluation unchanged
+2025-12-31 11:36:45 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:36:45 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:36:45 - Graceful shutdown complete
+2025-12-31 11:36:45 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:45 - HikariPool-10 - Shutdown initiated...
+2025-12-31 11:36:45 - HikariPool-10 - Shutdown completed.
+2025-12-31 11:36:46 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:36:46 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:36:46 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:36:46 - Finished Spring Data repository scanning in 138 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:36:46 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:36:46 - Starting service [Tomcat]
+2025-12-31 11:36:46 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:36:46 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:36:46 - Root WebApplicationContext: initialization completed in 903 ms
+2025-12-31 11:36:47 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:36:47 - HHH000026: Second-level cache disabled
+2025-12-31 11:36:47 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:36:47 - HikariPool-11 - Starting...
+2025-12-31 11:36:47 - HikariPool-11 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5a494e62
+2025-12-31 11:36:47 - HikariPool-11 - Start completed.
+2025-12-31 11:36:47 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:36:47 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-11)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:36:47 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:36:47 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:36:47 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:47 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:36:48 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:36:48 - LiveReload server is running on port 35729
+2025-12-31 11:36:48 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:36:48 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:36:48 - Started CooperativeTaxiManagmentApplication in 2.433 seconds (process running for 980.71)
+2025-12-31 11:36:48 - Condition evaluation unchanged
+2025-12-31 11:36:54 - Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2025-12-31 11:36:54 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:36:54 - Graceful shutdown complete
+2025-12-31 11:36:54 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:54 - HikariPool-11 - Shutdown initiated...
+2025-12-31 11:36:54 - HikariPool-11 - Shutdown completed.
+2025-12-31 11:36:55 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:36:55 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:36:55 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:36:56 - Finished Spring Data repository scanning in 160 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:36:56 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:36:56 - Starting service [Tomcat]
+2025-12-31 11:36:56 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:36:56 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:36:56 - Root WebApplicationContext: initialization completed in 1156 ms
+2025-12-31 11:36:56 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:36:56 - HHH000026: Second-level cache disabled
+2025-12-31 11:36:56 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:36:56 - HikariPool-12 - Starting...
+2025-12-31 11:36:56 - HikariPool-12 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5c42e408
+2025-12-31 11:36:56 - HikariPool-12 - Start completed.
+2025-12-31 11:36:56 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:36:56 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-12)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:36:57 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:36:57 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:36:57 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:36:57 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:36:57 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:36:58 - LiveReload server is running on port 35729
+2025-12-31 11:36:58 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:36:58 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:36:58 - Started CooperativeTaxiManagmentApplication in 3.036 seconds (process running for 990.399)
+2025-12-31 11:36:58 - Condition evaluation unchanged
+2025-12-31 11:39:22 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-31 11:39:22 - Initializing Servlet 'dispatcherServlet'
+2025-12-31 11:39:22 - Completed initialization in 2 ms
+2025-12-31 11:39:30 - Init duration for springdoc-openapi is: 7345 ms
+2025-12-31 11:39:46 - Starting automatic generation of account histories for previous month
+2025-12-31 11:39:46 - Generating account histories for period: 2025-11 (registration date: 2025-12-31)
+2025-12-31 11:39:46 - Generating member account histories
+2025-12-31 11:39:46 - 
+    select
+        mae1_0.id_account,
+        mae1_0.active,
+        mae1_0.balance,
+        mae1_0.last_modified,
+        mae1_0.id_member 
+    from
+        member_accounts mae1_0 
+    where
+        mae1_0.active
+2025-12-31 11:39:46 - 
+    select
+        me1_0.id_person,
+        case 
+            when me1_1.id_person is not null 
+                then 2 
+            when me1_0.id_person is not null 
+                then 1 
+        end,
+        me1_2.active,
+        me1_2.birth_date,
+        me1_2.cuit,
+        me1_2.dni,
+        me1_2.email,
+        me1_2.father_surname,
+        me1_2.first_name,
+        me1_2.mother_surname,
+        me1_2.phone,
+        me1_2.second_name,
+        me1_0.id_address,
+        a1_0.id_address,
+        a1_0.apartment,
+        a1_0.city,
+        a1_0.floor,
+        a1_0.numeral,
+        a1_0.street,
+        me1_0.join_date,
+        me1_0.leave_date,
+        me1_0.role,
+        me1_1.expiration_registration_date 
+    from
+        members me1_0 
+    left join
+        drivers me1_1 
+            on me1_0.id_person=me1_1.id_person 
+    join
+        people me1_2 
+            on me1_0.id_person=me1_2.id_person 
+    join
+        addresses a1_0 
+            on a1_0.id_address=me1_0.id_address 
+    where
+        me1_0.id_person=?
+2025-12-31 11:39:46 - 
+    select
+        me1_0.id_person,
+        case 
+            when me1_1.id_person is not null 
+                then 2 
+            when me1_0.id_person is not null 
+                then 1 
+        end,
+        me1_2.active,
+        me1_2.birth_date,
+        me1_2.cuit,
+        me1_2.dni,
+        me1_2.email,
+        me1_2.father_surname,
+        me1_2.first_name,
+        me1_2.mother_surname,
+        me1_2.phone,
+        me1_2.second_name,
+        me1_0.id_address,
+        a1_0.id_address,
+        a1_0.apartment,
+        a1_0.city,
+        a1_0.floor,
+        a1_0.numeral,
+        a1_0.street,
+        me1_0.join_date,
+        me1_0.leave_date,
+        me1_0.role,
+        me1_1.expiration_registration_date 
+    from
+        members me1_0 
+    left join
+        drivers me1_1 
+            on me1_0.id_person=me1_1.id_person 
+    join
+        people me1_2 
+            on me1_0.id_person=me1_2.id_person 
+    join
+        addresses a1_0 
+            on a1_0.id_address=me1_0.id_address 
+    where
+        me1_0.id_person=?
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        member_accounts ma1_0 
+            on ma1_0.id_account=ahe1_0.id_member_account 
+    where
+        ma1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.id_member_account=? 
+        and ahe1_0.period=?
+2025-12-31 11:39:46 - 
+    insert 
+    into
+        account_histories
+        (active, id_member_account, month_end_balance, registration_date, id_subscriber_account, id_vehicle_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:39:46 - Created account history for member account 1 with balance 5000.0
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        member_accounts ma1_0 
+            on ma1_0.id_account=ahe1_0.id_member_account 
+    where
+        ma1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.id_member_account=? 
+        and ahe1_0.period=?
+2025-12-31 11:39:46 - 
+    insert 
+    into
+        account_histories
+        (active, id_member_account, month_end_balance, registration_date, id_subscriber_account, id_vehicle_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:39:46 - Created account history for member account 2 with balance 20000.0
+2025-12-31 11:39:46 - Generating subscriber account histories
+2025-12-31 11:39:46 - 
+    select
+        sae1_0.id_account,
+        sae1_0.active,
+        sae1_0.balance,
+        sae1_0.last_modified,
+        sae1_0.id_subscriber 
+    from
+        subscriber_accounts sae1_0 
+    where
+        sae1_0.active
+2025-12-31 11:39:46 - 
+    select
+        se1_0.id_person,
+        se1_1.active,
+        se1_1.birth_date,
+        se1_1.cuit,
+        se1_1.dni,
+        se1_1.email,
+        se1_1.father_surname,
+        se1_1.first_name,
+        se1_1.mother_surname,
+        se1_1.phone,
+        se1_1.second_name 
+    from
+        subscribers se1_0 
+    join
+        people se1_1 
+            on se1_0.id_person=se1_1.id_person 
+    where
+        se1_0.id_person=?
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        subscriber_accounts sa1_0 
+            on sa1_0.id_account=ahe1_0.id_subscriber_account 
+    where
+        sa1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.id_subscriber_account=? 
+        and ahe1_0.period=?
+2025-12-31 11:39:46 - 
+    insert 
+    into
+        account_histories
+        (active, id_member_account, month_end_balance, registration_date, id_subscriber_account, id_vehicle_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:39:46 - Created account history for subscriber account 1 with balance -5000.0
+2025-12-31 11:39:46 - Generating vehicle account histories
+2025-12-31 11:39:46 - 
+    select
+        vae1_0.id_account,
+        vae1_0.active,
+        vae1_0.balance,
+        vae1_0.last_modified,
+        vae1_0.id_vehicle 
+    from
+        vehicle_accounts vae1_0 
+    where
+        vae1_0.active
+2025-12-31 11:39:46 - 
+    select
+        ve1_0.id_vehicle,
+        ve1_0.active,
+        ve1_0.chassis_number,
+        ve1_0.engine_number,
+        ve1_0.leave_date,
+        ve1_0.license_number,
+        ve1_0.license_plate,
+        ve1_0.id_model,
+        m1_0.id_model,
+        m1_0.id_brand,
+        b1_0.id_brand,
+        b1_0.name,
+        m1_0.name,
+        m1_0.year,
+        ve1_0.vtv_expiration_date 
+    from
+        vehicles ve1_0 
+    join
+        models m1_0 
+            on m1_0.id_model=ve1_0.id_model 
+    join
+        brands b1_0 
+            on b1_0.id_brand=m1_0.id_brand 
+    where
+        ve1_0.id_vehicle=?
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        vehicle_accounts va1_0 
+            on va1_0.id_account=ahe1_0.id_vehicle_account 
+    where
+        va1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:39:46 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.id_vehicle_account=? 
+        and ahe1_0.period=?
+2025-12-31 11:39:46 - 
+    insert 
+    into
+        account_histories
+        (active, id_member_account, month_end_balance, registration_date, id_subscriber_account, id_vehicle_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:39:46 - Created account history for vehicle account 1 with balance -20000.0
+2025-12-31 11:39:46 - Successfully completed automatic generation of account histories
+2025-12-31 11:40:06 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0
+2025-12-31 11:41:01 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        vehicle_accounts va1_0 
+            on va1_0.id_account=ahe1_0.id_vehicle_account 
+    where
+        va1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:41:08 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        vehicle_accounts va1_0 
+            on va1_0.id_account=ahe1_0.id_vehicle_account 
+    where
+        va1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:41:35 - Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Method parameter 'startDate': Failed to convert value of type 'java.lang.String' to required type 'java.time.LocalDate'; Failed to convert from type [java.lang.String] to type [@org.springframework.web.bind.annotation.RequestParam @org.springframework.format.annotation.DateTimeFormat java.time.LocalDate] for value [1-12-2025]]
+2025-12-31 11:41:43 - Resolved [org.springframework.web.method.annotation.MethodArgumentTypeMismatchException: Method parameter 'startDate': Failed to convert value of type 'java.lang.String' to required type 'java.time.LocalDate'; Failed to convert from type [java.lang.String] to type [@org.springframework.web.bind.annotation.RequestParam @org.springframework.format.annotation.DateTimeFormat java.time.LocalDate] for value [01-12-2025]]
+2025-12-31 11:42:13 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.registration_date between ? and ? 
+        and ahe1_0.active
+2025-12-31 11:42:39 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.period=?
+2025-12-31 11:42:45 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.period=?
+2025-12-31 11:42:57 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    left join
+        member_accounts ma1_0 
+            on ma1_0.id_account=ahe1_0.id_member_account 
+    where
+        ma1_0.id_account=? 
+        and ahe1_0.active
+2025-12-31 11:43:11 - 
+    select
+        ahe1_0.id_account_history,
+        ahe1_0.active,
+        ahe1_0.id_member_account,
+        ahe1_0.month_end_balance,
+        ahe1_0.registration_date,
+        ahe1_0.id_subscriber_account,
+        ahe1_0.id_vehicle_account,
+        ahe1_0.period 
+    from
+        account_histories ahe1_0 
+    where
+        ahe1_0.id_account_history=?
+2025-12-31 11:44:30 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_member_account=? 
+        and re1_0.period=?
+2025-12-31 11:44:30 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.receipt_number=? 
+        and re1_0.booklet_number=?
+2025-12-31 11:44:30 - 
+    select
+        mae1_0.id_account,
+        mae1_0.active,
+        mae1_0.balance,
+        mae1_0.last_modified,
+        mae1_0.id_member,
+        m1_0.id_person,
+        case 
+            when m1_1.id_person is not null 
+                then 2 
+            when m1_0.id_person is not null 
+                then 1 
+        end,
+        m1_2.active,
+        m1_2.birth_date,
+        m1_2.cuit,
+        m1_2.dni,
+        m1_2.email,
+        m1_2.father_surname,
+        m1_2.first_name,
+        m1_2.mother_surname,
+        m1_2.phone,
+        m1_2.second_name,
+        m1_0.id_address,
+        a1_0.id_address,
+        a1_0.apartment,
+        a1_0.city,
+        a1_0.floor,
+        a1_0.numeral,
+        a1_0.street,
+        m1_0.join_date,
+        m1_0.leave_date,
+        m1_0.role,
+        m1_1.expiration_registration_date 
+    from
+        member_accounts mae1_0 
+    join
+        members m1_0 
+            on m1_0.id_person=mae1_0.id_member 
+    left join
+        drivers m1_1 
+            on m1_0.id_person=m1_1.id_person 
+    join
+        people m1_2 
+            on m1_0.id_person=m1_2.id_person 
+    join
+        addresses a1_0 
+            on a1_0.id_address=m1_0.id_address 
+    where
+        mae1_0.id_account=?
+2025-12-31 11:44:30 - 
+    insert 
+    into
+        receipts
+        (active, booklet_number, issue_date, id_member_account, receipt_number, receipt_type, id_subscriber_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:45:01 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_member_account=? 
+        and re1_0.period=?
+2025-12-31 11:45:01 - Resolved [com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException: A receipt already exists for this member account and period]
+2025-12-31 11:45:12 - Resolved [com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException: Receipt type SUBSCRIBER requires a subscriberAccount]
+2025-12-31 11:49:48 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0
+2025-12-31 11:50:35 - Resolved [com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException: Receipt type MEMBER requires a memberAccount]
+2025-12-31 11:50:43 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_subscriber_account=? 
+        and re1_0.period=?
+2025-12-31 11:50:43 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.receipt_number=? 
+        and re1_0.booklet_number=?
+2025-12-31 11:50:43 - Resolved [com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException: A receipt with this receipt number and booklet number already exists]
+2025-12-31 11:52:43 - Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2025-12-31 11:52:43 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:52:43 - Graceful shutdown complete
+2025-12-31 11:52:43 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:43 - HikariPool-12 - Shutdown initiated...
+2025-12-31 11:52:43 - HikariPool-12 - Shutdown completed.
+2025-12-31 11:52:44 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:52:44 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:52:45 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:52:45 - Finished Spring Data repository scanning in 164 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:52:45 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:52:45 - Starting service [Tomcat]
+2025-12-31 11:52:45 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:52:46 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:52:46 - Root WebApplicationContext: initialization completed in 1853 ms
+2025-12-31 11:52:46 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:52:46 - HHH000026: Second-level cache disabled
+2025-12-31 11:52:46 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:52:46 - HikariPool-13 - Starting...
+2025-12-31 11:52:46 - HikariPool-13 - Added connection com.mysql.cj.jdbc.ConnectionImpl@399a461c
+2025-12-31 11:52:46 - HikariPool-13 - Start completed.
+2025-12-31 11:52:46 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:52:46 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-13)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:52:46 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:52:46 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:52:46 - 
+    alter table receipts 
+       drop index uk_receipt_booklet_type
+2025-12-31 11:52:47 - 
+    alter table receipts 
+       add constraint uk_receipt_booklet_type unique (receipt_number, booklet_number, receipt_type)
+2025-12-31 11:52:47 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:47 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:52:48 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:52:48 - LiveReload server is running on port 35729
+2025-12-31 11:52:48 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:52:48 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:52:48 - Started CooperativeTaxiManagmentApplication in 4.77 seconds (process running for 1941.145)
+2025-12-31 11:52:48 - Condition evaluation unchanged
+2025-12-31 11:52:50 - Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2025-12-31 11:52:50 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:52:50 - Graceful shutdown complete
+2025-12-31 11:52:50 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:50 - HikariPool-13 - Shutdown initiated...
+2025-12-31 11:52:50 - HikariPool-13 - Shutdown completed.
+2025-12-31 11:52:50 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:52:50 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:52:51 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:52:51 - Finished Spring Data repository scanning in 147 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:52:51 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:52:51 - Starting service [Tomcat]
+2025-12-31 11:52:51 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:52:51 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:52:51 - Root WebApplicationContext: initialization completed in 1050 ms
+2025-12-31 11:52:51 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:52:51 - HHH000026: Second-level cache disabled
+2025-12-31 11:52:51 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:52:51 - HikariPool-14 - Starting...
+2025-12-31 11:52:51 - HikariPool-14 - Added connection com.mysql.cj.jdbc.ConnectionImpl@15a880bd
+2025-12-31 11:52:51 - HikariPool-14 - Start completed.
+2025-12-31 11:52:51 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:52:51 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-14)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:52:52 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:52:52 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:52:52 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:52 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:52:53 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:52:53 - LiveReload server is running on port 35729
+2025-12-31 11:52:53 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:52:53 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:52:53 - Started CooperativeTaxiManagmentApplication in 2.763 seconds (process running for 1945.733)
+2025-12-31 11:52:53 - Condition evaluation unchanged
+2025-12-31 11:52:55 - Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2025-12-31 11:52:55 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:52:55 - Graceful shutdown complete
+2025-12-31 11:52:55 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:55 - HikariPool-14 - Shutdown initiated...
+2025-12-31 11:52:55 - HikariPool-14 - Shutdown completed.
+2025-12-31 11:52:55 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:52:55 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:52:55 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:52:56 - Finished Spring Data repository scanning in 175 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:52:56 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:52:56 - Starting service [Tomcat]
+2025-12-31 11:52:56 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:52:56 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:52:56 - Root WebApplicationContext: initialization completed in 963 ms
+2025-12-31 11:52:56 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:52:56 - HHH000026: Second-level cache disabled
+2025-12-31 11:52:56 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:52:56 - HikariPool-15 - Starting...
+2025-12-31 11:52:56 - HikariPool-15 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7e3606aa
+2025-12-31 11:52:56 - HikariPool-15 - Start completed.
+2025-12-31 11:52:56 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:52:56 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-15)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:52:56 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:52:56 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:52:57 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:52:57 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:52:57 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:52:58 - LiveReload server is running on port 35729
+2025-12-31 11:52:58 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:52:58 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:52:58 - Started CooperativeTaxiManagmentApplication in 3.348 seconds (process running for 1950.895)
+2025-12-31 11:52:58 - Condition evaluation unchanged
+2025-12-31 11:53:00 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:53:00 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:53:00 - Graceful shutdown complete
+2025-12-31 11:53:00 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:53:00 - HikariPool-15 - Shutdown initiated...
+2025-12-31 11:53:00 - HikariPool-15 - Shutdown completed.
+2025-12-31 11:53:00 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:53:00 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:53:01 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:53:01 - Finished Spring Data repository scanning in 179 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:53:01 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:53:01 - Starting service [Tomcat]
+2025-12-31 11:53:01 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:53:01 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:53:01 - Root WebApplicationContext: initialization completed in 1168 ms
+2025-12-31 11:53:01 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:53:01 - HHH000026: Second-level cache disabled
+2025-12-31 11:53:01 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:53:01 - HikariPool-16 - Starting...
+2025-12-31 11:53:01 - HikariPool-16 - Added connection com.mysql.cj.jdbc.ConnectionImpl@47b7dddc
+2025-12-31 11:53:01 - HikariPool-16 - Start completed.
+2025-12-31 11:53:01 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:53:01 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-16)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:53:02 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:53:02 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:53:02 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:53:02 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:53:03 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:53:03 - LiveReload server is running on port 35729
+2025-12-31 11:53:03 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:53:03 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:53:03 - Started CooperativeTaxiManagmentApplication in 3.227 seconds (process running for 1955.941)
+2025-12-31 11:53:03 - Condition evaluation unchanged
+2025-12-31 11:53:05 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:53:05 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:53:05 - Graceful shutdown complete
+2025-12-31 11:53:05 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:53:05 - HikariPool-16 - Shutdown initiated...
+2025-12-31 11:53:05 - HikariPool-16 - Shutdown completed.
+2025-12-31 11:53:05 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:53:05 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:53:06 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:53:06 - Finished Spring Data repository scanning in 141 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:53:06 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:53:06 - Starting service [Tomcat]
+2025-12-31 11:53:06 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:53:06 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:53:06 - Root WebApplicationContext: initialization completed in 897 ms
+2025-12-31 11:53:06 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:53:06 - HHH000026: Second-level cache disabled
+2025-12-31 11:53:06 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:53:06 - HikariPool-17 - Starting...
+2025-12-31 11:53:06 - HikariPool-17 - Added connection com.mysql.cj.jdbc.ConnectionImpl@42906aff
+2025-12-31 11:53:06 - HikariPool-17 - Start completed.
+2025-12-31 11:53:06 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:53:06 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-17)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:53:06 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:53:06 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:53:07 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:53:07 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:53:07 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:53:07 - LiveReload server is running on port 35729
+2025-12-31 11:53:07 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:53:07 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:53:07 - Started CooperativeTaxiManagmentApplication in 2.332 seconds (process running for 1960.151)
+2025-12-31 11:53:07 - Condition evaluation unchanged
+2025-12-31 11:54:18 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:54:18 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:54:18 - Graceful shutdown complete
+2025-12-31 11:54:18 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:18 - HikariPool-17 - Shutdown initiated...
+2025-12-31 11:54:18 - HikariPool-17 - Shutdown completed.
+2025-12-31 11:54:18 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:54:18 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:54:18 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:54:19 - Finished Spring Data repository scanning in 147 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:54:19 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:54:19 - Starting service [Tomcat]
+2025-12-31 11:54:19 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:54:19 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:54:19 - Root WebApplicationContext: initialization completed in 898 ms
+2025-12-31 11:54:19 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:54:19 - HHH000026: Second-level cache disabled
+2025-12-31 11:54:19 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:54:19 - HikariPool-18 - Starting...
+2025-12-31 11:54:19 - HikariPool-18 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1135450f
+2025-12-31 11:54:19 - HikariPool-18 - Start completed.
+2025-12-31 11:54:19 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:54:19 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-18)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:54:19 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:54:19 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:54:19 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:20 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:54:20 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:54:20 - LiveReload server is running on port 35729
+2025-12-31 11:54:20 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:54:20 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:54:20 - Started CooperativeTaxiManagmentApplication in 2.341 seconds (process running for 2032.959)
+2025-12-31 11:54:20 - Condition evaluation unchanged
+2025-12-31 11:54:25 - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-12-31 11:54:25 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:54:25 - Graceful shutdown complete
+2025-12-31 11:54:25 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:25 - HikariPool-18 - Shutdown initiated...
+2025-12-31 11:54:25 - HikariPool-18 - Shutdown completed.
+2025-12-31 11:54:26 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:54:26 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:54:26 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:54:26 - Finished Spring Data repository scanning in 206 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:54:27 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:54:27 - Starting service [Tomcat]
+2025-12-31 11:54:27 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:54:27 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:54:27 - Root WebApplicationContext: initialization completed in 1071 ms
+2025-12-31 11:54:27 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:54:27 - HHH000026: Second-level cache disabled
+2025-12-31 11:54:27 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:54:27 - HikariPool-19 - Starting...
+2025-12-31 11:54:27 - HikariPool-19 - Added connection com.mysql.cj.jdbc.ConnectionImpl@22db8deb
+2025-12-31 11:54:27 - HikariPool-19 - Start completed.
+2025-12-31 11:54:27 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:54:27 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-19)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:54:27 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:54:27 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:54:27 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:28 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:54:28 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:54:29 - LiveReload server is running on port 35729
+2025-12-31 11:54:29 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:54:29 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:54:29 - Started CooperativeTaxiManagmentApplication in 3.095 seconds (process running for 2041.417)
+2025-12-31 11:54:29 - Condition evaluation unchanged
+2025-12-31 11:54:30 - Restarting due to 4 class path changes (0 additions, 0 deletions, 4 modifications)
+2025-12-31 11:54:30 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:54:30 - Graceful shutdown complete
+2025-12-31 11:54:30 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:30 - HikariPool-19 - Shutdown initiated...
+2025-12-31 11:54:30 - HikariPool-19 - Shutdown completed.
+2025-12-31 11:54:31 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 9500 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:54:31 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:54:31 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:54:31 - Finished Spring Data repository scanning in 232 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:54:32 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:54:32 - Starting service [Tomcat]
+2025-12-31 11:54:32 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:54:32 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:54:32 - Root WebApplicationContext: initialization completed in 1097 ms
+2025-12-31 11:54:32 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:54:32 - HHH000026: Second-level cache disabled
+2025-12-31 11:54:32 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:54:32 - HikariPool-20 - Starting...
+2025-12-31 11:54:32 - HikariPool-20 - Added connection com.mysql.cj.jdbc.ConnectionImpl@ac81a47
+2025-12-31 11:54:32 - HikariPool-20 - Start completed.
+2025-12-31 11:54:32 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:54:32 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-20)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:54:32 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:54:32 - 
+    alter table receipts 
+       modify column receipt_type enum ('MEMBER','SUBSCRIBER') not null
+2025-12-31 11:54:32 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:54:32 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:54:33 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:54:33 - LiveReload server is running on port 35729
+2025-12-31 11:54:33 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:54:33 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:54:33 - Started CooperativeTaxiManagmentApplication in 2.572 seconds (process running for 2045.863)
+2025-12-31 11:54:33 - Condition evaluation unchanged
+2025-12-31 11:54:33 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-31 11:54:33 - Initializing Servlet 'dispatcherServlet'
+2025-12-31 11:54:33 - Completed initialization in 2 ms
+2025-12-31 11:54:33 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_subscriber_account=? 
+        and re1_0.period=?
+2025-12-31 11:54:33 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.receipt_number=? 
+        and re1_0.booklet_number=? 
+        and re1_0.receipt_type=?
+2025-12-31 11:54:33 - 
+    select
+        sae1_0.id_account,
+        sae1_0.active,
+        sae1_0.balance,
+        sae1_0.last_modified,
+        sae1_0.id_subscriber,
+        s1_0.id_person,
+        s1_1.active,
+        s1_1.birth_date,
+        s1_1.cuit,
+        s1_1.dni,
+        s1_1.email,
+        s1_1.father_surname,
+        s1_1.first_name,
+        s1_1.mother_surname,
+        s1_1.phone,
+        s1_1.second_name 
+    from
+        subscriber_accounts sae1_0 
+    join
+        subscribers s1_0 
+            on s1_0.id_person=sae1_0.id_subscriber 
+    join
+        people s1_1 
+            on s1_0.id_person=s1_1.id_person 
+    where
+        sae1_0.id_account=?
+2025-12-31 11:54:33 - 
+    insert 
+    into
+        receipts
+        (active, booklet_number, issue_date, id_member_account, receipt_number, receipt_type, id_subscriber_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:54:33 - SQL Error: 1062, SQLState: 23000
+2025-12-31 11:54:33 - Duplicate entry '1-1' for key 'receipts.uk_receipt_booklet'
+2025-12-31 11:54:33 - Resolved [org.springframework.dao.DataIntegrityViolationException: could not execute statement [Duplicate entry '1-1' for key 'receipts.uk_receipt_booklet'] [insert into receipts (active,booklet_number,issue_date,id_member_account,receipt_number,receipt_type,id_subscriber_account,period) values (?,?,?,?,?,?,?,?)]; SQL [insert into receipts (active,booklet_number,issue_date,id_member_account,receipt_number,receipt_type,id_subscriber_account,period) values (?,?,?,?,?,?,?,?)]; constraint [receipts.uk_receipt_booklet]]
+2025-12-31 11:55:14 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 11:55:14 - Graceful shutdown complete
+2025-12-31 11:55:14 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:55:14 - HikariPool-20 - Shutdown initiated...
+2025-12-31 11:55:14 - HikariPool-20 - Shutdown completed.
+2025-12-31 11:55:38 - Starting CooperativeTaxiManagmentApplication using Java 21.0.4 with PID 4120 (C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend\target\classes started by Luciano in C:\Users\Estudiante\Desktop\Programacion\Proyects\Cooperative_taxi_management\backend)
+2025-12-31 11:55:38 - No active profile set, falling back to 1 default profile: "default"
+2025-12-31 11:55:38 - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-31 11:55:38 - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-31 11:55:40 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-31 11:55:40 - Finished Spring Data repository scanning in 199 ms. Found 22 JPA repository interfaces.
+2025-12-31 11:55:41 - Tomcat initialized with port 8080 (http)
+2025-12-31 11:55:41 - Starting service [Tomcat]
+2025-12-31 11:55:41 - Starting Servlet engine: [Apache Tomcat/10.1.46]
+2025-12-31 11:55:41 - Initializing Spring embedded WebApplicationContext
+2025-12-31 11:55:41 - Root WebApplicationContext: initialization completed in 2808 ms
+2025-12-31 11:55:42 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-31 11:55:42 - HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-12-31 11:55:42 - HHH000026: Second-level cache disabled
+2025-12-31 11:55:42 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-31 11:55:42 - HikariPool-1 - Starting...
+2025-12-31 11:55:42 - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5d11ed2f
+2025-12-31 11:55:42 - HikariPool-1 - Start completed.
+2025-12-31 11:55:42 - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-31 11:55:42 - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.42
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-31 11:55:44 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-31 11:55:44 - 
+    create table receipts (
+        id_receipt bigint not null auto_increment,
+        active bit not null,
+        booklet_number integer not null,
+        issue_date date not null,
+        receipt_number integer not null,
+        receipt_type enum ('MEMBER','SUBSCRIBER') not null,
+        period varchar(7) not null,
+        id_member_account bigint,
+        id_subscriber_account bigint,
+        primary key (id_receipt)
+    ) engine=InnoDB
+2025-12-31 11:55:44 - 
+    alter table receipts 
+       drop index uk_member_receipt_period
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       add constraint uk_member_receipt_period unique (id_member_account, period)
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       drop index uk_subscriber_receipt_period
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       add constraint uk_subscriber_receipt_period unique (id_subscriber_account, period)
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       drop index uk_receipt_booklet_type
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       add constraint uk_receipt_booklet_type unique (receipt_number, booklet_number, receipt_type)
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       add constraint FK2rt5v5x65lofpeffn74nha5my 
+       foreign key (id_member_account) 
+       references member_accounts (id_account)
+2025-12-31 11:55:45 - 
+    alter table receipts 
+       add constraint FKsq925mmtn7swm5ly2bxrdi8pa 
+       foreign key (id_subscriber_account) 
+       references subscriber_accounts (id_account)
+2025-12-31 11:55:45 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 11:55:45 - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-31 11:55:46 - 
+    select
+        cre1_0.id_cash_register,
+        cre1_0.active,
+        cre1_0.amount 
+    from
+        cash_register cre1_0
+2025-12-31 11:55:47 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-31 11:55:48 - LiveReload server is running on port 35729
+2025-12-31 11:55:48 - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-31 11:55:48 - Tomcat started on port 8080 (http) with context path '/'
+2025-12-31 11:55:48 - Started CooperativeTaxiManagmentApplication in 10.005 seconds (process running for 10.694)
+2025-12-31 11:56:44 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-31 11:56:44 - Initializing Servlet 'dispatcherServlet'
+2025-12-31 11:56:44 - Completed initialization in 2 ms
+2025-12-31 11:56:44 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_subscriber_account=? 
+        and re1_0.period=?
+2025-12-31 11:56:44 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.receipt_number=? 
+        and re1_0.booklet_number=? 
+        and re1_0.receipt_type=?
+2025-12-31 11:56:44 - 
+    select
+        sae1_0.id_account,
+        sae1_0.active,
+        sae1_0.balance,
+        sae1_0.last_modified,
+        sae1_0.id_subscriber,
+        s1_0.id_person,
+        s1_1.active,
+        s1_1.birth_date,
+        s1_1.cuit,
+        s1_1.dni,
+        s1_1.email,
+        s1_1.father_surname,
+        s1_1.first_name,
+        s1_1.mother_surname,
+        s1_1.phone,
+        s1_1.second_name 
+    from
+        subscriber_accounts sae1_0 
+    join
+        subscribers s1_0 
+            on s1_0.id_person=sae1_0.id_subscriber 
+    join
+        people s1_1 
+            on s1_0.id_person=s1_1.id_person 
+    where
+        sae1_0.id_account=?
+2025-12-31 11:56:44 - 
+    insert 
+    into
+        receipts
+        (active, booklet_number, issue_date, id_member_account, receipt_number, receipt_type, id_subscriber_account, period) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+2025-12-31 11:56:52 - 
+    select
+        re1_0.id_receipt,
+        re1_0.active,
+        re1_0.booklet_number,
+        re1_0.issue_date,
+        re1_0.id_member_account,
+        re1_0.receipt_number,
+        re1_0.receipt_type,
+        re1_0.id_subscriber_account,
+        re1_0.period 
+    from
+        receipts re1_0 
+    where
+        re1_0.id_subscriber_account=? 
+        and re1_0.period=?
+2025-12-31 11:56:52 - Resolved [com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException: A receipt already exists for this subscriber account and period]
+2025-12-31 13:05:14 - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-31 13:05:14 - Graceful shutdown complete
+2025-12-31 13:05:14 - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-31 13:05:14 - HikariPool-1 - Shutdown initiated...
+2025-12-31 13:05:14 - HikariPool-1 - Shutdown completed.

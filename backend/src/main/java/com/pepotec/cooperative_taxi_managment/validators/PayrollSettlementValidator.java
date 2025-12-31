@@ -1,16 +1,23 @@
 package com.pepotec.cooperative_taxi_managment.validators;
 
 import com.pepotec.cooperative_taxi_managment.exceptions.InvalidDataException;
+import com.pepotec.cooperative_taxi_managment.models.entities.AdvanceEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberAccountEntity;
 import com.pepotec.cooperative_taxi_managment.models.entities.MemberEntity;
 import com.pepotec.cooperative_taxi_managment.models.enums.MemberRole;
+import com.pepotec.cooperative_taxi_managment.repositories.PayrollSettlementRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
 
 @Component
 public class PayrollSettlementValidator {
+
+    @Autowired
+    private PayrollSettlementRepository payrollSettlementRepository;
 
     public void validateMemberRole(MemberAccountEntity account) {
         MemberEntity member = account.getMember();
@@ -55,6 +62,41 @@ public class PayrollSettlementValidator {
 
     public void validatePaymentDate(LocalDate paymentDate) {
         // paymentDate can be null; no extra validation for now.
+    }
+
+    /**
+     * Valida la unicidad de account + yearMonth.
+     * @param memberAccountId ID de la cuenta de socio
+     * @param period Período en formato String "YYYY-MM"
+     * @param excludeId ID a excluir de la validación (para updates, null para creates)
+     */
+    public void validateUniqueAccountPeriod(Long memberAccountId, String period, Long excludeId) {
+        payrollSettlementRepository.findByMemberAccountIdAndYearMonth(memberAccountId, period)
+                .ifPresent(existing -> {
+                    if (excludeId == null || !existing.getId().equals(excludeId)) {
+                        throw new InvalidDataException("A payroll settlement already exists for this account and period");
+                    }
+                });
+    }
+
+    /**
+     * Valida que los advances no estén ya asociados a otra liquidación.
+     * @param advances Lista de advances a validar
+     * @param excludeSettlementId ID de liquidación a excluir (para updates, null para creates)
+     */
+    public void validateAdvancesNotLinked(List<AdvanceEntity> advances, Long excludeSettlementId) {
+        if (advances == null || advances.isEmpty()) {
+            return;
+        }
+        for (AdvanceEntity adv : advances) {
+            if (adv.getPayrollSettlement() != null) {
+                if (excludeSettlementId == null) {
+                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to a payroll settlement");
+                } else if (!adv.getPayrollSettlement().getId().equals(excludeSettlementId)) {
+                    throw new InvalidDataException("Advance " + adv.getId() + " is already linked to another payroll settlement");
+                }
+            }
+        }
     }
 }
 

@@ -38,7 +38,7 @@ public class MovementValidator {
         if (dto.getVehicleAccountId() != null) accountCount++;
         
         if (accountCount > 1) {
-            throw new InvalidDataException("Un movimiento solo puede tener una cuenta asociada o ninguna. Se encontraron " + accountCount + " cuentas.");
+            throw new InvalidDataException("A movement can only have one account associated or none. Found " + accountCount + " accounts.");
         }
         
         // Validar restricciones por tipo de movimiento
@@ -60,7 +60,7 @@ public class MovementValidator {
         if (dto.getVehicleAccountId() != null) accountCount++;
         
         if (accountCount > 1) {
-            throw new InvalidDataException("Un movimiento solo puede tener una cuenta asociada o ninguna. Se encontraron " + accountCount + " cuentas.");
+            throw new InvalidDataException("A movement can only have one account associated or none. Found " + accountCount + " accounts.");
         }
         
         // Validar restricciones por tipo de movimiento
@@ -80,7 +80,7 @@ public class MovementValidator {
         if (movement.getVehicleAccount() != null) accountCount++;
         
         if (accountCount > 1) {
-            throw new InvalidDataException("Un movimiento solo puede tener una cuenta asociada o ninguna. Se encontraron " + accountCount + " cuentas.");
+            throw new InvalidDataException("A movement can only have one account associated or none. Found " + accountCount + " accounts.");
         }
     }
     

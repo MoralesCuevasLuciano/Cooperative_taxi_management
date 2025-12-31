@@ -52,9 +52,7 @@ public class DailyFuelService {
         dailyFuelEntity.setDriver(driver);
         dailyFuelEntity.setVehicle(vehicle);
 
-        if (settlementId == null) {
-            throw new InvalidDataException("El ID de rendición no puede ser nulo");
-        }
+        dailyFuelValidator.validateSettlementIdNotNull(settlementId);
         var settlement = driverSettlementService.getDriverSettlementEntityById(settlementId);
         dailyFuelEntity.setSettlement(settlement);
 
@@ -85,105 +83,67 @@ public class DailyFuelService {
     }
 
     public List<DailyFuelDTO> getDailyFuelsByVehicle(Long vehicleId) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
+        dailyFuelValidator.validateVehicleIdNotNull(vehicleId);
         return dailyFuelRepository.findByVehicleId(vehicleId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByDriver(Long driverId) {
-        if (driverId == null) {
-            throw new InvalidDataException("El ID del chofer no puede ser nulo");
-        }
+        dailyFuelValidator.validateDriverIdNotNull(driverId);
         return dailyFuelRepository.findByDriverId(driverId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByTicketIssueDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        dailyFuelValidator.validateDateRange(startDate, endDate);
         return dailyFuelRepository.findByTicketIssueDateBetween(startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsBySubmissionDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        dailyFuelValidator.validateDateRange(startDate, endDate);
         return dailyFuelRepository.findBySubmissionDateBetween(startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByFuelType(FuelType fuelType) {
-        if (fuelType == null) {
-            throw new InvalidDataException("El tipo de combustible no puede ser nulo");
-        }
+        dailyFuelValidator.validateFuelTypeNotNull(fuelType);
         return dailyFuelRepository.findByFuelType(fuelType).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByVehicleAndTicketIssueDateRange(Long vehicleId, LocalDate startDate, LocalDate endDate) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        dailyFuelValidator.validateVehicleIdNotNull(vehicleId);
+        dailyFuelValidator.validateDateRange(startDate, endDate);
         return dailyFuelRepository.findByVehicleIdAndTicketIssueDateBetween(vehicleId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByDriverAndTicketIssueDateRange(Long driverId, LocalDate startDate, LocalDate endDate) {
-        if (driverId == null) {
-            throw new InvalidDataException("El ID del chofer no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        dailyFuelValidator.validateDriverIdNotNull(driverId);
+        dailyFuelValidator.validateDateRange(startDate, endDate);
         return dailyFuelRepository.findByDriverIdAndTicketIssueDateBetween(driverId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByVehicleAndFuelType(Long vehicleId, FuelType fuelType) {
-        if (vehicleId == null) {
-            throw new InvalidDataException("El ID del vehículo no puede ser nulo");
-        }
-        if (fuelType == null) {
-            throw new InvalidDataException("El tipo de combustible no puede ser nulo");
-        }
+        dailyFuelValidator.validateVehicleIdNotNull(vehicleId);
+        dailyFuelValidator.validateFuelTypeNotNull(fuelType);
         return dailyFuelRepository.findByVehicleIdAndFuelType(vehicleId, fuelType).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DailyFuelDTO> getDailyFuelsByDriverAndFuelType(Long driverId, FuelType fuelType) {
-        if (driverId == null) {
-            throw new InvalidDataException("El ID del chofer no puede ser nulo");
-        }
-        if (fuelType == null) {
-            throw new InvalidDataException("El tipo de combustible no puede ser nulo");
-        }
+        dailyFuelValidator.validateDriverIdNotNull(driverId);
+        dailyFuelValidator.validateFuelTypeNotNull(fuelType);
         return dailyFuelRepository.findByDriverIdAndFuelType(driverId, fuelType).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
@@ -191,9 +151,7 @@ public class DailyFuelService {
 
     @Transactional
     public DailyFuelDTO updateDailyFuel(DailyFuelDTO dailyFuel) {
-        if (dailyFuel.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        dailyFuelValidator.validateIdNotNullForUpdate(dailyFuel.getId());
 
         DailyFuelEntity dailyFuelEntity = dailyFuelRepository.findById(dailyFuel.getId())
             .orElseThrow(() -> new ResourceNotFoundException(dailyFuel.getId(), "Combustible Diario"));
@@ -223,9 +181,7 @@ public class DailyFuelService {
     }
 
     public void deleteDailyFuel(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        dailyFuelValidator.validateIdNotNull(id);
 
         DailyFuelEntity dailyFuel = dailyFuelRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Combustible Diario"));

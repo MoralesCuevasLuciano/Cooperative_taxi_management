@@ -43,10 +43,7 @@ public class MemberAccountService {
 
     public MemberAccountDTO createMemberAccount(MemberEntity member, MemberAccountCreateDTO account) {
         memberAccountValidator.validateMemberAccountCreateFields(account.getBalance(), account.getLastModified());
-
-        memberAccountRepository.findByMemberId(member.getId()).ifPresent(existing -> {
-            throw new InvalidDataException("El socio ya tiene una cuenta asociada");
-        });
+        memberAccountValidator.validateUniqueMemberAccount(member.getId());
 
         MemberAccountEntity entity = convertCreateDtoToEntity(account);
         entity.setMember(member);
@@ -65,9 +62,7 @@ public class MemberAccountService {
     }
 
     public MemberAccountDTO getMemberAccountByMemberId(Long memberId) {
-        if (memberId == null) {
-            throw new InvalidDataException("El ID del socio no puede ser nulo");
-        }
+        memberAccountValidator.validateMemberIdNotNull(memberId);
         MemberAccountEntity account = memberAccountRepository.findByMemberIdAndActiveTrue(memberId)
             .orElseThrow(() -> new ResourceNotFoundException(memberId, "Cuenta de Socio para el socio"));
         return convertToDTO(account);
@@ -86,9 +81,7 @@ public class MemberAccountService {
     }
 
     public MemberAccountDTO updateMemberAccount(MemberAccountDTO account) {
-        if (account.getId() == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo para actualizar");
-        }
+        memberAccountValidator.validateIdNotNullForUpdate(account.getId());
 
         MemberAccountEntity entity = memberAccountRepository.findById(account.getId())
             .orElseThrow(() -> new ResourceNotFoundException(account.getId(), "Cuenta de Socio"));
@@ -105,9 +98,7 @@ public class MemberAccountService {
     }
 
     public void deleteMemberAccount(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID de la cuenta no puede ser nulo");
-        }
+        memberAccountValidator.validateIdNotNull(id);
 
         MemberAccountEntity entity = memberAccountRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Cuenta de Socio"));

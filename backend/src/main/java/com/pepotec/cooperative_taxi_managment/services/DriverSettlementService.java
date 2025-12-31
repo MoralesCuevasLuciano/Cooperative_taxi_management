@@ -57,45 +57,29 @@ public class DriverSettlementService {
     }
 
     public List<DriverSettlementDTO> getDriverSettlementsByDriver(Long driverId) {
-        if (driverId == null) {
-            throw new InvalidDataException("El ID del chofer no puede ser nulo");
-        }
+        driverSettlementValidator.validateDriverIdNotNull(driverId);
         return driverSettlementRepository.findByDriverId(driverId).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DriverSettlementDTO> getDriverSettlementsBySubmissionDate(LocalDate submissionDate) {
-        if (submissionDate == null) {
-            throw new InvalidDataException("La fecha de entrega no puede ser nula");
-        }
+        driverSettlementValidator.validateSubmissionDateNotNull(submissionDate);
         return driverSettlementRepository.findBySubmissionDate(submissionDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DriverSettlementDTO> getDriverSettlementsBySubmissionDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        driverSettlementValidator.validateDateRange(startDate, endDate);
         return driverSettlementRepository.findBySubmissionDateBetween(startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }
 
     public List<DriverSettlementDTO> getDriverSettlementsByDriverAndSubmissionDateRange(Long driverId, LocalDate startDate, LocalDate endDate) {
-        if (driverId == null) {
-            throw new InvalidDataException("El ID del chofer no puede ser nulo");
-        }
-        if (startDate == null || endDate == null) {
-            throw new InvalidDataException("Las fechas de inicio y fin no pueden ser nulas");
-        }
-        if (startDate.isAfter(endDate)) {
-            throw new InvalidDataException("La fecha de inicio no puede ser posterior a la fecha de fin");
-        }
+        driverSettlementValidator.validateDriverIdNotNull(driverId);
+        driverSettlementValidator.validateDateRange(startDate, endDate);
         return driverSettlementRepository.findByDriverIdAndSubmissionDateBetween(driverId, startDate, endDate).stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
@@ -103,9 +87,7 @@ public class DriverSettlementService {
 
     @Transactional
     public DriverSettlementDTO updateDriverSettlement(DriverSettlementDTO settlement) {
-        if (settlement.getId() == null) {
-            throw new InvalidDataException("El ID no puede ser nulo para actualizar");
-        }
+        driverSettlementValidator.validateIdNotNullForUpdate(settlement.getId());
 
         DriverSettlementEntity settlementEntity = driverSettlementRepository.findById(settlement.getId())
             .orElseThrow(() -> new ResourceNotFoundException(settlement.getId(), "Rendición de Chofer"));
@@ -125,9 +107,7 @@ public class DriverSettlementService {
     }
 
     public void deleteDriverSettlement(Long id) {
-        if (id == null) {
-            throw new InvalidDataException("El ID no puede ser nulo");
-        }
+        driverSettlementValidator.validateIdNotNull(id);
 
         DriverSettlementEntity settlement = driverSettlementRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException(id, "Rendición de Chofer"));
@@ -140,9 +120,7 @@ public class DriverSettlementService {
      * Suma todos los montos de los tickets de taxi que pertenecen a esta rendición.
      */
     public Double calculateTotalTickets(Long settlementId) {
-        if (settlementId == null) {
-            throw new InvalidDataException("El ID de la rendición no puede ser nulo");
-        }
+        driverSettlementValidator.validateSettlementIdNotNullForCalculation(settlementId);
 
         // Verificar que la rendición existe
         driverSettlementRepository.findById(settlementId)
@@ -160,10 +138,10 @@ public class DriverSettlementService {
      */
     public Double calculateFinalBalance(DriverSettlementDTO settlement) {
         if (settlement == null) {
-            throw new InvalidDataException("La rendición no puede ser nula");
+            throw new InvalidDataException("The settlement cannot be null");
         }
         if (settlement.getTicketAmount() == null || settlement.getVoucherAmount() == null || settlement.getVoucherDifference() == null) {
-            throw new InvalidDataException("Los montos de ticket, voucher y diferencia no pueden ser nulos");
+            throw new InvalidDataException("The ticket, voucher and difference amounts cannot be null");
         }
 
         return settlement.getTicketAmount() - settlement.getVoucherAmount() + settlement.getVoucherDifference();
