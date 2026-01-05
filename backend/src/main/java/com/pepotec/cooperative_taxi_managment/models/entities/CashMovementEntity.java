@@ -15,6 +15,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Entity
 @Table(name = "cash_movements")
+@DiscriminatorValue("CASH")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

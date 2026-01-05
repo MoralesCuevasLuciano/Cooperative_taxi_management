@@ -1,0 +1,6 @@
+Agregar "monto" a recibo que sume todos los "Movimiento Cuenta" que se le agregaron.
+Modificar cuenta de "rendicion_chofer" para que se haga de forma realista.
+Endpoint que visualice los TipoMovimiento que no tengan MovimientoCuenta con cuota_final asignada
+¿Con polmorfismo mejor implementado hubiese quedado mejor el tema de la asignación de clases? ¿O un cambio de estrategia como a JOINED en JPA?
+Modificar liquidacion y recibo para implementar el "Movimiento"
+Corregir estrategira de AbstractMvementEntity a JOINED para con sus hijas

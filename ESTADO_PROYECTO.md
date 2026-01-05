@@ -2,7 +2,7 @@
 
 **Última actualización:** Diciembre, 2024
 
-**Actualización reciente:** Sistema completo de Receipt (Recibo) y AccountHistory (Historial de Cuenta) implementado. Endpoint manual para generación de historiales. Configuración de logging a archivos. Validación de unicidad de recibos actualizada para incluir receiptType.
+**Actualización reciente:** Sistema de Account Movements (Movimientos de Cuenta) parcialmente implementado. Completadas: Entidades, DTOs, Repositories y Validators. Pendientes: Services y Controllers. Pendiente también: Reestructuración del sistema de cuentas para usar JOINED inheritance y relaciones polimórficas.
 
 ---
 
@@ -508,6 +508,81 @@
 ## 🚧 Tareas Pendientes
 
 ### ⏳ Tareas para Próxima Sesión
+
+#### 15. **Sistema de Account Movements (Movimientos de Cuenta)** ⏳ EN PROGRESO
+
+**Estado actual:** Parcialmente implementado
+
+**✅ Completado:**
+- ✅ Enum `RepairType` con valores: `WORKSHOP_REPAIR`, `LUBRICATION_CENTER`
+- ✅ Entidades con estrategia JOINED:
+  - `AbstractAccountMovementEntity` (clase base abstracta)
+  - `AccountIncomeEntity` (ingresos de cuenta)
+  - `AbstractAccountExpenseEntity` (clase intermedia para gastos)
+  - `MonthlyExpenseEntity` (gastos mensuales recurrentes)
+  - `WorkshopRepairEntity` (arreglos de taller)
+  - `AbstractTypeEntity` (clase base para tipos)
+  - `IncomeTypeEntity` (tipos de ingreso)
+  - `ExpenseTypeEntity` (tipos de gasto)
+  - `SettlementAllocationEntity` (asignaciones de pago - tabla puente)
+- ✅ DTOs organizados en estructura de carpetas:
+  - `models.dto.incometype.*` - `IncomeTypeDTO`, `IncomeTypeCreateDTO`
+  - `models.dto.expensetype.*` - `ExpenseTypeDTO`, `ExpenseTypeCreateDTO`
+  - `models.dto.accountmovement.income.*` - `AccountIncomeDTO`, `AccountIncomeCreateDTO`
+  - `models.dto.accountmovement.expense.monthly.*` - `MonthlyExpenseDTO`, `MonthlyExpenseCreateDTO`
+  - `models.dto.accountmovement.expense.workshop.*` - `WorkshopRepairDTO`, `WorkshopRepairCreateDTO`
+  - `models.dto.settlementallocation.*` - `SettlementAllocationDTO`, `SettlementAllocationCreateDTO`
+- ✅ Repositories completos con métodos de búsqueda:
+  - `IncomeTypeRepository` - búsqueda por nombre, activos
+  - `ExpenseTypeRepository` - búsqueda por nombre, activos
+  - `AccountIncomeRepository` - búsqueda por cuenta, período, tipo, estado, unicidad condicional
+  - `MonthlyExpenseRepository` - búsqueda por cuenta, período, tipo, estado, unicidad condicional
+  - `WorkshopRepairRepository` - búsqueda por cuenta, período, tipo, saldo pendiente
+  - `SettlementAllocationRepository` - búsqueda por movimiento de cuenta, método de pago, suma de montos
+- ✅ Validators completos con todas las validaciones:
+  - `IncomeTypeValidator` - validación de campos y unicidad
+  - `ExpenseTypeValidator` - validación de campos y unicidad
+  - `AccountIncomeValidator` - validación de cuenta única, período, cuotas, unicidad condicional
+  - `MonthlyExpenseValidator` - validación de cuenta única, período, cuotas, unicidad condicional
+  - `WorkshopRepairValidator` - validación de cuenta única, período, tipo, saldo restante, sin cuotas
+  - `SettlementAllocationValidator` - validación XOR de métodos de pago, monto asignado, coincidencia de cuentas, inmutabilidad
+
+**⏳ Pendiente:**
+- ⏳ Services (lógica de negocio):
+  - `IncomeTypeService` - CRUD completo
+  - `ExpenseTypeService` - CRUD completo
+  - `AccountIncomeService` - CRUD completo + inicialización de `remainingBalance` en WorkshopRepair
+  - `MonthlyExpenseService` - CRUD completo
+  - `WorkshopRepairService` - CRUD completo + actualización de `remainingBalance` al crear/eliminar SettlementAllocation
+  - `SettlementAllocationService` - CRUD completo + validación de inmutabilidad, cascade delete
+- ⏳ Controllers (endpoints REST):
+  - `IncomeTypeController` - CRUD completo
+  - `ExpenseTypeController` - CRUD completo
+  - `AccountIncomeController` - CRUD completo
+  - `MonthlyExpenseController` - CRUD completo
+  - `WorkshopRepairController` - CRUD completo
+  - `SettlementAllocationController` - CRUD completo
+- ⏳ Scheduler para automatización mensual:
+  - Generación automática de movimientos mensuales recurrentes
+  - Creación de historiales mensuales
+- ⏳ Integración con sistema de login para historial automático
+
+**Características implementadas:**
+- Unicidad condicional: `(account + yearMonth + incomeType)` solo cuando `monthlyRecurrence = true`
+- Unicidad condicional: `(account + yearMonth + expenseType)` solo cuando `monthlyRecurrence = true`
+- Validación XOR en `SettlementAllocation`: solo uno de (receipt, payrollSettlement, movement) puede estar presente
+- Inmutabilidad: `SettlementAllocation` con receipt o payrollSettlement no puede modificarse ni eliminarse
+- Cascade delete: `SettlementAllocation` con movement se elimina si se elimina el movement
+- `WorkshopRepair` NO puede tener cuotas (currentInstallment y finalInstallment deben ser null)
+- `remainingBalance` en `WorkshopRepair` se inicializa con `amount` en el servicio
+
+**Pendiente de reestructuración:**
+- 🔄 **Reestructuración del sistema de cuentas:** Actualmente `AbstractAccountEntity` usa `@MappedSuperclass`, lo que significa que cada entidad hija (MemberAccount, SubscriberAccount, VehicleAccount) tiene sus propios campos copiados. Se propone cambiar a estrategia `JOINED` con `@Inheritance` para:
+  - Crear una tabla padre `accounts` con campos comunes
+  - Tablas hijas con solo campos específicos
+  - Permitir relaciones polimórficas más limpias (un solo campo `account` en lugar de tres campos separados)
+  - Beneficios: menos duplicación, consultas más eficientes, mejor soporte para relaciones polimórficas
+  - **Nota:** Esta refactorización afectará múltiples entidades que usan cuentas (AccountMovements, Movements, Receipts, etc.). Se recomienda hacerlo después de completar el sistema de Account Movements para minimizar el impacto.
 
 1. **✅ COMPLETADO: Hacer que `notes` de `Advance` herede `description` de `NonCashMovement`**
    - ✅ Implementado: El campo `notes` ahora hereda el `description` del movimiento al crear un `Advance`

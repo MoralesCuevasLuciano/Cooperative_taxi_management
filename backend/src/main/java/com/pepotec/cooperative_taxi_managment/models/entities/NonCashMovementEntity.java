@@ -13,6 +13,7 @@ import lombok.experimental.SuperBuilder;
  */
 @Entity
 @Table(name = "non_cash_movements")
+@DiscriminatorValue("NON_CASH")
 @Data
 @NoArgsConstructor
 @SuperBuilder

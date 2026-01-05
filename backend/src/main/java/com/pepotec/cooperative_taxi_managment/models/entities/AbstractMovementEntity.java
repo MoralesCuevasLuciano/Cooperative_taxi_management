@@ -14,9 +14,15 @@ import java.time.LocalDate;
 
 /**
  * Clase base abstracta para movimientos de dinero (efectivo y no efectivo).
- * Usa @MappedSuperclass para compartir campos comunes entre CashMovement y NonCashMovement.
+ * 
+ * Utiliza estrategia JOINED para la herencia, donde las clases hijas
+ * (CashMovementEntity y NonCashMovementEntity) tienen sus propias tablas.
+ * Esto evita duplicación de columnas comunes en la base de datos.
  */
-@MappedSuperclass
+@Entity
+@Table(name = "movements")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "movement_type", discriminatorType = DiscriminatorType.STRING)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
